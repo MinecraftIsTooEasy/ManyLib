@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "many-lib",
+  "version": "${version}",
+  "depends": {
+    "fishmodloader": ">=3.2.2"
+  },
+  "environment": "*",
+  "name": "ManyLib",
+  "description": "A simple fork of MaliLib to MITE1.6.4",
+  "authors": [
+    "masa",
+    "Debris",
+    "Xy_Lose"
+  ],
+  "entrypoints": {
+    "main": [
+      "fi.dy.masa.malilib.ManyLib"
+    ]
+  },
+  "accessWidener": "ManyLib.accesswidener",
+  "mixins": [
+    "ManyLib.mixins.json"
+  ]
+}

@@ -1,0 +1,46 @@
+manyLib.gui.button.controls=ManyLib Controls
+manyLib.gui.button.controls.comment=Click me to manage controls
+manyLib.gui.button.options=ManyLib Options
+manyLib.gui.button.pageUp=Page Up
+manyLib.gui.button.pageDown=Page Down
+manyLib.gui.button.search=Search
+manyLib.gui.button.reset=Reset
+manyLib.gui.button.reset_all=Reset All
+
+manyLib.gui.reset_hotkeys_question=Are you sure you want to reset all hotkeys?
+manyLib.gui.reset_values_question=Are you sure you want to reset all values?
+manyLib.gui.reset_tab_question=Are you sure you want to reset all configs in this tab?
+manyLib.gui.title.options=ManyLib Options
+manyLib.gui.title.controls=ManyLib Controls
+
+manyLib.gui.comment.available_values=Available Values
+
+manyLib.configToggle.toggle=%s has been changed to: %s
+
+config.name.manyLib.openValueMenu=Open Value Menu
+config.comment.manyLib.openValueMenu=Press to display ManyLib value menu
+
+config.name.manyLib.openHotkeyMenu=Open Hotkey Value
+config.comment.manyLib.openHotkeyMenu=Press to display ManyLib hotkey menu
+
+config.name.manyLib.hideValueButton=Hide Value Button
+config.comment.manyLib.hideValueButton=Hide the button added at the main menu and pause screen
+
+config.name.manyLib.hoverInfoY=Hovering Info Y Level
+config.comment.manyLib.hoverInfoY=Count up from the bottom
+
+config.comment.manyLib.sortCategory=Sort Category
+
+config.enum.manyLib.sortCategory.Default=Default
+config.enum.manyLib.sortCategory.Alphabetical=Alphabetical
+config.enum.manyLib.sortCategory.Inverted=Inverted
+
+config.value.comment.ManyLib=Click me to hide the ManyLib button\n You can still press %s to open it
+
+config.tab.generic=Generic
+
+toggle.on=On
+toggle.off=Off
+
+boolean.true=True
+boolean.false=False

@@ -1,0 +1,16 @@
+accessWidener v2 named
+accessible field net/minecraft/GuiButton width I
+accessible field net/minecraft/GuiButton height I
+accessible field net/minecraft/Gui zLevel F
+accessible field net/minecraft/GuiScreen fontRenderer Lnet/minecraft/FontRenderer;
+accessible method net/minecraft/Gui drawGradientRect (IIIIII)V
+accessible field net/minecraft/GuiScreen mc Lnet/minecraft/Minecraft;
+accessible field net/minecraft/GuiScreen selectedButton Lnet/minecraft/GuiButton;
+
+accessible field net/minecraft/GuiTextField xPos I
+accessible field net/minecraft/GuiTextField yPos I
+accessible field net/minecraft/GuiTextField width I
+accessible field net/minecraft/GuiTextField height I
+
+accessible field net/minecraft/GuiTextField enableBackgroundDrawing Z
+accessible field net/minecraft/GuiTextField fontRenderer Lnet/minecraft/FontRenderer;
