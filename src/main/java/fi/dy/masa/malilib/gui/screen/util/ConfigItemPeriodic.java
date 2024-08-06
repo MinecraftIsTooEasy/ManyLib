@@ -5,10 +5,10 @@ import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigPeriodic;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
-import fi.dy.masa.malilib.util.RenderUtils;
+import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.EnumChatFormatting;
 import net.minecraft.GuiButton;
 import net.minecraft.GuiScreen;
 import net.minecraft.I18n;
@@ -40,7 +40,7 @@ class ConfigItemPeriodic<T extends ConfigBase<T> & IConfigPeriodic & IConfigDisp
         if (this.drawComment && ((GuiButton) this.periodicButton).func_82252_a()) {// hovering
             int ordinal = ((ConfigEnum<?>) this.config).getOrdinal() + 1;
             String s = this.strings.get(ordinal);
-            this.strings.set(ordinal, EnumChatFormatting.GREEN + s);
+            this.strings.set(ordinal, GuiBase.TXT_GREEN + s);
             RenderUtils.drawTextList(guiScreen, this.strings, x, y);
             this.strings.set(ordinal, s);
         }

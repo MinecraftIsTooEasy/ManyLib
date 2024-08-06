@@ -5,12 +5,13 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.gui.screen.HotKeyScreen;
-import fi.dy.masa.malilib.gui.screen.ValueScreen;
+import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
+import fi.dy.masa.malilib.hotkeys.IKeybindManager;
+import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
-import net.minecraft.KeyBinding;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -22,40 +23,55 @@ public abstract class SimpleConfigs implements IConfigHandler {
     protected File optionsFile;
     protected final List<ConfigHotkey> hotkeys;
     protected final List<ConfigBase<?>> values;
-    protected String valuesComment;
-    protected String hotKeysComment;
+    protected String menuComment;
 
     public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values) {
-        this(name, hotkeys, values, null, null);
+        this(name, hotkeys, values, null);
     }
 
-    public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values, String valuesComment, String hotKeysComment) {
+    public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values, String menuComment) {
         this.name = name;
         this.optionsFile = new File("configs" + File.separator + name + ".json");
-        this.hotkeys = hotkeys;
-        this.values = cast(values);
-        this.valuesComment = valuesComment;
-        this.hotKeysComment = hotKeysComment;
-    }
-
-    private static List<ConfigBase<?>> cast(List<?> values) {
-        ArrayList<ConfigBase<?>> objects = new ArrayList<>();
-        for (Object value : values) {
-            objects.add((ConfigBase<?>) value);
+        if (values == null || values.isEmpty()) {
+            this.values = null;
+        } else {
+            this.values = new ArrayList<>();
+            castFill(this.values, values);
         }
-        return objects;
+        if (hotkeys == null || hotkeys.isEmpty()) {
+            this.hotkeys = null;
+        } else {
+            this.hotkeys = hotkeys;// below is registering
+            InputEventHandler.getKeybindManager().registerKeybindProvider(new IKeybindProvider() {
+                @Override
+                public void addKeysToMap(IKeybindManager manager) {
+                    hotkeys.forEach(hotkey -> manager.addKeybindToMap(hotkey.getKeybind()));
+                }
+
+                @Override
+                public void addHotkeys(IKeybindManager manager) {
+                    manager.addHotkeysForCategory(name, name + ".hotkeys.category.generic_hotkeys", hotkeys);
+                }
+            });
+        }
+        this.menuComment = menuComment;
+    }
+
+    @Deprecated(since = "2.0.2")
+    public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values, String valueComment, String hotKeysComment) {
+        this(name, hotkeys, values, valueComment);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void castFill(List<T> to, List<?> from) {
+        for (Object o : from) {
+            to.add((T) o);
+        }
     }
 
     @Override
-    public GuiScreen getValueScreen(GuiScreen parentScreen) {
-        return new ValueScreen(parentScreen, this.getName() + " Configs", this);
-//        return new ValueScreen(parentScreen, this.getName(), this, this.values);
-//        return new LegacyValueScreen(parentScreen, this.getName(), this, this.values);
-    }
-
-    @Override
-    public GuiScreen getHotKeyScreen(GuiScreen parentScreen) {
-        return new HotKeyScreen(parentScreen, this.getName(), this, this.hotkeys);
+    public GuiScreen getConfigScreen(GuiScreen parentScreen) {
+        return new DefaultConfigScreen(parentScreen, this.getName() + " Configs", this);
     }
 
     @Override
@@ -85,7 +101,6 @@ public abstract class SimpleConfigs implements IConfigHandler {
             ConfigUtils.readConfigBase(obj, "HotKeys", this.hotkeys);
             ConfigUtils.readConfigBase(obj, "Values", this.values);
             this.save();
-            KeyBinding.resetKeyBindingArrayAndHash();
         }
     }
 
@@ -110,7 +125,16 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     @Override
     public List<ConfigTab> getConfigTabs() {
-        return List.of(new ConfigTab("generic", this.values));
+        List<ConfigTab> configTabs = new ArrayList<>();
+        if (this.values != null) {
+            configTabs.add(new ConfigTab("generic", this.values));
+        }
+        if (this.hotkeys != null) {
+            List<ConfigBase<?>> temp = new ArrayList<>();
+            castFill(temp, this.hotkeys);
+            configTabs.add(new ConfigTab("hotkey", temp));
+        }
+        return configTabs;
     }
 
     @Override
@@ -120,12 +144,7 @@ public abstract class SimpleConfigs implements IConfigHandler {
     }
 
     @Override
-    public String getValuesComment() {
-        return StringUtils.getTranslatedOrFallback("config.value.comment." + this.name, this.valuesComment);
-    }
-
-    @Override
-    public String getHotKeysComment() {
-        return StringUtils.getTranslatedOrFallback("config.hotkey.comment." + this.name, this.hotKeysComment);
+    public String getMenuComment() {
+        return StringUtils.getTranslatedOrFallback("config.menu.comment." + this.name, this.menuComment);
     }
 }

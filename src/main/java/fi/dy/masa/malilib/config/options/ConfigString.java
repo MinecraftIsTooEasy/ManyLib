@@ -76,4 +76,9 @@ public class ConfigString extends ConfigBase<ConfigString> implements IConfigStr
     public boolean isModified(String newValue) {
         return newValue.equals(this.value);
     }
+
+    @Override
+    public String getDisplayText() {
+        return this.value;
+    }
 }

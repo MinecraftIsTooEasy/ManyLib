@@ -5,6 +5,9 @@ import fi.dy.masa.malilib.config.interfaces.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KeybindSettings {
     public static final KeybindSettings DEFAULT = new KeybindSettings(Context.INGAME, KeyAction.PRESS, false, true, false, true);
     public static final KeybindSettings EXCLUSIVE = new KeybindSettings(Context.INGAME, KeyAction.PRESS, false, true, true, true);
@@ -150,6 +153,18 @@ public class KeybindSettings {
         if (orderSensitive != other.orderSensitive)
             return false;
         return true;
+    }
+
+    public List<String> toStringList() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(StringUtils.translate("manyLib.keybind.settings.activate_on") + ": " + this.activateOn.name());
+        list.add(StringUtils.translate("manyLib.keybind.settings.context") + ": " + this.context.name());
+        list.add(StringUtils.translate("manyLib.keybind.settings.allow_empty") + ": " + this.allowEmpty);
+        list.add(StringUtils.translate("manyLib.keybind.settings.allow_extra_keys") + ": " + this.allowExtraKeys);
+        list.add(StringUtils.translate("manyLib.keybind.settings.order_sensitive") + ": " + this.orderSensitive);
+        list.add(StringUtils.translate("manyLib.keybind.settings.exclusive") + ": " + this.exclusive);
+        list.add(StringUtils.translate("manyLib.keybind.settings.cancel") + ": " + this.cancel);
+        return list;
     }
 
     public enum Context implements IConfigOptionListEntry {

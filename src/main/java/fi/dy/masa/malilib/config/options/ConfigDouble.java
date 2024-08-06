@@ -42,12 +42,6 @@ public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDou
     }
 
     @Override
-    public String getDisplayTextFull() {
-        int percent = (int) (this.getRatio() * 100.0f);
-        return this.getConfigGuiDisplayName() + ": " + percent + "%";
-    }
-
-    @Override
     public String getDisplayText() {
         int percent = (int) (this.getRatio() * 100.0f);
         return percent + "%";
@@ -61,12 +55,6 @@ public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDou
     @Override
     public void toggleUseSlider() {
         this.useSlider = !this.useSlider;
-    }
-
-    @Deprecated
-    @Override
-    public double get() {
-        return this.value;
     }
 
     @Override

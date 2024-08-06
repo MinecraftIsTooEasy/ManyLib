@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.button.interfaces;
 
-import fi.dy.masa.malilib.util.RenderUtils;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.GuiScreen;
 
 import javax.annotation.Nullable;

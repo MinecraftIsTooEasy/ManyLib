@@ -2,10 +2,30 @@
 
 ---
 
-## 2.0.2
+## 2.1.1
 
 * 在`ValueScreen`屏幕提供一个下拉按钮来切换不同模组[WIP]
 * 把模组菜单也改为滑动屏幕[WIP]
+* 加入取色板[WIP]
+* 加入`ConfigStringList`配置板[WIP]
+* 加入`KeybindSettings`配置板[WIP]
+* 对于Int设置, 提供了按钮来加减1[WIP]
+
+---
+
+## 2.1.0
+
+* 现在允许更改配置项的显示颜色了, 通过覆写`getDisplayColor`
+* 加入了一些事件, 可以在`event`文件夹的各个`Handler`中注册
+* 支持拼音搜索和排序, 如果你加了拼音库(比如`craftguide`模组就带了这个)
+* 添加了多按键绑定
+* 现在默认按M打开模组菜单, 按M+C打开ManyLib菜单
+* 取消了按键菜单, 如果你覆写了`getConfigTabs`, 需要添加一个新的标签页用来展示按键
+* 改进了用户视觉体验
+* 调整了一些类的目录
+* 删除了一些无用内容
+* 离开屏幕时会保留当前位置
+* 关于1.1.1中需要`KeyBinding.resetKeyBindingArrayAndHash()`, 现在无需了
 
 ---
 

@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib;
 
-import fi.dy.masa.malilib.config.ConfigManager;
+import fi.dy.masa.malilib.event.InitializationHandler;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +12,6 @@ public class ManyLib implements ModInitializer {
     @Override
     public void onInitialize() {
         ManyLibConfig.getInstance().load();
-        ConfigManager.getInstance().registerConfig(ManyLibConfig.getInstance());
+        InitializationHandler.getInstance().registerInitializationHandler(new ManyLibInitHandler());
     }
 }

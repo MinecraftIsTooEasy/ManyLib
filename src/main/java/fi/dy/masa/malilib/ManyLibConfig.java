@@ -1,15 +1,14 @@
 package fi.dy.masa.malilib;
 
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.SimpleConfigs;
-import fi.dy.masa.malilib.config.options.ConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
-import fi.dy.masa.malilib.gui.screen.HotKeyMenu;
-import fi.dy.masa.malilib.gui.screen.ValueMenu;
+import fi.dy.masa.malilib.config.options.*;
+import fi.dy.masa.malilib.hotkeys.KeybindMulti;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.StringUtils;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.EnumChatFormatting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static fi.dy.masa.malilib.ManyLib.MOD_ID;
@@ -17,11 +16,13 @@ import static fi.dy.masa.malilib.ManyLib.MOD_ID;
 public class ManyLibConfig extends SimpleConfigs {
     private static final ManyLibConfig Instance;
     public static final List<ConfigHotkey> hotkeys;
-    public static final List<ConfigBase<?>> values;
-    public static final ConfigHotkey openValueMenu = new ConfigHotkey("manyLib.openValueMenu", Keyboard.KEY_M, "按下打开ManyLib数值配置页面");
-    public static final ConfigHotkey openHotkeyMenu = new ConfigHotkey("manyLib.openHotkeyMenu", Keyboard.KEY_P, "按下打开ManyLib按键配置页面");
+    public static final List<ConfigBase<?>> values;//openValueMenu
+    public static final ConfigHotkey openConfigMenu = new ConfigHotkey("manyLib.openMenu", "M,C", "按下打开ManyLib数值配置页面");
+    public static final ConfigHotkey openModMenu = new ConfigHotkey("manyLib.openModMenu", KeybindMulti.fromStorageString("M", KeybindSettings.RELEASE), "按下打开使用ManyLib的模组的菜单");
     public static final ConfigBoolean hideValueButton = new ConfigBoolean("manyLib.hideValueButton", false, "隐藏在游戏主界面以及暂停界面的数值配置按钮");
-    public static final ConfigInteger hoverTextYLevel = new ConfigInteger("manyLib.hoverInfoY", 60, 0, 512, false, "从屏幕底部往上数");
+    public static final ConfigInteger hoverTextYLevel = new ConfigInteger("manyLib.hoverInfoY", 70, 0, 512, false, "从屏幕底部往上数");
+    public static final ConfigColor highlightColor = new ConfigColor("高亮颜色", "#77777777");
+    public static final ConfigEnum<EnumChatFormatting> titleFormat = new ConfigEnum<>("标题格式", EnumChatFormatting.WHITE);
 
 //    public static final ConfigDouble testDoubleBox = new ConfigDouble("Double文本框", 0.0d, -1.0d, 1.0d, false, "测试");
 //    public static final ConfigDouble testDoubleSlider = new ConfigDouble("Double滑块", 0.0d, -1.0d, 1.0d, true, "测试");
@@ -32,18 +33,14 @@ public class ManyLibConfig extends SimpleConfigs {
 //    public static final ConfigColor testColor = new ConfigColor("颜色", "#C03030F0");
 
     //    public static final ConfigStringList testStringList = new ConfigStringList("StringList", List.of("11", "22"), "测试");
-    public ManyLibConfig(String name, List<ConfigHotkey> hotkeys, List<ConfigBase<?>> values) {
+    public ManyLibConfig(String name, List<ConfigHotkey> hotkeys, List<?> values) {
         super(name, hotkeys, values);
     }
 
     static {
-        hotkeys = List.of(openValueMenu, openHotkeyMenu);
-        values = List.of(hideValueButton, hoverTextYLevel);
-//        values = List.of(hideValueButton, testColor);
-
-        openValueMenu.setHotKeyPressCallBack(minecraft -> minecraft.displayGuiScreen(ValueMenu.getInstance(null)));
-        openHotkeyMenu.setHotKeyPressCallBack(minecraft -> minecraft.displayGuiScreen(HotKeyMenu.getInstance(null)));
-
+        values = new ArrayList<>();
+        values.addAll(List.of(hideValueButton, hoverTextYLevel, highlightColor, titleFormat));
+        hotkeys = List.of(openConfigMenu, openModMenu);
         Instance = new ManyLibConfig(MOD_ID, hotkeys, values);
     }
 
@@ -52,7 +49,22 @@ public class ManyLibConfig extends SimpleConfigs {
     }
 
     @Override
-    public String getValuesComment() {
-        return StringUtils.translateParams("config.value.comment." + this.name, openValueMenu.getKeyName());
+    public String getMenuComment() {
+        return StringUtils.translate("config.menu.comment." + this.name, openConfigMenu.getDisplayText());
+    }
+
+
+    public static class Debug {
+        public static final ConfigBoolean INPUT_CANCELLATION_DEBUG = new ConfigBoolean("inputCancellationDebugging", false, "When enabled, then the cancellation reason/source\nfor inputs (keyboard and mouse) is printed out");
+        public static final ConfigBoolean KEYBIND_DEBUG = new ConfigBoolean("keybindDebugging", false, "When enabled, key presses and held keys are\nprinted to the game console (and the action bar, if enabled)");
+        public static final ConfigBoolean KEYBIND_DEBUG_ACTIONBAR = new ConfigBoolean("keybindDebuggingIngame", true, "If enabled, then the messages from 'keybindDebugging'\nare also printed to the in-game action bar");
+        public static final ConfigBoolean MOUSE_SCROLL_DEBUG = new ConfigBoolean("mouseScrollDebug", false, "If enabled, some debug values from mouse scrolling\nare printed to the game console/log");
+
+        public static final ImmutableList<ConfigBase<?>> OPTIONS = ImmutableList.of(
+                INPUT_CANCELLATION_DEBUG,
+                KEYBIND_DEBUG,
+                KEYBIND_DEBUG_ACTIONBAR,
+                MOUSE_SCROLL_DEBUG
+        );
     }
 }

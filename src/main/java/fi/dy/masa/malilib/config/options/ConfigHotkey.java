@@ -5,29 +5,29 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.config.interfaces.ConfigType;
-import fi.dy.masa.malilib.config.interfaces.IConfigHotkey;
+import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
+import fi.dy.masa.malilib.hotkeys.IHotkey;
+import fi.dy.masa.malilib.hotkeys.IKeybind;
+import fi.dy.masa.malilib.hotkeys.KeybindMulti;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
-import net.minecraft.KeyBinding;
-import net.minecraft.Minecraft;
 
-import javax.annotation.Nullable;
-import java.util.function.Consumer;
+import java.util.List;
 
-public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IConfigHotkey {
-    protected final int defaultKey;
-
-    private final KeyBinding keyBinding;
-
-    @Nullable
-    protected Consumer<Minecraft> hotKeyPressCallBack;
+public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey, IConfigDisplay {
+    protected final IKeybind keybind;
 
     public ConfigHotkey(String name) {
-        this(name, KeyCodes.KEY_NONE, name);
+        this(name, "", null);
     }
 
     public ConfigHotkey(String name, String comment) {
-        this(name, KeyCodes.KEY_NONE, comment);
+        this(name, "", comment);
+    }
+
+    public ConfigHotkey(String name, String defaultStorageString, String comment) {
+        this(name, KeybindMulti.fromStorageString(defaultStorageString, KeybindSettings.DEFAULT), comment);
     }
 
     public ConfigHotkey(String name, int hotkey) {
@@ -35,59 +35,25 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IConfigHot
     }
 
     public ConfigHotkey(String name, int defaultKey, String comment) {
+        this(name, KeyCodes.getNameForKey(defaultKey), comment);
+    }
+
+    public ConfigHotkey(String name, IKeybind keybind, String comment) {
         super(ConfigType.HOTKEY, name, comment);
-        this.defaultKey = defaultKey;
-        this.keyBinding = new KeyBinding(name, defaultKey);
-    }
-
-    public boolean isPressed() {
-        return this.keyBinding.isPressed();
+        this.keybind = keybind;
     }
 
     @Override
-    public boolean isModified() {
-        return this.getKeyCode() != this.defaultKey;
-    }
-
-    @Override
-    public boolean isModified(String newValue) {
-        try {
-            return Integer.parseInt(newValue) != this.defaultKey;
-        } catch (Exception ignored) {
-        }
-        return true;
-    }
-
-    @Override
-    public void resetToDefault() {
-        this.setHotKeyAndHash(this.defaultKey);
-    }
-
-    @Override
-    public String getStringValue() {
-        return String.valueOf(this.keyBinding.keyCode);
-    }
-
-    @Override
-    public String getDefaultStringValue() {
-        return String.valueOf(this.defaultKey);
-    }
-
-    @Override
-    public void setValueFromString(String value) {
-        try {
-            this.setHotKeyAndHash(Integer.parseInt(value));
-        } catch (Exception e) {
-            ManyLib.logger.warn("Failed to set config value for {} from the string '{}'", this.getName(), value, e);
-        }
+    public IKeybind getKeybind() {
+        return this.keybind;
     }
 
     @Override
     public void setValueFromJsonElement(JsonElement element) {
         try {
             JsonObject obj = element.getAsJsonObject();
-            if (JsonUtils.hasString(obj, "hotkey")) {
-                this.setHotKeyWithoutHash(KeyCodes.getKeyCodeFromName(obj.get("hotkey").getAsString()));
+            if (JsonUtils.hasObject(obj, "hotkey")) {
+                this.keybind.setValueFromJsonElement(obj.get("hotkey").getAsJsonObject());
             } else {
                 ManyLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
@@ -99,7 +65,7 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IConfigHot
     @Override
     public JsonElement getAsJsonElement() {
         JsonObject obj = new JsonObject();
-        obj.add("hotkey", new JsonPrimitive(this.getKeyName()));
+        obj.add("hotkey", this.keybind.getAsJsonElement());
         if (this.getComment() != null) {
             obj.add("comment", new JsonPrimitive(this.getComment()));
         }
@@ -107,35 +73,19 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IConfigHot
     }
 
     @Override
+    public String getDisplayText() {
+        return this.keybind.getKeysDisplayString();
+    }
+
+    @Deprecated(since = "2.0.2")
     public int getKeyCode() {
-        return this.keyBinding.keyCode;
+        List<Integer> keys = this.keybind.getKeys();
+        if (keys.isEmpty()) return KeyCodes.KEY_NONE;
+        return keys.get(keys.size() - 1);
     }
 
-    @Override
-    public String getKeyName() {
-        return KeyCodes.getNameForKeyCode(this.getKeyCode());
-    }
-
-    @Override
-    public void setHotKeyAndHash(int keyCode) {
-        this.keyBinding.keyCode = keyCode;
-        KeyBinding.resetKeyBindingArrayAndHash();
-    }
-
-    @Override
-    public void setHotKeyWithoutHash(int keyCode) {
-        this.keyBinding.keyCode = keyCode;
-    }
-
-    @Override
-    public void setHotKeyPressCallBack(@Nullable Consumer<Minecraft> callBack) {
-        this.hotKeyPressCallBack = callBack;
-    }
-
-    @Override
-    public void onPressed(Minecraft minecraft) {
-        if (this.hotKeyPressCallBack != null) {
-            this.hotKeyPressCallBack.accept(minecraft);
-        }
+    @Deprecated
+    public boolean isPressed() {
+        return this.keybind.isPressed();
     }
 }

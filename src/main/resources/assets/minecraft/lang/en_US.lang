@@ -1,3 +1,4 @@
+## private
 manyLib.gui.button.controls=ManyLib Controls
 manyLib.gui.button.controls.comment=Click me to manage controls
 manyLib.gui.button.options=ManyLib Options
@@ -17,27 +18,40 @@ manyLib.gui.comment.available_values=Available Values
 
 manyLib.configToggle.toggle=%s has been changed to: %s
 
-config.name.manyLib.openValueMenu=Open Value Menu
-config.comment.manyLib.openValueMenu=Press to display ManyLib value menu
+manyLib.message.formatting_code.error=§c
+manyLib.message.formatting_code.info=§f
+manyLib.message.formatting_code.success=§a
+manyLib.message.formatting_code.warning=§6
 
-config.name.manyLib.openHotkeyMenu=Open Hotkey Value
-config.comment.manyLib.openHotkeyMenu=Press to display ManyLib hotkey menu
+manyLib.keybind.settings=Keybind Settings
+manyLib.keybind.settings.activate_on=Activate On
+manyLib.keybind.settings.context=Context
+manyLib.keybind.settings.allow_empty=Allow Empty
+manyLib.keybind.settings.allow_extra_keys=Allow Extra Keys
+manyLib.keybind.settings.order_sensitive=Order Sentsitive
+manyLib.keybind.settings.exclusive=Exclusive
+manyLib.keybind.settings.cancel=Cancel
 
+## configs
+config.name.manyLib.openMenu=Open ManyLib Menu
+config.comment.manyLib.openMenu=Press to display ManyLib config menu
+config.name.manyLib.openModMenu=Open ManyLib Mods Menu
+config.comment.manyLib.openModMenu=Press to display ManyLib Mods Menu
 config.name.manyLib.hideValueButton=Hide Value Button
 config.comment.manyLib.hideValueButton=Hide the button added at the main menu and pause screen
-
 config.name.manyLib.hoverInfoY=Hovering Info Y Level
 config.comment.manyLib.hoverInfoY=Count up from the bottom
-
 config.comment.manyLib.sortCategory=Sort Category
-
 config.enum.manyLib.sortCategory.Default=Default
+config.enum.manyLib.sortCategory.PinYin=Chinese PinYin
 config.enum.manyLib.sortCategory.Alphabetical=Alphabetical
 config.enum.manyLib.sortCategory.Inverted=Inverted
 
-config.value.comment.ManyLib=Click me to hide the ManyLib button\n You can still press %s to open it
+config.menu.comment.ManyLib=Click me to hide the ManyLib button\n You can still press %s to open it
 
+## generic
 config.tab.generic=Generic
+config.tab.hotkey=Hotkey
 
 toggle.on=On
 toggle.off=Off

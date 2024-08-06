@@ -1,3 +1,4 @@
+## private
 manyLib.gui.button.controls=ManyLib按键绑定
 manyLib.gui.button.controls.comment=点我以更改键位
 manyLib.gui.button.options=ManyLib选项
@@ -17,27 +18,40 @@ manyLib.gui.comment.available_values=可用值
 
 manyLib.configToggle.toggle=功能%s已切换为: %s
 
-config.name.manyLib.openValueMenu=打开数值菜单
-config.comment.manyLib.openValueMenu=按下打开ManyLib数值配置页面
+manyLib.message.formatting_code.error=§c
+manyLib.message.formatting_code.info=§f
+manyLib.message.formatting_code.success=§a
+manyLib.message.formatting_code.warning=§6
 
-config.name.manyLib.openHotkeyMenu=打开按键菜单
-config.comment.manyLib.openHotkeyMenu=按下打开ManyLib按键配置页面
+manyLib.keybind.settings=按键行为设置
+manyLib.keybind.settings.activate_on=激活条件
+manyLib.keybind.settings.context=激活环境
+manyLib.keybind.settings.allow_empty=允许为空
+manyLib.keybind.settings.allow_extra_keys=允许额外按键
+manyLib.keybind.settings.order_sensitive=顺序严格
+manyLib.keybind.settings.exclusive=禁止连续触发
+manyLib.keybind.settings.cancel=触发后取消按键事件
 
+## configs
+config.name.manyLib.openMenu=打开配置菜单
+config.comment.manyLib.openMenu=按下打开ManyLib配置菜单
+config.name.manyLib.openModMenu=打开模组菜单
+config.comment.manyLib.openModMenu=按下打开使用ManyLib的模组的菜单
 config.name.manyLib.hideValueButton=隐藏数值配置按钮
 config.comment.manyLib.hideValueButton=隐藏在游戏主界面以及暂停界面的数值配置按钮
-
 config.name.manyLib.hoverInfoY=悬浮信息Y轴
 config.comment.manyLib.hoverInfoY=从屏幕底部往上数
-
 config.comment.manyLib.sortCategory=排序方式
-
 config.enum.manyLib.sortCategory.Default=默认顺序
+config.enum.manyLib.sortCategory.PinYin=按拼音排序
 config.enum.manyLib.sortCategory.Alphabetical=按字母顺序
 config.enum.manyLib.sortCategory.Inverted=按字母倒序
 
-config.value.comment.ManyLib=隐藏ManyLib按钮请点我\n 找不到了可以按%s键打开
+config.menu.comment.ManyLib=隐藏ManyLib按钮请点我\n 找不到了可以按%s键打开
 
+## generic
 config.tab.generic=通用
+config.tab.hotkey=热键
 
 toggle.on=开
 toggle.off=关

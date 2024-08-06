@@ -1,22 +1,23 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
+import fi.dy.masa.malilib.ManyLib;
+import fi.dy.masa.malilib.ManyLibConfig;
+import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.options.*;
+import fi.dy.masa.malilib.gui.button.CommentedText;
 import fi.dy.masa.malilib.gui.button.ResetButton;
-import fi.dy.masa.malilib.gui.button.interfaces.CommentedText;
 import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
-import fi.dy.masa.malilib.gui.button.interfaces.ISuppressibleElement;
 import net.minecraft.GuiButton;
 import net.minecraft.GuiScreen;
-import net.minecraft.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ConfigItem<T extends ConfigBase<?>> implements IInteractiveElement, ISuppressibleElement {
+public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> implements IInteractiveElement {
     final T config;
     final ResetButton resetButton;
     final CommentedText commentedText;
-    boolean visible;
+    boolean visible = true;
     final List<GuiButton> buttons = new ArrayList<>();
     final GuiScreen screen;
 
@@ -24,17 +25,23 @@ public abstract class ConfigItem<T extends ConfigBase<?>> implements IInteractiv
         this.config = config;
         this.screen = screen;
         this.resetButton = ScreenConstants.getResetButton(index, screen);
+        this.updateScreen();
         this.commentedText = ScreenConstants.getCommentedText(index, config, screen);
         this.buttons.add(this.resetButton);
     }
 
     public void draw(GuiScreen guiScreen, int x, int y) {
         if (this.visible) {
+            int yStart = this.resetButton.yPosition;
+            int yEnd = yStart + this.resetButton.height;
+            int color = ManyLibConfig.highlightColor.getColorInteger();
+            if (y >= yStart && y <= yEnd) {
+                guiScreen.drawGradientRect(0, yStart, guiScreen.width, yEnd, color, color);
+            }
             this.commentedText.draw(guiScreen, x, y);
             this.buttons.forEach(guiButton -> guiButton.drawButton(guiScreen.mc, x, y));
             this.customDraw(guiScreen, x, y);
         }
-//        this.tryDrawComment(guiScreen, x, y);// TODO
     }
 
     public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
@@ -52,9 +59,9 @@ public abstract class ConfigItem<T extends ConfigBase<?>> implements IInteractiv
         this.customMouseClicked(this.screen, mouseX, mouseY, click);
     }
 
-    public abstract void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click);
+    protected abstract void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click);
 
-    public void buttonListen(GuiButton guiButton, GuiScreen guiScreen, int mouseX, int mouseY) {
+    protected void buttonListen(GuiButton guiButton, GuiScreen guiScreen, int mouseX, int mouseY) {
         if (guiButton.mousePressed(guiScreen.mc, mouseX, mouseY)) {
             guiScreen.selectedButton = guiButton;
             guiButton.playClickedSound(guiScreen.mc.sndManager);
@@ -83,15 +90,6 @@ public abstract class ConfigItem<T extends ConfigBase<?>> implements IInteractiv
 
     public abstract void customActionPerformed(GuiButton guiButton);
 
-    //TODO kill it
-    @Override
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-        this.buttons.forEach(guiButton -> guiButton.drawButton = visible);
-        this.commentedText.setVisible(visible);
-        this.customSetVisible(visible);
-    }
-
     public abstract void customSetVisible(boolean visible);
 
     public static ConfigItem<?> getConfigItem(int index, ConfigBase<?> config, GuiScreen screen) {
@@ -102,8 +100,10 @@ public abstract class ConfigItem<T extends ConfigBase<?>> implements IInteractiv
             case STRING -> new ConfigItemInputBox<>(index, (ConfigString) config, screen);
             case ENUM -> new ConfigItemPeriodic<>(index, (ConfigEnum<?>) config, screen);
             case COLOR -> new ConfigItemColor(index, (ConfigColor) config, screen);
+            case HOTKEY -> new ConfigItemHotkey(index, (ConfigHotkey) config, screen);
+            case TOGGLE -> new ConfigItemToggle(index, (ConfigToggle) config, screen);
             default -> {
-                Minecraft.setErrorMessage("unsupported config type");
+                ManyLib.logger.error("unsupported config type");
                 yield null;
             }
         };

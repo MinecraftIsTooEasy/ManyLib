@@ -10,15 +10,15 @@ import net.minecraft.GuiScreen;
 
 class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDisplay & IStringRepresentable> extends ConfigItemInputBox<T> {
     boolean useSlider;
-    final SlideableToggleButton toggleButton;
+    final SlideableToggleButton slideableToggleButton;
     final ISliderButton sliderButton;
 
     public ConfigItemSlideable(int index, T config, GuiScreen screen) {
         super(index, config, screen);
         this.inputBox = ScreenConstants.getInputBoxForSlideable(index, config, screen);
         this.useSlider = config.shouldUseSlider();
-        this.toggleButton = ScreenConstants.getToggleButton(index, this.useSlider, screen);
-        this.buttons.add(this.toggleButton);
+        this.slideableToggleButton = ScreenConstants.getSlieableToggleButton(index, this.useSlider, screen);
+        this.buttons.add(this.slideableToggleButton);
         this.sliderButton = ScreenConstants.getSliderButton(index, config, screen);
     }
 
@@ -44,7 +44,7 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
 
     @Override
     public void customActionPerformed(GuiButton guiButton) {
-        if (guiButton == this.toggleButton) {
+        if (guiButton == this.slideableToggleButton) {
             this.toggle();
         }
     }
@@ -71,7 +71,7 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     }
 
     private void toggle() {
-        this.toggleButton.toggle();
+        this.slideableToggleButton.toggle();
         this.config.toggleUseSlider();
         if (this.useSlider) {
             this.inputBox.setTextByValue();

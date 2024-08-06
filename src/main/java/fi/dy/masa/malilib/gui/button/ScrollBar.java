@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.button;
 
-import fi.dy.masa.malilib.gui.screen.ValueScreen;
+import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiButton;
 import net.minecraft.MathHelper;
@@ -13,9 +13,9 @@ public class ScrollBar extends GuiButton {
     protected int maxStatus;
     protected float percentage;
     protected int sliderHeight;
-    protected final ValueScreen screen;
+    protected final DefaultConfigScreen screen;
 
-    public ScrollBar(int index, int xPos, int yPos, int width, int height, int pageCapacity, int maxStatus, ValueScreen screen) {
+    public ScrollBar(int index, int xPos, int yPos, int width, int height, int pageCapacity, int maxStatus, DefaultConfigScreen screen) {
         super(index, xPos, yPos, width, height, "");
         this.updateArguments(maxStatus, pageCapacity);
         this.screen = screen;

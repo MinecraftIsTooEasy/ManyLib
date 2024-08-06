@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.util;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.GuiIngame;
 import net.minecraft.I18n;
 import net.minecraft.Minecraft;
 
@@ -246,25 +247,28 @@ public class StringUtils {
         return I18n.getString(translationKey);
     }
 
-    public static String translateParams(String translationKey, Object... args) {
+    public static String translate(String translationKey, Object... args) {
         return I18n.getStringParams(translationKey, args);
     }
 
-//    /**
-//     * Just a wrapper to get the font height from the Font/TextRenderer
-//     * @return
-//     */
-//    public static int getFontHeight()
-//    {
-//        return net.minecraft.client.MinecraftClient.getInstance().textRenderer.fontHeight;
-//    }
+    /**
+     * Just a wrapper to get the font height from the Font/TextRenderer
+     *
+     * @return
+     */
+    public static int getFontHeight() {
+        return Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+    }
 
     public static int getStringWidth(String text) {
         return Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
     }
 
-//    public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext)
-//    {
+    //    public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext) {
+//
 //        drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
 //    }
+    public static void drawString(int x, int y, int color, String text, GuiIngame guiIngame) {
+        guiIngame.drawString(Minecraft.getMinecraft().fontRenderer, text, x, y, color);
+    }
 }

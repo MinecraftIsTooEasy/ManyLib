@@ -8,10 +8,11 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "GuiControlsMixin",
     "GuiIngameMenuMixin",
     "GuiIngameMixin",
     "GuiMainMenuMixin",
+    "GuiScreenMixin",
+    "GuiTextFieldMixin",
     "MinecraftMixin"
   ]
 }

@@ -2,7 +2,9 @@ package fi.dy.masa.malilib.config.interfaces;
 
 public interface IConfigInteger extends IConfigValue, IConfigDisplay, IConfigSlideable {
     @Deprecated(since = "1.1.1")
-    int get();
+    default int get() {
+        return this.getIntegerValue();
+    }
 
     int getIntegerValue();
 

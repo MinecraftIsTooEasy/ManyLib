@@ -10,8 +10,7 @@ import fi.dy.masa.malilib.util.JsonUtils;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface IKeybind extends IConfigResettable, IStringRepresentable
-{
+public interface IKeybind extends IConfigResettable, IStringRepresentable {
     boolean isValid();
 
     /**
@@ -29,6 +28,7 @@ public interface IKeybind extends IConfigResettable, IStringRepresentable
      * Returns true if further processing of the just pressed key should be cancelled.
      * This return value can be determined by the callback, if one has been set.
      * Without a callback, the return value will be false to not cancel further processing.
+     *
      * @return
      */
     boolean updateIsPressed();
@@ -37,6 +37,7 @@ public interface IKeybind extends IConfigResettable, IStringRepresentable
 
     /**
      * Set the settings for this keybind.
+     *
      * @param settings
      */
     void setSettings(KeybindSettings settings);
@@ -50,6 +51,7 @@ public interface IKeybind extends IConfigResettable, IStringRepresentable
     /**
      * Check if this keybind is only a single key, matching the given key code.
      * This is mainly meant for checking equality against vanilla keybinds.
+     *
      * @param keyCode
      * @return
      */
@@ -69,32 +71,26 @@ public interface IKeybind extends IConfigResettable, IStringRepresentable
 
     void resetSettingsToDefaults();
 
-    default JsonElement getAsJsonElement()
-    {
+    default JsonElement getAsJsonElement() {
         JsonObject obj = new JsonObject();
         obj.add("keys", new JsonPrimitive(this.getStringValue()));
 
-        if (this.areSettingsModified())
-        {
+        if (this.areSettingsModified()) {
             obj.add("settings", this.getSettings().toJson());
         }
 
         return obj;
     }
 
-    default void setValueFromJsonElement(JsonElement element)
-    {
-        if (element.isJsonObject())
-        {
+    default void setValueFromJsonElement(JsonElement element) {
+        if (element.isJsonObject()) {
             JsonObject obj = element.getAsJsonObject();
 
-            if (JsonUtils.hasString(obj, "keys"))
-            {
+            if (JsonUtils.hasString(obj, "keys")) {
                 this.setValueFromString(obj.get("keys").getAsString());
             }
 
-            if (JsonUtils.hasObject(obj, "settings"))
-            {
+            if (JsonUtils.hasObject(obj, "settings")) {
                 this.setSettings(KeybindSettings.fromJson(obj.getAsJsonObject("settings")));
             }
         }

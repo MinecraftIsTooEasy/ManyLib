@@ -1,5 +1,6 @@
 package fi.dy.masa.malilib.gui.screen.interfaces;
 
+import fi.dy.masa.malilib.ManyLibConfig;
 import net.minecraft.GuiScreen;
 
 public class GuiScreenParented extends GuiScreen implements ScreenWithParent {
@@ -14,7 +15,7 @@ public class GuiScreenParented extends GuiScreen implements ScreenWithParent {
     @Override
     public void drawScreen(int i, int j, float f) {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
+        this.drawCenteredString(this.fontRenderer, ManyLibConfig.titleFormat.getEnumValue() + this.screenTitle, this.width / 2, 20, 16777215);
         super.drawScreen(i, j, f);
     }
 

@@ -1,6 +1,8 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
-import fi.dy.masa.malilib.util.Constant;
+import fi.dy.masa.malilib.gui.ManyLibIcons;
+import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.GuiButton;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
@@ -16,12 +18,11 @@ class SlideableToggleButton extends GuiButton {
     @Override
     public void drawButton(Minecraft minecraft, int par2, int par3) {
         if (this.drawButton) {
-            minecraft.getTextureManager().bindTexture(Constant.buttonTexturesManyLib);
+            IGuiIcon icon = this.useSlider ? ManyLibIcons.SlideIdentifier : ManyLibIcons.InputIdentifier;
+            RenderUtils.bindTexture(icon.getTexture());
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
-            int textureX = this.field_82253_i ? 32 : 16;
-            int textureY = this.useSlider ? 100 : 116;
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, textureX, textureY, 16, 16);
+            icon.renderAt(this.xPosition, this.yPosition, 0, true, this.field_82253_i);
         }
     }
 

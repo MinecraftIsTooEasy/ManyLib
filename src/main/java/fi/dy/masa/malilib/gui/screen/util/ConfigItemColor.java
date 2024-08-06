@@ -18,4 +18,15 @@ class ConfigItemColor extends ConfigItemInputBox<ConfigColor> {
         this.colorBoard.draw(guiScreen, x, y);
     }
 
+    @Override
+    public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
+        super.tryDrawComment(guiScreen, x, y);
+//        this.colorBoard.tryDrawComment(guiScreen, x, y);// TODO make a color select screen
+    }
+
+    @Override
+    public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
+        super.customMouseClicked(guiScreen, mouseX, mouseY, click);
+        this.colorBoard.mouseClicked(mouseX, mouseY, click);
+    }
 }

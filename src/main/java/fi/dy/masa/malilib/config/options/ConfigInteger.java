@@ -42,11 +42,6 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
     }
 
     @Override
-    public String getDisplayTextFull() {
-        return this.getConfigGuiDisplayName() + ": " + this.getIntegerValue();
-    }
-
-    @Override
     public String getDisplayText() {
         return String.valueOf(this.getIntegerValue());
     }
@@ -62,12 +57,6 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
     @Override
     public void setValueByRatio(double ratio) {
         this.setIntegerValue((int) Math.round((this.minValue * (1.0d - ratio) + this.maxValue * ratio)));
-    }
-
-    @Deprecated
-    @Override
-    public int get() {
-        return this.value;
     }
 
     @Override

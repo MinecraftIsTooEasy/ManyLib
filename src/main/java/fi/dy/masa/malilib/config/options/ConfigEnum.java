@@ -54,11 +54,6 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
     }
 
     @Override
-    public String getDisplayTextFull() {
-        return this.getConfigGuiDisplayName() + ": " + StringUtils.getTranslatedOrFallback("config.enum." + this.getName() + "." + this.getStringValue(), this.getStringValue());
-    }
-
-    @Override
     public String getDisplayText() {
         return StringUtils.getTranslatedOrFallback("config.enum." + this.getName() + "." + this.getStringValue(), this.getStringValue());
     }

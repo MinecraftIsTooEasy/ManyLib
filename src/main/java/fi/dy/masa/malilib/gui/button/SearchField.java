@@ -1,11 +1,12 @@
 package fi.dy.masa.malilib.gui.button;
 
-import fi.dy.masa.malilib.gui.button.interfaces.GuiButtonCommented;
+import fi.dy.masa.malilib.gui.ManyLibIcons;
 import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
 import fi.dy.masa.malilib.gui.button.interfaces.ISuppressibleElement;
 import fi.dy.masa.malilib.gui.button.interfaces.IToggleableElement;
+import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.screen.interfaces.SearchableScreen;
-import fi.dy.masa.malilib.util.Constant;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.GuiTextField;
 import net.minecraft.I18n;
@@ -56,10 +57,11 @@ public class SearchField extends GuiButtonCommented implements ISuppressibleElem
         if (!this.drawButton) {
             return;
         }
-        minecraft.getTextureManager().bindTexture(Constant.buttonTexturesManyLib);
+        IGuiIcon icon = ManyLibIcons.SearchButton;
+        RenderUtils.bindTexture(icon.getTexture());
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
-        this.drawTexturedModalRect(this.xPosition, this.yPosition, 20, 60, this.width, this.height);
+        icon.renderAt(this.xPosition, this.yPosition, 0, false, false);
         this.tryDrawComment(this.screen, par2, par3);
         this.guiTextField.drawTextBox();
     }

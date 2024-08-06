@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.gui.button.interfaces;
+package fi.dy.masa.malilib.gui.button;
 
 import net.minecraft.FontRenderer;
 import net.minecraft.GuiTextField;

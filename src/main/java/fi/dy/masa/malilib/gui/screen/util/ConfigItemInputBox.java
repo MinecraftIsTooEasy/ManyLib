@@ -1,5 +1,6 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
+import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.gui.button.InputBox;
@@ -7,7 +8,7 @@ import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
 import net.minecraft.GuiButton;
 import net.minecraft.GuiScreen;
 
-class ConfigItemInputBox<T extends ConfigBase<?> & IStringRepresentable> extends ConfigItem<T> implements AboutInputMethod {
+class ConfigItemInputBox<T extends ConfigBase<?> & IStringRepresentable & IConfigDisplay> extends ConfigItem<T> implements AboutInputMethod {
     InputBox<T> inputBox;
 
     public ConfigItemInputBox(int index, T config, GuiScreen screen) {

@@ -6,8 +6,8 @@ import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigBoolean;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.JsonUtils;
-import net.minecraft.EnumChatFormatting;
 import net.minecraft.I18n;
 
 public class ConfigBoolean extends ConfigBase<ConfigBoolean> implements IConfigBoolean {
@@ -33,23 +33,12 @@ public class ConfigBoolean extends ConfigBase<ConfigBoolean> implements IConfigB
     }
 
     @Override
-    public String getDisplayTextFull() {
-        return this.getConfigGuiDisplayName() + ": " + this.getDisplayText();
-    }
-
-    @Override
     public String getDisplayText() {
         if (this.value) {
-            return EnumChatFormatting.GREEN + I18n.getString("boolean.true");
+            return GuiBase.TXT_GREEN + I18n.getString("boolean.true");
         } else {
-            return EnumChatFormatting.RED + I18n.getString("boolean.false");
+            return GuiBase.TXT_RED + I18n.getString("boolean.false");
         }
-    }
-
-    @Deprecated
-    @Override
-    public boolean get() {
-        return this.value;
     }
 
     @Override

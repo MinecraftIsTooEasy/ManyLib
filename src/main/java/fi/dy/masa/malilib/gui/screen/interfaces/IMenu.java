@@ -1,8 +1,7 @@
 package fi.dy.masa.malilib.gui.screen.interfaces;
 
-import fi.dy.masa.malilib.gui.button.interfaces.GuiButtonCommented;
+import fi.dy.masa.malilib.gui.button.GuiButtonCommented;
 import net.minecraft.GuiButton;
-import net.minecraft.GuiScreen;
 import net.minecraft.GuiSmallButton;
 
 public interface IMenu {

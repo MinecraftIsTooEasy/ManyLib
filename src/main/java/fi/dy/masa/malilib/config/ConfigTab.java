@@ -1,27 +1,34 @@
 package fi.dy.masa.malilib.config;
 
+import fi.dy.masa.malilib.ManyLib;
+import fi.dy.masa.malilib.compat.PinyinHandler;
 import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.gui.screen.util.SortCategory;
 import fi.dy.masa.malilib.util.StringUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ConfigTab {
-    final static Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR);
+    final static Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR, ConfigType.HOTKEY, ConfigType.TOGGLE);
     String unlocalizedName;
     final List<ConfigBase<?>> allConfigs;
     List<ConfigBase<?>> searchableConfigs;
     String searchText;
 
-    public ConfigTab(String unlocalizedName, List<ConfigBase<?>> allConfigs) {
+    public ConfigTab(String unlocalizedName, List<?> allConfigs) {
         this.unlocalizedName = unlocalizedName;
-        this.allConfigs = allConfigs.stream()
-                .filter(configBase -> supportedConfigTypes.contains(configBase.getType()))
-                .toList();
+        this.allConfigs = new ArrayList<>();
+        for (Object allConfig : allConfigs) {
+            ConfigBase<?> config = (ConfigBase<?>) allConfig;
+            if (supportedConfigTypes.contains(config.getType())) {
+                this.allConfigs.add(config);
+            }
+        }
         this.searchableConfigs = new ArrayList<>(this.allConfigs);
     }
 
@@ -49,11 +56,28 @@ public class ConfigTab {
         }
     }
 
-    public void updateSearchableConfigs(String string) {
-        this.searchText = string;
+    public void updateSearchableConfigs(String input) {
+        this.searchText = input;
         this.searchableConfigs = this.allConfigs.stream()
-                .filter(configBase -> configBase.getConfigGuiDisplayName().toLowerCase().contains(string.toLowerCase()))
+                .filter(configBase -> this.stringMatchesInput(configBase.getConfigGuiDisplayName(), input))
                 .collect(Collectors.toList());
+    }
+
+    private boolean stringMatchesInput(String string, String input) {
+        if (string.toLowerCase().contains(input.toLowerCase())) {
+            return true;
+        }
+        PinyinHandler instance = PinyinHandler.getInstance();
+        if (instance.isValid()) {
+            try {
+                if (instance.contains(string, input)) {
+                    return true;
+                }
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                ManyLib.logger.warn("PinyinHandler: failed to match input");
+            }
+        }
+        return false;
     }
 
     public void resetSearchableConfigs() {

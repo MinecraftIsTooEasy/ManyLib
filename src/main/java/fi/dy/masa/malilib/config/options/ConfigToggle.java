@@ -5,16 +5,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.interfaces.IConfigBoolean;
 import fi.dy.masa.malilib.config.interfaces.IConfigToggle;
+import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
-import fi.dy.masa.malilib.util.RenderUtils;
-import net.minecraft.EnumChatFormatting;
-import net.minecraft.I18n;
 
-public class ConfigToggle extends ConfigHotkey implements IConfigToggle {
+public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfigBoolean {
     private boolean status;
-
     private final boolean defaultStatus;
 
     public ConfigToggle(String name) {
@@ -22,28 +20,22 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle {
     }
 
     public ConfigToggle(String name, String comment) {
-        this(name, KeyCodes.KEY_NONE, false, comment);
+        this(name, "", false, comment);
     }
 
     public ConfigToggle(String name, boolean defaultStatus) {
-        this(name, KeyCodes.KEY_NONE, defaultStatus, null);
+        this(name, "", defaultStatus, null);
     }
 
-    public ConfigToggle(String name, int keycode, boolean defaultStatus, String comment) {
-        super(name, keycode, comment);
+    public ConfigToggle(String name, int defaultKey, boolean defaultStatus, String comment) {
+        this(name, KeyCodes.getNameForKey(defaultKey), defaultStatus, comment);
+    }
+
+    public ConfigToggle(String name, String defaultStorageString, boolean defaultStatus, String comment) {
+        super(name, defaultStorageString, comment);
         this.status = defaultStatus;
         this.defaultStatus = defaultStatus;
-        this.hotKeyPressCallBack = minecraft -> {
-            this.toggle();
-            String status;
-            if (this.isOn()) {
-                status = EnumChatFormatting.GREEN + I18n.getString("toggle.on");
-            } else {
-                status = EnumChatFormatting.RED + I18n.getString("toggle.off");
-            }
-            String message = I18n.getStringParams("manyLib.configToggle.toggle", this.getConfigGuiDisplayName(), status);
-            RenderUtils.setGuiIngameInfo(message);
-        };
+        this.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(this));
     }
 
     @Override
@@ -66,7 +58,7 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle {
     public JsonElement getAsJsonElement() {
         JsonObject obj = new JsonObject();
         obj.add("enabled", new JsonPrimitive(this.status));
-        obj.add("hotkey", new JsonPrimitive(this.getKeyName()));
+        obj.add("hotkey", this.keybind.getAsJsonElement());
         if (this.getComment() != null) {
             obj.add("comment", new JsonPrimitive(this.getComment()));
         }
@@ -82,8 +74,8 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle {
             } else {
                 ManyLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
-            if (JsonUtils.hasString(obj, "hotkey")) {
-                this.setHotKeyAndHash(KeyCodes.getKeyCodeFromName(obj.get("hotkey").getAsString()));
+            if (JsonUtils.hasObject(obj, "hotkey")) {
+                this.keybind.setValueFromJsonElement(obj.get("hotkey").getAsJsonObject());
             } else {
                 ManyLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
@@ -105,5 +97,25 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle {
     @Override
     public void setIsOn(boolean status) {
         this.status = status;
+    }
+
+    @Override
+    public void next() {
+        this.toggle();
+    }
+
+    @Override
+    public boolean getBooleanValue() {
+        return this.status;
+    }
+
+    @Override
+    public boolean getDefaultBooleanValue() {
+        return this.defaultStatus;
+    }
+
+    @Override
+    public void setBooleanValue(boolean value) {
+        this.status = value;
     }
 }

@@ -1,5 +1,6 @@
-package fi.dy.masa.malilib.gui.button.interfaces;
+package fi.dy.masa.malilib.gui.button;
 
+import fi.dy.masa.malilib.gui.button.interfaces.ICommentedElement;
 import net.minecraft.GuiButton;
 import net.minecraft.Minecraft;
 import org.jetbrains.annotations.Nullable;

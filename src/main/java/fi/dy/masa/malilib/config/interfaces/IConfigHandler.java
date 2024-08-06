@@ -20,11 +20,12 @@ public interface IConfigHandler {
 
     String getName();
 
-    String getValuesComment();
+    String getMenuComment();
 
-    String getHotKeysComment();
+    GuiScreen getConfigScreen(GuiScreen parentScreen);
 
-    GuiScreen getValueScreen(GuiScreen parentScreen);
-
-    GuiScreen getHotKeyScreen(GuiScreen parentScreen);
+    @Deprecated(since = "2.0.2")
+    default GuiScreen getValueScreen(GuiScreen parentScreen) {
+        return this.getConfigScreen(parentScreen);
+    }
 }
