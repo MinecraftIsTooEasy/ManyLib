@@ -4,11 +4,12 @@ import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
 import fi.dy.masa.malilib.gui.button.interfaces.IToggleableElement;
 import net.minecraft.Minecraft;
 
-public class PullDownButton extends GuiButtonCommented implements IInteractiveElement, IToggleableElement {
+public class PullDownButton extends ButtonWidget implements IInteractiveElement, IToggleableElement {
     private boolean expand;
 
-    public PullDownButton(int index, int x, int y, int width, int height, String comment) {
-        super(index, x, y, width, height, "测试", comment);
+    public PullDownButton(int x, int y, int width, int height, String tooltip) {
+        super(x, y, width, height, "测试", button -> ((PullDownButton) button).toggle());
+        this.setTooltip(tooltip);
     }
 
     @Override
@@ -16,7 +17,7 @@ public class PullDownButton extends GuiButtonCommented implements IInteractiveEl
         if (!this.drawButton) {
             return;
         }
-        this.tryDrawComment(minecraft.currentScreen, par2, par3);
+        this.tryDrawTooltip(minecraft.currentScreen, par2, par3);
     }
 
     @Override

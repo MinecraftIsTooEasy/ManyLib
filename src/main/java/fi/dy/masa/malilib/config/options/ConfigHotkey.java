@@ -22,6 +22,7 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey, I
         this(name, "", null);
     }
 
+    @Deprecated(since = "2.1.1")
     public ConfigHotkey(String name, String comment) {
         this(name, "", comment);
     }
@@ -77,7 +78,7 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey, I
         return this.keybind.getKeysDisplayString();
     }
 
-    @Deprecated(since = "2.0.2")
+    @Deprecated(since = "2.1.0", forRemoval = true)
     public int getKeyCode() {
         List<Integer> keys = this.keybind.getKeys();
         if (keys.isEmpty()) return KeyCodes.KEY_NONE;

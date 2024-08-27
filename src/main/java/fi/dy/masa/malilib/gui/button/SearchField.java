@@ -13,16 +13,17 @@ import net.minecraft.I18n;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class SearchField extends GuiButtonCommented implements ISuppressibleElement, IInteractiveElement, IToggleableElement {
+public class SearchField<T extends GuiScreen & SearchableScreen> extends ButtonWidget implements ISuppressibleElement, IInteractiveElement, IToggleableElement {
     private final GuiTextField guiTextField;
 
     private boolean searchEnabled;
 
-    private final GuiScreen screen;
+    private final T screen;
 
-    public SearchField(int index, int x, int y, int width, int height, GuiScreen screen) {
-        super(index, x, y, 9, 9, "", I18n.getString("manyLib.gui.button.search"));
-        this.guiTextField = new GuiTextField(screen.fontRenderer, x + 16, y - 2, width, height);
+    public SearchField(int x, int y, int boxWidth, int boxHeight, T screen) {
+        super(x, y, 9, 9, "", button -> ((SearchField<?>) button).toggle());
+        this.setTooltip(I18n.getString("manyLib.gui.button.search"));
+        this.guiTextField = new GuiTextField(screen.fontRenderer, x + 16, y - 2, boxWidth, boxHeight);
         this.screen = screen;
         this.setVisible(false);
     }
@@ -34,7 +35,7 @@ public class SearchField extends GuiButtonCommented implements ISuppressibleElem
             this.guiTextField.textboxKeyTyped(c, i);
             String after = this.guiTextField.getText();
             if (!after.equals(temp)) {
-                ((SearchableScreen) this.screen).updateSearchResult(after);
+                this.screen.updateSearchResult(after);
             }
             if (i == 1 || i == 28 || i == 156) {
                 this.guiTextField.setFocused(false);
@@ -62,7 +63,7 @@ public class SearchField extends GuiButtonCommented implements ISuppressibleElem
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
         icon.renderAt(this.xPosition, this.yPosition, 0, false, false);
-        this.tryDrawComment(this.screen, par2, par3);
+        this.tryDrawTooltip(this.screen, par2, par3);
         this.guiTextField.drawTextBox();
     }
 
@@ -70,7 +71,7 @@ public class SearchField extends GuiButtonCommented implements ISuppressibleElem
     public void toggle() {
         this.setVisible(!this.searchEnabled);
         if (this.searchEnabled) {
-            ((SearchableScreen) this.screen).resetSearchResult();
+            this.screen.resetSearchResult();
             this.guiTextField.setText("");
         } else {
             this.guiTextField.setFocused(true);

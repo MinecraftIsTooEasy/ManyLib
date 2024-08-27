@@ -1,12 +1,12 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigColor;
-import fi.dy.masa.malilib.gui.button.interfaces.ICommentedElement;
 import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
+import fi.dy.masa.malilib.gui.button.interfaces.ITooltipElement;
 import net.minecraft.GuiScreen;
 import org.jetbrains.annotations.Nullable;
 
-class ColorBoard implements ICommentedElement, IInteractiveElement {
+class ColorBoard implements ITooltipElement, IInteractiveElement {
     ConfigColor configColor;
     int xPos;
     int yPos;
@@ -46,18 +46,18 @@ class ColorBoard implements ICommentedElement, IInteractiveElement {
     }
 
     @Override
-    public void setComment(String comment) {
+    public void setTooltip(String tooltip) {
 
     }
 
     @Nullable
     @Override
-    public String getComment() {
+    public String getTooltip() {
         return "点我打开取色板";
     }
 
     @Override
-    public boolean shouldDrawComment() {
+    public boolean shouldDrawTooltip() {
         return this.mouseOver;
     }
 }

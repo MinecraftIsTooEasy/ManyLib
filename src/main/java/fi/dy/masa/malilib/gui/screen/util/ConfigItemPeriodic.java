@@ -6,6 +6,7 @@ import fi.dy.masa.malilib.config.interfaces.IConfigPeriodic;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.gui.button.ButtonWidget;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -31,7 +32,7 @@ class ConfigItemPeriodic<T extends ConfigBase<T> & IConfigPeriodic & IConfigDisp
             }
         }
         this.periodicButton = ScreenConstants.getPeriodicButton(index, config, screen);
-        this.buttons.add((GuiButton) this.periodicButton);
+        this.buttons.add((ButtonWidget) this.periodicButton);
     }
 
     @Override
@@ -52,13 +53,6 @@ class ConfigItemPeriodic<T extends ConfigBase<T> & IConfigPeriodic & IConfigDisp
 
     @Override
     public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
-    }
-
-    @Override
-    public void customActionPerformed(GuiButton guiButton) {
-        if (guiButton == this.periodicButton) {
-            this.periodicButton.next();
-        }
     }
 
     @Override

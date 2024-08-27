@@ -4,10 +4,10 @@ import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.options.*;
+import fi.dy.masa.malilib.gui.button.ButtonWidget;
 import fi.dy.masa.malilib.gui.button.CommentedText;
 import fi.dy.masa.malilib.gui.button.ResetButton;
 import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
-import net.minecraft.GuiButton;
 import net.minecraft.GuiScreen;
 
 import java.util.ArrayList;
@@ -18,13 +18,16 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> imple
     final ResetButton resetButton;
     final CommentedText commentedText;
     boolean visible = true;
-    final List<GuiButton> buttons = new ArrayList<>();
+    final List<ButtonWidget> buttons = new ArrayList<>();
     final GuiScreen screen;
 
     public ConfigItem(int index, T config, GuiScreen screen) {
         this.config = config;
         this.screen = screen;
-        this.resetButton = ScreenConstants.getResetButton(index, screen);
+        this.resetButton = ScreenConstants.getResetButton(index, screen, button -> {
+            this.config.resetToDefault();
+            this.resetButtonClicked();
+        });
         this.updateScreen();
         this.commentedText = ScreenConstants.getCommentedText(index, config, screen);
         this.buttons.add(this.resetButton);
@@ -45,8 +48,8 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> imple
     }
 
     public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
-        this.commentedText.tryDrawComment(guiScreen, x, y);
-        this.resetButton.tryDrawComment(guiScreen, x, y);
+        this.commentedText.tryDrawTooltip(guiScreen, x, y);
+        this.resetButton.tryDrawTooltip(guiScreen, x, y);
     }
 
     public abstract void customDraw(GuiScreen guiScreen, int x, int y);
@@ -61,11 +64,11 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> imple
 
     protected abstract void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click);
 
-    protected void buttonListen(GuiButton guiButton, GuiScreen guiScreen, int mouseX, int mouseY) {
-        if (guiButton.mousePressed(guiScreen.mc, mouseX, mouseY)) {
-            guiScreen.selectedButton = guiButton;
-            guiButton.playClickedSound(guiScreen.mc.sndManager);
-            this.actionPerformed(guiButton);
+    protected void buttonListen(ButtonWidget button, GuiScreen guiScreen, int mouseX, int mouseY) {
+        if (button.mousePressed(guiScreen.mc, mouseX, mouseY)) {
+            guiScreen.selectedButton = button;
+            button.playClickedSound(guiScreen.mc.sndManager);
+            button.onPress();
         }
     }
 
@@ -74,21 +77,11 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> imple
         this.resetButton.enabled = this.config.isModified();
     }
 
-    public void actionPerformed(GuiButton guiButton) {
-        if (guiButton == this.resetButton) {
-            this.config.resetToDefault();
-            this.resetButtonClicked();
-        }
-        this.customActionPerformed(guiButton);
-    }
-
     @Override
     public void keyTyped(char c, int i) {
     }
 
     public abstract void resetButtonClicked();
-
-    public abstract void customActionPerformed(GuiButton guiButton);
 
     public abstract void customSetVisible(boolean visible);
 

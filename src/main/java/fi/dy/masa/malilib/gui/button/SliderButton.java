@@ -11,18 +11,19 @@ import net.minecraft.MathHelper;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDisplay & IStringRepresentable> extends GuiButtonCommented implements ISliderButton {
+public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDisplay & IStringRepresentable> extends ButtonWidget implements ISliderButton {
     protected float sliderRatio;
     protected boolean dragging;
     protected final T config;
     private final boolean isDouble;
 
-    public SliderButton(int index, int x, int y, int width, int height, T config) {
-        super(index, x, y, width, height, config.getDisplayText(), null);
+    public SliderButton(int x, int y, int width, int height, T config) {
+        super(x, y, width, height, config.getDisplayText(), button -> {
+        });
         this.config = config;
         this.updateSliderRatioByConfig();
         this.isDouble = config.getType() == ConfigType.DOUBLE;
-        if (this.isDouble) this.setComment(this.castDoubleString());
+        if (this.isDouble) this.setTooltip(this.castDoubleString());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     @Override
     public void updateString() {
         this.displayString = this.config.getDisplayText();
-        if (this.isDouble) this.setComment(this.castDoubleString());
+        if (this.isDouble) this.setTooltip(this.castDoubleString());
     }
 
     @Override

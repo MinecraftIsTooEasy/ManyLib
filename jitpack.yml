@@ -1,3 +1,0 @@
-jdk:
-  - openjdk17
-build: ./gradlew build

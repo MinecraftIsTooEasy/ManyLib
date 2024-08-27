@@ -1,7 +1,10 @@
 package fi.dy.masa.malilib.render;
 
 import fi.dy.masa.malilib.api.ManyLibGuiIngame;
-import net.minecraft.*;
+import net.minecraft.GuiScreen;
+import net.minecraft.Minecraft;
+import net.minecraft.ResourceLocation;
+import net.minecraft.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;

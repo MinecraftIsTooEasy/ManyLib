@@ -5,10 +5,7 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
-import fi.dy.masa.malilib.hotkeys.IKeybindManager;
-import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
@@ -42,22 +39,11 @@ public abstract class SimpleConfigs implements IConfigHandler {
             this.hotkeys = null;
         } else {
             this.hotkeys = hotkeys;// below is registering
-            InputEventHandler.getKeybindManager().registerKeybindProvider(new IKeybindProvider() {
-                @Override
-                public void addKeysToMap(IKeybindManager manager) {
-                    hotkeys.forEach(hotkey -> manager.addKeybindToMap(hotkey.getKeybind()));
-                }
-
-                @Override
-                public void addHotkeys(IKeybindManager manager) {
-                    manager.addHotkeysForCategory(name, name + ".hotkeys.category.generic_hotkeys", hotkeys);
-                }
-            });
         }
         this.menuComment = menuComment;
     }
 
-    @Deprecated(since = "2.0.2")
+    @Deprecated(since = "2.1.0", forRemoval = true)
     public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values, String valueComment, String hotKeysComment) {
         this(name, hotkeys, values, valueComment);
     }
@@ -71,7 +57,7 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     @Override
     public GuiScreen getConfigScreen(GuiScreen parentScreen) {
-        return new DefaultConfigScreen(parentScreen, this.getName() + " Configs", this);
+        return new DefaultConfigScreen(parentScreen, this.name + " Configs", this);
     }
 
     @Override

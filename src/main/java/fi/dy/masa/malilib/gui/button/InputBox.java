@@ -5,14 +5,14 @@ import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
-import fi.dy.masa.malilib.gui.button.interfaces.ICommentedElement;
 import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
 import fi.dy.masa.malilib.gui.button.interfaces.ISuppressibleElement;
+import fi.dy.masa.malilib.gui.button.interfaces.ITooltipElement;
 import net.minecraft.FontRenderer;
 import net.minecraft.GuiTextField;
 import org.jetbrains.annotations.Nullable;
 
-public class InputBox<T extends ConfigBase<?> & IStringRepresentable> implements ICommentedElement, IInteractiveElement, ISuppressibleElement {
+public class InputBox<T extends ConfigBase<?> & IStringRepresentable> implements ITooltipElement, IInteractiveElement, ISuppressibleElement {
     protected final T config;
     protected final int x;
     protected final int y;
@@ -90,18 +90,18 @@ public class InputBox<T extends ConfigBase<?> & IStringRepresentable> implements
     }
 
     @Override
-    public void setComment(String comment) {
+    public void setTooltip(String tooltip) {
         ManyLib.logger.warn("InputBox: do not set comment for me");
     }
 
     @Nullable
     @Override
-    public String getComment() {
+    public String getTooltip() {
         return this.config.getConfigGuiDisplayComment();
     }
 
     @Override
-    public boolean shouldDrawComment() {
+    public boolean shouldDrawTooltip() {
         return this.mouseOver && this.guiTextField.getVisible();
     }
 

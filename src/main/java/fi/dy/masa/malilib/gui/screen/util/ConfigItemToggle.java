@@ -2,27 +2,21 @@ package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigToggle;
 import fi.dy.masa.malilib.gui.GuiBase;
-import net.minecraft.GuiButton;
+import fi.dy.masa.malilib.gui.button.ButtonWidget;
 import net.minecraft.GuiScreen;
 import net.minecraft.I18n;
 
 class ConfigItemToggle extends ConfigItemHotkey {
-    final GuiButton toggleButton;
+    final ButtonWidget toggleButton;
 
     public ConfigItemToggle(int index, ConfigToggle config, GuiScreen screen) {
         super(index, config, screen);
-        this.toggleButton = ScreenConstants.getConfigToggleButton(index, config, screen);
-        this.updateStringByToggleStatus();
-        this.buttons.add(this.toggleButton);
-    }
-
-    @Override
-    public void customActionPerformed(GuiButton guiButton) {
-        super.customActionPerformed(guiButton);
-        if (guiButton == this.toggleButton) {
+        this.toggleButton = ScreenConstants.getConfigToggleButton(index, config, screen, button -> {
             ((ConfigToggle) this.config).toggle();
             this.updateStringByToggleStatus();
-        }
+        });
+        this.updateStringByToggleStatus();
+        this.buttons.add(this.toggleButton);
     }
 
     @Override

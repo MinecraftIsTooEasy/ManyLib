@@ -7,11 +7,12 @@ import net.minecraft.I18n;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class PageButton extends GuiButtonCommented {
+public class PageButton extends ButtonWidget {
     protected boolean isPageDown;
 
-    public PageButton(int index, int x, int y, boolean isPageDown) {
-        super(index, x, y, 20, 20, "", I18n.getString(isPageDown ? "manyLib.gui.button.pageDown" : "manyLib.gui.button.pageUp"));
+    public PageButton(int x, int y, boolean isPageDown, PressAction onPress) {
+        super(x, y, 20, 20, "", onPress);
+        this.setTooltip(I18n.getString(isPageDown ? "manyLib.gui.button.pageDown" : "manyLib.gui.button.pageUp"));
         this.isPageDown = isPageDown;
     }
 
@@ -25,6 +26,6 @@ public class PageButton extends GuiButtonCommented {
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
         icon.renderAt(this.xPosition, this.yPosition, 0, this.enabled, this.enabled && this.field_82253_i);
-        this.tryDrawComment(minecraft.currentScreen, par2, par3);
+        this.tryDrawTooltip(minecraft.currentScreen, par2, par3);
     }
 }

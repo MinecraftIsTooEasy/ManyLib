@@ -1,22 +1,23 @@
 package fi.dy.masa.malilib.gui.button;
 
-import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
+import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.GuiButton;
+import net.minecraft.GuiScreen;
 import net.minecraft.MathHelper;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class ScrollBar extends GuiButton {
+public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget {
     protected boolean dragging;
     protected float sliderRatio;
     protected int maxStatus;
     protected float percentage;
     protected int sliderHeight;
-    protected final DefaultConfigScreen screen;
+    protected final T screen;
 
-    public ScrollBar(int index, int xPos, int yPos, int width, int height, int pageCapacity, int maxStatus, DefaultConfigScreen screen) {
-        super(index, xPos, yPos, width, height, "");
+    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int maxStatus, T screen) {
+        super(xPos, yPos, width, height, "", button -> {
+        });
         this.updateArguments(maxStatus, pageCapacity);
         this.screen = screen;
     }

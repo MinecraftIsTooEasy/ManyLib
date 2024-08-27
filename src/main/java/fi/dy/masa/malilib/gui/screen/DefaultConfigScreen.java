@@ -7,24 +7,21 @@ import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.gui.button.PullDownButton;
-import fi.dy.masa.malilib.gui.button.ResetButton;
-import fi.dy.masa.malilib.gui.button.ScrollBar;
-import fi.dy.masa.malilib.gui.button.SearchField;
+import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
-import fi.dy.masa.malilib.gui.button.interfaces.ICommentedElement;
 import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
 import fi.dy.masa.malilib.gui.screen.interfaces.GuiScreenParented;
 import fi.dy.masa.malilib.gui.screen.interfaces.SearchableScreen;
 import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
 import fi.dy.masa.malilib.gui.screen.util.*;
-import net.minecraft.*;
+import net.minecraft.GuiScreen;
+import net.minecraft.GuiYesNoMITE;
+import net.minecraft.I18n;
+import net.minecraft.MathHelper;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 public class DefaultConfigScreen extends GuiScreenParented implements SearchableScreen, StatusScreen {
@@ -32,11 +29,11 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
     private final List<ConfigTab> configTabs;
     private ConfigTab currentTab;
     private int currentTabIndex;
-    private final Map<Integer, GuiButton> buttonMap = new HashMap<>();
+    private final List<ButtonWidget> buttons = new ArrayList<>();
     private final List<ConfigItem<?>> configItems = new ArrayList<>();
     private ResetButton resetAllButton;
-    private SearchField searchField;
-    private ScrollBar scrollBar;
+    private SearchField<?> searchField;
+    private ScrollBar<?> scrollBar;
     private PullDownButton pullDownButton;
     private int status;
     private int maxStatus;
@@ -62,10 +59,11 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
         this.setCurrentTab(this.currentTabIndex);
         this.resetAllButton.enabled = this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified);
         this.updateConfigItemsAfterTabChange();
-        if (this.firstSeen){
+        if (this.firstSeen) {
             this.firstSeen = false;
             this.setStatus(ProgressSaving.getStatus(this.configInstance.getName()));
         }
+        this.onStatusChange();
     }
 
     /**
@@ -73,33 +71,46 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
      * 200~: look up the Constant class
      */
     private void putButtons() {
-        this.buttonMap.clear();
-        int buttonX = 20;
+        this.buttons.clear();
+        WidthAdder widthAdder = new WidthAdder(20);
         for (int index = 0; index < this.configTabs.size(); index++) {
             ConfigTab configTab = this.configTabs.get(index);
             String name = configTab.getGuiDisplayName();
             int stringWidth = this.fontRenderer.getStringWidth(name);
-            this.buttonMap.put(index, new GuiButton(index, buttonX, 30, stringWidth + 10, 20, name));
-            buttonX += stringWidth + 14;
+            int finalIndex = index;
+            this.buttons.add(ButtonWidget.builder(name, button -> {
+                        this.needInit = true;
+                        this.setCurrentTab(finalIndex);
+                    })
+                    .dimensions(widthAdder.getWidth(), 30, stringWidth + 10, 20)
+                    .build());
+            widthAdder.addWidth(stringWidth + 14);
         }
-        WidthAdder widthAdder = new WidthAdder(buttonX);
-        this.resetAllButton = ScreenConstants.getResetAllButton(widthAdder);
-        this.buttonMap.put(ScreenConstants.resetAllButtonID, this.resetAllButton);
-        this.buttonMap.put(ScreenConstants.sortButtonID, ScreenConstants.getSortButton(this, widthAdder, this.sortCategory));
+        this.resetAllButton = ScreenConstants.getResetAllButton(widthAdder, button -> {
+            String question = I18n.getString("manyLib.gui.reset_tab_question"), yes = I18n.getString("gui.yes"), no = I18n.getString("gui.no");
+            GuiYesNoMITE var3 = new GuiYesNoMITE
+                    (this, question, this.configInstance.getName(), yes, no, ScreenConstants.confirmFlag);
+            this.mc.displayGuiScreen(var3);
+        });
+
+        this.buttons.add(this.resetAllButton);
+        this.buttons.add(ScreenConstants.getSortButton(this, widthAdder, this.sortCategory, button -> {
+            ((IButtonPeriodic) button).next();
+            this.sort();
+        }));
         this.searchField = ScreenConstants.getSearchButton(this);
-        this.buttonMap.put(ScreenConstants.searchButtonID, this.searchField);
+        this.buttons.add(this.searchField);
         this.scrollBar = ScreenConstants.getScrollBar(this, ScreenConstants.pageCapacity, 0);// dummy
-        this.buttonMap.put(ScreenConstants.scrollBarID, this.scrollBar);
+        this.buttons.add(this.scrollBar);
         this.pullDownButton = ScreenConstants.getPullDownButton(this);
-        this.buttonMap.put(ScreenConstants.pullDownButtonID, this.pullDownButton);
-        this.buttonMap.get(ScreenConstants.pullDownButtonID).drawButton = false;
+        this.pullDownButton.drawButton = false;
+        this.buttons.add(this.pullDownButton);
     }
 
     private void updateConfigItems() {
         this.configItems.clear();
         for (int i = this.status; i < this.currentTab.getSearchableConfigSize() && i < this.status + ScreenConstants.pageCapacity; i++) {
             ConfigItem<?> configItem = ConfigItem.getConfigItem(i - this.status, this.currentTab.getSearchableConfig(i), this);
-//            configItem.setVisible(true);
             this.configItems.add(configItem);
         }
     }
@@ -120,11 +131,9 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
     public void drawScreen(int i, int j, float f) {
         this.drawDefaultBackground();
         this.drawString(this.fontRenderer, ManyLibConfig.titleFormat.getEnumValue() + this.screenTitle, 40, 15, 16777215);
-        this.buttonMap.values().forEach(guiButton -> guiButton.drawButton(this.mc, i, j));
+        this.buttons.forEach(guiButton -> guiButton.drawButton(this.mc, i, j));
         this.getConfigItems().forEach(configItem -> configItem.draw(this, i, j));
-        this.buttonMap.values().stream().filter(guiButton -> guiButton instanceof ICommentedElement)
-                .map(guiButton -> (ICommentedElement) guiButton)
-                .anyMatch(iCommentedElement -> iCommentedElement.tryDrawComment(this, i, j));
+        this.buttons.stream().anyMatch(buttonWidget -> buttonWidget.tryDrawTooltip(this, i, j));
         this.getConfigItems().forEach(configItem -> configItem.tryDrawComment(this, i, j));
     }
 
@@ -141,9 +150,16 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
 
     @Override
     public void setStatus(int status) {
+        int oldStatus = this.status;
         this.status = MathHelper.clamp_int(status, 0, this.maxStatus);
+        if (status != oldStatus) {
+            this.onStatusChange();
+        }
+    }
+
+    private void onStatusChange() {
         this.updateConfigItems();
-        if (!this.singlePage) {
+        if (this.singlePage == false) {
             if (this.scrollBar == null) {
                 ManyLib.logger.error("ValueScreen: multiPaged but no scroll bar?\n" + this);
             } else {
@@ -180,18 +196,18 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
      * First block: main buttons listener <br/>
      * Second block: config buttons listener <br/>
      * Third block: only for compatibility with Modern Mite's IMBlocker, this block enables the input method.
-     * Fourth block: in actionPerformed, the needInit may be true
+     * Fourth block: after the buttons clicked, the needInit may be true
      */
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int click) {
         this.searchField.mouseClicked(mouseX, mouseY, click);
         if (click == 0) {
-            this.buttonMap.values().stream().filter(x -> x.mousePressed(this.mc, mouseX, mouseY))
-                    .forEach(guiButton -> {
-                        this.selectedButton = guiButton;
-                        guiButton.playClickedSound(this.mc.sndManager);
-                        this.actionPerformed(guiButton);
+            this.buttons.stream().filter(x -> x.mousePressed(this.mc, mouseX, mouseY))
+                    .forEach(buttonWidget -> {
+                        this.selectedButton = buttonWidget;
+                        buttonWidget.playClickedSound(this.mc.sndManager);
+                        buttonWidget.onPress();
                     });
         }
         this.getConfigItems().forEach(configItem -> configItem.mouseClicked(mouseX, mouseY, click));
@@ -203,34 +219,6 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
         if (this.needInit) {
             this.needInit = false;
             this.initGui();
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton guiButton) {
-        if (!guiButton.drawButton) return;
-        int id = guiButton.id;
-        switch (id) {
-            case ScreenConstants.resetAllButtonID -> {
-                String question = I18n.getString("manyLib.gui.reset_tab_question");
-                String yes = I18n.getString("gui.yes");
-                String no = I18n.getString("gui.no");
-                GuiYesNoMITE var3 = new GuiYesNoMITE
-                        (this, question, this.configInstance.getName(), yes, no, ScreenConstants.confirmFlag);
-                this.mc.displayGuiScreen(var3);
-            }
-            case ScreenConstants.sortButtonID -> {
-                ((IButtonPeriodic) this.buttonMap.get(ScreenConstants.sortButtonID)).next();
-                this.sort();
-            }
-            case ScreenConstants.searchButtonID -> this.searchField.toggle();
-            case ScreenConstants.pullDownButtonID -> this.pullDownButton.toggle();
-            default -> {
-                if (id < 200) {
-                    this.needInit = true;
-                    this.setCurrentTab(id);
-                }
-            }
         }
     }
 
@@ -262,6 +250,7 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
         Keyboard.enableRepeatEvents(false);
         this.configInstance.save();
         InputEventHandler.getKeybindManager().updateUsedKeys();
+        ProgressSaving.saveProgress(this.configInstance.getName(), this.currentTabIndex, this.status);
     }
 
     private Stream<ConfigItem<?>> getConfigItems() {
@@ -269,10 +258,10 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
     }
 
     private void setCurrentTab(int index) {
-        this.buttonMap.get(this.currentTabIndex).enabled = true;
+        this.buttons.get(this.currentTabIndex).enabled = true;
         this.currentTabIndex = index;
         this.currentTab = this.configTabs.get(index);
-        this.buttonMap.get(index).enabled = false;
+        this.buttons.get(index).enabled = false;
     }
 
     @Override
@@ -301,10 +290,5 @@ public class DefaultConfigScreen extends GuiScreenParented implements Searchable
         this.updateConfigItemsAfterTabChange();
     }
 
-    @Override
-    public void leaveThisScreen() {
-        super.leaveThisScreen();
-        ProgressSaving.saveProgress(this.configInstance.getName(), this.currentTabIndex, this.status);
-    }
 }
 

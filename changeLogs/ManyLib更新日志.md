@@ -4,12 +4,17 @@
 
 ## 2.1.1
 
-* 在`ValueScreen`屏幕提供一个下拉按钮来切换不同模组[WIP]
+* 在`ConfigScreen`屏幕提供一个下拉按钮来切换不同模组[WIP]
 * 把模组菜单也改为滑动屏幕[WIP]
 * 加入取色板[WIP]
 * 加入`ConfigStringList`配置板[WIP]
 * 加入`KeybindSettings`配置板[WIP]
 * 对于Int设置, 提供了按钮来加减1[WIP]
+* 将ConfigHotkey的双String构造器标记为`@Deprecated`, 因为第二个参数不知道是热键还是comment
+* 添加了`reload`和`reloadAll`命令以供服务器热切换配置
+* 现在拼音功能是由`PinIn-Lib`而非`craftguide`提供了
+* 现在按键的注册不在`SimpleConfigs`的构造器进行而是在`ConfigManager.register`进行
+* 略微重构了关于Button方面的代码
 
 ---
 

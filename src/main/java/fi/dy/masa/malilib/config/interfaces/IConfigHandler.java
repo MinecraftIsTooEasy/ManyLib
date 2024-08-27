@@ -24,7 +24,7 @@ public interface IConfigHandler {
 
     GuiScreen getConfigScreen(GuiScreen parentScreen);
 
-    @Deprecated(since = "2.0.2")
+    @Deprecated(since = "2.1.0", forRemoval = true)
     default GuiScreen getValueScreen(GuiScreen parentScreen) {
         return this.getConfigScreen(parentScreen);
     }

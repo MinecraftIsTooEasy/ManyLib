@@ -7,9 +7,8 @@ public class WidthAdder {
         this.width = width;
     }
 
-    int addWidth(int addend) {
+    public void addWidth(int addend) {
         this.width += addend;
-        return this.width;
     }
 
     public int getWidth() {

@@ -47,6 +47,7 @@ dependencies {
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\Neodymium.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\FPSPlus.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\DebrisHUD.jar")
+    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\PinIn-Lib.jar")
 }
 
 processResources {

@@ -1,15 +1,20 @@
 package fi.dy.masa.malilib.gui.button;
 
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigPeriodic;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
-import net.minecraft.GuiButton;
 
-public class PeriodicButton extends GuiButton implements IButtonPeriodic {
+public class PeriodicButton<T extends IConfigBase & IConfigPeriodic> extends ButtonWidget implements IButtonPeriodic {
     protected final IConfigPeriodic configPeriodic;
 
-    public PeriodicButton(int index, int x, int y, int width, int height, IConfigPeriodic configPeriodic) {
-        super(index, x, y, width, height, configPeriodic.getDisplayText());
+    public PeriodicButton(int x, int y, int width, int height, T configPeriodic) {
+        this(x, y, width, height, configPeriodic, button -> ((IButtonPeriodic) button).next());
+    }
+
+    public PeriodicButton(int x, int y, int width, int height, T configPeriodic, PressAction onPress) {
+        super(x, y, width, height, configPeriodic.getDisplayText(), onPress);
         this.configPeriodic = configPeriodic;
+        this.setTooltip(configPeriodic.getConfigGuiDisplayComment());
     }
 
     @Override

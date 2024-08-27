@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.button;
 
-import fi.dy.masa.malilib.gui.button.interfaces.ICommentedElement;
+import fi.dy.masa.malilib.gui.button.interfaces.ITooltipElement;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.util.Color4f;
 import net.minecraft.FontRenderer;
@@ -8,7 +8,7 @@ import net.minecraft.Gui;
 import net.minecraft.GuiScreen;
 import org.jetbrains.annotations.Nullable;
 
-public class CommentedText extends Gui implements ICommentedElement {
+public class CommentedText extends Gui implements ITooltipElement {
     final int x;
     final int y;
     final String content;
@@ -54,18 +54,18 @@ public class CommentedText extends Gui implements ICommentedElement {
     }
 
     @Override
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setTooltip(String tooltip) {
+        this.comment = tooltip;
     }
 
     @Nullable
     @Override
-    public String getComment() {
+    public String getTooltip() {
         return this.comment;
     }
 
     @Override
-    public boolean shouldDrawComment() {
+    public boolean shouldDrawTooltip() {
         return this.visible && this.isMouseOver;
     }
 

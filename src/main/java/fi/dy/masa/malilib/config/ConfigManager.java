@@ -2,12 +2,13 @@ package fi.dy.masa.malilib.config;
 
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.hotkeys.IKeybindManager;
+import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 public class ConfigManager {
     private static final ConfigManager INSTANCE = new ConfigManager();
@@ -26,17 +27,27 @@ public class ConfigManager {
     }
 
     public void registerConfig(String modId, IConfigHandler configs) {
-        if (configs.getValues() != null || configs.getHotkeys() != null) {
+        List<ConfigHotkey> hotkeys = configs.getHotkeys();
+        if (configs.getValues() != null || hotkeys != null) {
             this.configInstances.put(modId, configs);
+        }
+        if (hotkeys != null) {
+            InputEventHandler.getKeybindManager().registerKeybindProvider(new IKeybindProvider() {
+                @Override
+                public void addKeysToMap(IKeybindManager manager) {
+                    hotkeys.forEach(hotkey -> manager.addKeybindToMap(hotkey.getKeybind()));
+                }
+
+                @Override
+                public void addHotkeys(IKeybindManager manager) {
+                    manager.addHotkeysForCategory(modId, modId + ".hotkeys.category.generic_hotkeys", hotkeys);
+                }
+            });
         }
     }
 
-    public Map<String, IConfigHandler> getConfigs() {
-        return configInstances;
-    }
-
-    public Stream<ConfigHotkey> getAllHotKeys() {
-        return this.configInstances.values().stream().map(IConfigHandler::getHotkeys).filter(Objects::nonNull).flatMap(Collection::stream);
+    public Map<String, IConfigHandler> getConfigMap() {
+        return this.configInstances;
     }
 
     /**

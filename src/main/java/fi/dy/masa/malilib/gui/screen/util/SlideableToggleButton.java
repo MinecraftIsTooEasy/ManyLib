@@ -1,17 +1,17 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.gui.ManyLibIcons;
+import fi.dy.masa.malilib.gui.button.ButtonWidget;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
-import net.minecraft.GuiButton;
 import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-class SlideableToggleButton extends GuiButton {
+class SlideableToggleButton extends ButtonWidget {
     private boolean useSlider;
 
-    public SlideableToggleButton(int index, int x, int y, boolean useSlider) {
-        super(index, x, y, 16, 16, "");
+    public SlideableToggleButton(int x, int y, boolean useSlider, PressAction onPress) {
+        super(x, y, 16, 16, "", onPress);
         this.useSlider = useSlider;
     }
 

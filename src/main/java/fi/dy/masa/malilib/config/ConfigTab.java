@@ -7,7 +7,6 @@ import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.gui.screen.util.SortCategory;
 import fi.dy.masa.malilib.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +72,7 @@ public class ConfigTab {
                 if (instance.contains(string, input)) {
                     return true;
                 }
-            } catch (InvocationTargetException | IllegalAccessException e) {
+            } catch (Exception e) {
                 ManyLib.logger.warn("PinyinHandler: failed to match input");
             }
         }

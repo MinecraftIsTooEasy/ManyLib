@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.gui.button.ButtonWidget;
 import fi.dy.masa.malilib.gui.button.interfaces.ISliderButton;
 import net.minecraft.GuiButton;
 import net.minecraft.GuiScreen;
@@ -17,7 +18,9 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
         super(index, config, screen);
         this.inputBox = ScreenConstants.getInputBoxForSlideable(index, config, screen);
         this.useSlider = config.shouldUseSlider();
-        this.slideableToggleButton = ScreenConstants.getSlieableToggleButton(index, this.useSlider, screen);
+        this.slideableToggleButton = ScreenConstants.getSlieableToggleButton(index, this.useSlider, screen, button -> {
+            this.toggle();
+        });
         this.buttons.add(this.slideableToggleButton);
         this.sliderButton = ScreenConstants.getSliderButton(index, config, screen);
     }
@@ -35,17 +38,10 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
         if (this.useSlider) {
             if (click == 0) {
-                this.buttonListen((GuiButton) this.sliderButton, guiScreen, mouseX, mouseY);
+                this.buttonListen((ButtonWidget) this.sliderButton, guiScreen, mouseX, mouseY);
             }
         } else {
             super.customMouseClicked(guiScreen, mouseX, mouseY, click);
-        }
-    }
-
-    @Override
-    public void customActionPerformed(GuiButton guiButton) {
-        if (guiButton == this.slideableToggleButton) {
-            this.toggle();
         }
     }
 

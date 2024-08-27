@@ -7,9 +7,7 @@ import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.hotkeys.*;
 import fi.dy.masa.malilib.util.InfoUtils;
-import fi.dy.masa.malilib.util.KeyCodes;
 import net.minecraft.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Collection;
