@@ -1,19 +1,18 @@
-package fi.dy.masa.malilib.gui.button;
+package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.FontRenderer;
-import net.minecraft.GuiTextField;
+import fi.dy.masa.malilib.gui.DrawContext;
 
-public class GuiTextFieldWithDefaultText extends GuiTextField {
+public class WidgetTextFieldWithDefaultText extends WidgetTextField {
     protected String defaultText;
 
-    public GuiTextFieldWithDefaultText(FontRenderer fontRenderer, int xPos, int yPos, int width, int height, String defaultText) {
-        super(fontRenderer, xPos, yPos, width, height);
+    public WidgetTextFieldWithDefaultText(int x, int y, int width, int height, String defaultText) {
+        super(x, y, width, height);
         this.defaultText = defaultText;
     }
 
     @Override
-    public void drawTextBox() {
-        super.drawTextBox();
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
         if (this.getVisible() && this.getText().isEmpty()) {
             int var7 = this.enableBackgroundDrawing ? this.xPos + 4 : this.xPos;
             int var8 = this.enableBackgroundDrawing ? this.yPos + (this.height - 8) / 2 : this.yPos;

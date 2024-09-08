@@ -69,6 +69,7 @@ public interface IHotkey extends IConfigValue {
         this.getKeybind().resetToDefault();
     }
 
+    @Deprecated(since = "2.2.0")
     default void setHotKeyPressCallBack(Consumer<Minecraft> callBack) {
         this.getKeybind().setCallback((action, key) -> {
             callBack.accept(Minecraft.getMinecraft());

@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.gui;
 
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.GuiIngame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +39,11 @@ public class Message {
      *
      * @return the y coordinate of the next message
      */
-//    public int renderAt(int x, int y, int textColor, DrawContext drawContext) {
-    public int renderAt(int x, int y, int textColor, GuiIngame guiIngame) {
+    public int renderAt(int x, int y, int textColor, DrawContext drawContext) {
         String format = this.getFormatCode();
 
         for (String text : this.messageLines) {
-            StringUtils.drawString(x, y, textColor, format + text + GuiBase.TXT_RST, guiIngame);
+            StringUtils.drawString(x, y, textColor, format + text + GuiBase.TXT_RST, drawContext);
             y += StringUtils.getFontHeight() + 1;
         }
 

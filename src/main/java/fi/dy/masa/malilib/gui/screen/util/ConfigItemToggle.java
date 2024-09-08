@@ -2,16 +2,16 @@ package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigToggle;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.button.ButtonWidget;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
-import net.minecraft.I18n;
 
 class ConfigItemToggle extends ConfigItemHotkey {
-    final ButtonWidget toggleButton;
+    final ButtonBase toggleButton;
 
     public ConfigItemToggle(int index, ConfigToggle config, GuiScreen screen) {
         super(index, config, screen);
-        this.toggleButton = ScreenConstants.getConfigToggleButton(index, config, screen, button -> {
+        this.toggleButton = ScreenConstants.getConfigToggleButton(index, screen, button -> {
             ((ConfigToggle) this.config).toggle();
             this.updateStringByToggleStatus();
         });
@@ -27,9 +27,9 @@ class ConfigItemToggle extends ConfigItemHotkey {
 
     private void updateStringByToggleStatus() {
         if (((ConfigToggle) this.config).isOn()) {
-            this.toggleButton.displayString = GuiBase.TXT_GREEN + I18n.getString("boolean.true");
+            this.toggleButton.setDisplayString(GuiBase.TXT_GREEN + StringUtils.translate("boolean.true"));
         } else {
-            this.toggleButton.displayString = GuiBase.TXT_RED + I18n.getString("boolean.false");
+            this.toggleButton.setDisplayString(GuiBase.TXT_RED + StringUtils.translate("boolean.false"));
         }
     }
 }

@@ -7,12 +7,18 @@ manyLib.gui.button.pageDown=Page Down
 manyLib.gui.button.search=Search
 manyLib.gui.button.reset=Reset
 manyLib.gui.button.reset_all=Reset All
+manyLib.gui.button.keySettings=Key Settings
+manyLib.gui.button.other_mods=Other Mods
+
+manyLib.gui.button.hover.hold_shift_for_info=§oHold Shift for more information§r
 
 manyLib.gui.reset_hotkeys_question=Are you sure you want to reset all hotkeys?
 manyLib.gui.reset_values_question=Are you sure you want to reset all values?
 manyLib.gui.reset_tab_question=Are you sure you want to reset all configs in this tab?
 manyLib.gui.title.options=ManyLib Options
 manyLib.gui.title.controls=ManyLib Controls
+manyLib.gui.title.keySettings=Keybind Settings
+manyLib.gui.keySettings.configuring=Configuring
 
 manyLib.gui.comment.available_values=Available Values
 

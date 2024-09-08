@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.render;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.gui.Message.MessageType;
-import net.minecraft.GuiIngame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,8 +96,7 @@ public class MessageRenderer {
         return height;
     }
 
-//    public void drawMessages(int x, int y, DrawContext drawContext) {
-    public void drawMessages(int x, int y, GuiIngame guiIngame) {
+    public void drawMessages(int x, int y, DrawContext drawContext) {
         if (this.messages.isEmpty() == false) {
             int boxWidth = this.messageBoxWidth;
             int boxHeight = this.getMessagesHeight() + 20;
@@ -127,7 +126,7 @@ public class MessageRenderer {
 
             for (int i = 0; i < this.messages.size(); ++i) {
                 Message message = this.messages.get(i);
-                y = message.renderAt(x, y, 0xFFFFFFFF, guiIngame);
+                y = message.renderAt(x, y, 0xFFFFFFFF, drawContext);
 //                y = message.renderAt(x, y, 0xFFFFFFFF, drawContext);
 
                 if (message.hasExpired(currentTime)) {

@@ -5,18 +5,22 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.ResourceLocation;
 
 public enum ManyLibIcons implements IGuiIcon {
-    ResetButton(0, 0, 20, 20),
-    PageDownButton(20, 0, 20, 20),
-    PageUpButton(40, 0, 20, 20),
-    SearchButton(20, 60, 9, 9),
-    ToggleOn(0, 60, 20, 20),
-    ToggleOff(0, 80, 20, 20),
-    SlideIdentifier(0, 100, 16, 16),
-    InputIdentifier(16, 100, 16, 16),
-    AddMinusButton(32, 100, 16, 16),
-    ;
+    ResetButton(0, 100, 20, 20, true),
+    PageDownButton(20, 100, 20, 20, true),
+    PageUpButton(40, 100, 20, 20, true),
+    ToggleOn(0, 160, 20, 20),
+    ToggleOff(0, 180, 20, 20),
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets_many_lib.png");
+    ARROW_UP(108, 0, 15, 15),
+    ARROW_DOWN(108, 15, 15, 15),
+    PLUS(108, 30, 15, 15),
+    MINUS(108, 45, 15, 15),
+    BTN_SLIDER(153, 0, 16, 16),
+    BTN_TXTFIELD(153, 16, 16, 16),
+    BTN_PLUSMINUS_16(153, 32, 16, 16),
+    SEARCH(201, 0, 12, 12, 0, 0);;
+
+    public static final ResourceLocation TEXTURE = new ResourceLocation("textures/manyLib/gui/gui_widgets.png");
 
     private final int u;
     private final int v;
@@ -26,8 +30,13 @@ public enum ManyLibIcons implements IGuiIcon {
     private final int hoverOffV;
 
     ManyLibIcons(int u, int v, int w, int h) {
-        this(u, v, w, h, 0, h);
+        this(u, v, w, h, false);
     }
+
+    ManyLibIcons(int u, int v, int w, int h, boolean offsetVertical) {
+        this(u, v, w, h, offsetVertical ? 0 : w, offsetVertical ? h : 0);
+    }
+
 
     ManyLibIcons(int u, int v, int w, int h, int hoverOffU, int hoverOffV) {
         this.u = u;

@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigColor;
+import fi.dy.masa.malilib.gui.DrawContext;
 import net.minecraft.GuiScreen;
 
 class ConfigItemColor extends ConfigItemInputBox<ConfigColor> {
@@ -13,20 +14,20 @@ class ConfigItemColor extends ConfigItemInputBox<ConfigColor> {
     }
 
     @Override
-    public void customDraw(GuiScreen guiScreen, int x, int y) {
-        super.customDraw(guiScreen, x, y);
-        this.colorBoard.draw(guiScreen, x, y);
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
+        this.colorBoard.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
-    public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
-        super.tryDrawComment(guiScreen, x, y);
-//        this.colorBoard.tryDrawComment(guiScreen, x, y);// TODO make a color select screen
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        this.colorBoard.postRenderHovered(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
-    public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
-        super.customMouseClicked(guiScreen, mouseX, mouseY, click);
-        this.colorBoard.mouseClicked(mouseX, mouseY, click);
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
+        return this.colorBoard.onMouseClickedImpl(mouseX, mouseY, mouseButton);
     }
 }

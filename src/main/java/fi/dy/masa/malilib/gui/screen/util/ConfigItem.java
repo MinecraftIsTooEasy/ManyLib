@@ -4,86 +4,89 @@ import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.options.*;
-import fi.dy.masa.malilib.gui.button.ButtonWidget;
-import fi.dy.masa.malilib.gui.button.CommentedText;
-import fi.dy.masa.malilib.gui.button.ResetButton;
-import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.screen.interfaces.ScreenParented;
+import fi.dy.masa.malilib.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetText;
+import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.GuiUtils;
 import net.minecraft.GuiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> implements IInteractiveElement {
+public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> extends WidgetBase {
     final T config;
-    final ResetButton resetButton;
-    final CommentedText commentedText;
+    final ButtonGeneric resetButton;
+    final WidgetText widgetText;
     boolean visible = true;
-    final List<ButtonWidget> buttons = new ArrayList<>();
+    final List<ButtonBase> buttons = new ArrayList<>();
     final GuiScreen screen;
 
     public ConfigItem(int index, T config, GuiScreen screen) {
+        super(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         this.config = config;
         this.screen = screen;
-        this.resetButton = ScreenConstants.getResetButton(index, screen, button -> {
+        this.resetButton = ScreenConstants.getResetButton(index, screen, config, button -> {
             this.config.resetToDefault();
             this.resetButtonClicked();
         });
-        this.updateScreen();
-        this.commentedText = ScreenConstants.getCommentedText(index, config, screen);
+        this.y = this.resetButton.getY();
+        this.height = this.resetButton.getHeight();
+        this.update();
+        this.widgetText = ScreenConstants.getCommentedText(index, config, screen);
         this.buttons.add(this.resetButton);
     }
 
-    public void draw(GuiScreen guiScreen, int x, int y) {
+    @Override
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
         if (this.visible) {
-            int yStart = this.resetButton.yPosition;
-            int yEnd = yStart + this.resetButton.height;
-            int color = ManyLibConfig.highlightColor.getColorInteger();
-            if (y >= yStart && y <= yEnd) {
-                guiScreen.drawGradientRect(0, yStart, guiScreen.width, yEnd, color, color);
+            int color = ManyLibConfig.HighlightColor.getColorInteger();
+            if (((ScreenParented) this.screen).getHoveredSubWidget() == null && this.isMouseOver(mouseX, mouseY)) {
+                RenderUtils.drawRect(0, this.y, GuiUtils.getScaledWindowWidth(), this.height, color);
             }
-            this.commentedText.draw(guiScreen, x, y);
-            this.buttons.forEach(guiButton -> guiButton.drawButton(guiScreen.mc, x, y));
-            this.customDraw(guiScreen, x, y);
-        }
-    }
-
-    public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
-        this.commentedText.tryDrawTooltip(guiScreen, x, y);
-        this.resetButton.tryDrawTooltip(guiScreen, x, y);
-    }
-
-    public abstract void customDraw(GuiScreen guiScreen, int x, int y);
-
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int click) {
-        if (click == 0) {
-            this.buttons.forEach(guiButton -> this.buttonListen(guiButton, this.screen, mouseX, mouseY));
-        }
-        this.customMouseClicked(this.screen, mouseX, mouseY, click);
-    }
-
-    protected abstract void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click);
-
-    protected void buttonListen(ButtonWidget button, GuiScreen guiScreen, int mouseX, int mouseY) {
-        if (button.mousePressed(guiScreen.mc, mouseX, mouseY)) {
-            guiScreen.selectedButton = button;
-            button.playClickedSound(guiScreen.mc.sndManager);
-            button.onPress();
+            this.widgetText.render(mouseX, mouseY, selected, drawContext);
+            this.buttons.forEach(guiButton -> guiButton.render(mouseX, mouseY, guiButton.isMouseOver(), drawContext));
         }
     }
 
     @Override
-    public void updateScreen() {
-        this.resetButton.enabled = this.config.isModified();
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        this.widgetText.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        this.resetButton.postRenderHovered(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
-    public void keyTyped(char c, int i) {
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        return mouseButton == 0 && this.buttons.stream().anyMatch(button -> button.onMouseClicked(mouseX, mouseY, mouseButton));
     }
 
-    public abstract void resetButtonClicked();
+    @Override
+    protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
+        super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
+        this.buttons.forEach(x -> x.onMouseReleased(mouseX, mouseY, mouseButton));
+    }
 
-    public abstract void customSetVisible(boolean visible);
+    @Override
+    public void update() {
+        super.update();
+        this.resetButton.update();
+    }
+
+    public void resetButtonClicked() {
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        this.customSetVisible(visible);
+    }
+
+    public void customSetVisible(boolean visible) {
+    }
 
     public static ConfigItem<?> getConfigItem(int index, ConfigBase<?> config, GuiScreen screen) {
         return switch (config.getType()) {

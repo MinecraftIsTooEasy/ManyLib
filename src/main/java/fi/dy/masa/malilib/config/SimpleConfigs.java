@@ -28,7 +28,7 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     public SimpleConfigs(String name, List<ConfigHotkey> hotkeys, List<?> values, String menuComment) {
         this.name = name;
-        this.optionsFile = new File("configs" + File.separator + name + ".json");
+        this.optionsFile = new File("config" + File.separator + name + ".json");
         if (values == null || values.isEmpty()) {
             this.values = null;
         } else {
@@ -57,7 +57,7 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     @Override
     public GuiScreen getConfigScreen(GuiScreen parentScreen) {
-        return new DefaultConfigScreen(parentScreen, this.name + " Configs", this);
+        return new DefaultConfigScreen(parentScreen, this);
     }
 
     @Override

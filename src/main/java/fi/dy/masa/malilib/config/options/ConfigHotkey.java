@@ -22,7 +22,7 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey, I
         this(name, "", null);
     }
 
-    @Deprecated(since = "2.1.1")
+    @Deprecated(since = "2.2.0")
     public ConfigHotkey(String name, String comment) {
         this(name, "", comment);
     }

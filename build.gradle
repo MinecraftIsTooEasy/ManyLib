@@ -7,7 +7,8 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = project.archives_base_name
+//    archivesName = project.archives_base_name
+    archivesName = "[很多库]ManyLib"
 }
 
 repositories {
@@ -48,6 +49,7 @@ dependencies {
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\FPSPlus.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\DebrisHUD.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\PinIn-Lib.jar")
+    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ModMenu.jar")
 }
 
 processResources {

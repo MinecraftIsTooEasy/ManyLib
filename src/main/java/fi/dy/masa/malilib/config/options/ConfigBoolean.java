@@ -8,7 +8,7 @@ import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigBoolean;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.JsonUtils;
-import net.minecraft.I18n;
+import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigBoolean extends ConfigBase<ConfigBoolean> implements IConfigBoolean {
     private final boolean defaultValue;
@@ -35,9 +35,9 @@ public class ConfigBoolean extends ConfigBase<ConfigBoolean> implements IConfigB
     @Override
     public String getDisplayText() {
         if (this.value) {
-            return GuiBase.TXT_GREEN + I18n.getString("boolean.true");
+            return GuiBase.TXT_GREEN + StringUtils.translate("boolean.true");
         } else {
-            return GuiBase.TXT_RED + I18n.getString("boolean.false");
+            return GuiBase.TXT_RED + StringUtils.translate("boolean.false");
         }
     }
 

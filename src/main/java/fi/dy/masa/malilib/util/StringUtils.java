@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.util;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.GuiIngame;
 import net.minecraft.I18n;
 import net.minecraft.Minecraft;
 
@@ -264,11 +264,7 @@ public class StringUtils {
         return Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
     }
 
-    //    public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext) {
-//
-//        drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
-//    }
-    public static void drawString(int x, int y, int color, String text, GuiIngame guiIngame) {
-        guiIngame.drawString(Minecraft.getMinecraft().fontRenderer, text, x, y, color);
+    public static void drawString(int x, int y, int color, String text, DrawContext drawContext) {
+        drawContext.drawText(Minecraft.getMinecraft().fontRenderer, text, x, y, color, false);
     }
 }

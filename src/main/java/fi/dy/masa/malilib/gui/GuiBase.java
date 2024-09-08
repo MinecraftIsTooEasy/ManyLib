@@ -1,9 +1,25 @@
 package fi.dy.masa.malilib.gui;
 
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
+import fi.dy.masa.malilib.gui.Message.MessageType;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
+import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
+import fi.dy.masa.malilib.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetLabel;
+import fi.dy.masa.malilib.gui.widgets.WidgetTextField;
+import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.interfaces.IStringConsumer;
-import net.minecraft.EnumChatFormatting;
-import net.minecraft.GuiScreen;
+import fi.dy.masa.malilib.render.MessageRenderer;
+import fi.dy.masa.malilib.render.RenderUtils;
+import net.minecraft.*;
+import org.lwjgl.input.Keyboard;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //
 public abstract class GuiBase extends GuiScreen implements IMessageConsumer, IStringConsumer {
@@ -40,141 +56,133 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
     public static final int COLOR_HORIZONTAL_BAR = 0xFF999999;
     protected static final int LEFT = 20;
     protected static final int TOP = 10;
-//    public final MinecraftClient mc = MinecraftClient.getInstance();
-//    public final TextRenderer textRenderer = this.mc.textRenderer;
-//    public final int fontHeight = this.textRenderer.fontHeight;
-//    private final List<ButtonBase> buttons = new ArrayList<>();
-//    private final List<WidgetBase> widgets = new ArrayList<>();
-//    private final List<TextFieldWrapper<? extends GuiTextFieldGeneric>> textFields = new ArrayList<>();
-//    private final MessageRenderer messageRenderer = new MessageRenderer(0xDD000000, COLOR_HORIZONTAL_BAR);
-//    private long openTime;
-//    protected WidgetBase hoveredWidget = null;
-//    protected String title = "";
-//    protected boolean useTitleHierarchy = true;
-//    private int keyInputCount;
-//    private double mouseWheelDeltaSum;
-//    @Nullable
-//    private Screen parent;
-//
+    public final Minecraft mc = Minecraft.getMinecraft();
+    public final FontRenderer textRenderer = this.mc.fontRenderer;
+    public final int fontHeight = this.textRenderer.FONT_HEIGHT;
+    private final List<ButtonBase> buttons = new ArrayList<>();
+    private final List<WidgetBase> widgets = new ArrayList<>();
+    private final List<TextFieldWrapper<? extends WidgetTextField>> textFields = new ArrayList<>();
+    private final MessageRenderer messageRenderer = new MessageRenderer(0xDD000000, COLOR_HORIZONTAL_BAR);
+    private long openTime;
+    protected WidgetBase hoveredWidget = null;
+    protected String title = "";
+    protected boolean useTitleHierarchy = true;
+    private int keyInputCount;
+    private double mouseWheelDeltaSum;
+    @Nullable
+    private GuiScreen parent;
+
+    //
 //    protected GuiBase()
 //    {
 //        super(ScreenTexts.EMPTY);
 //    }
 //
-//    public GuiBase setParent(@Nullable Screen parent)
-//    {
-//        // Don't allow nesting the GUI with itself...
-//        if (parent == null || parent.getClass() != this.getClass())
-//        {
-//            this.parent = parent;
-//        }
-//
-//        return this;
-//    }
-//
-//    @Nullable
-//    public Screen getParent()
-//    {
-//        return this.parent;
-//    }
-//
-//    public String getTitleString()
-//    {
-//        return (this.useTitleHierarchy && this.parent instanceof GuiBase) ? (((GuiBase) this.parent).getTitleString() + " => " + this.title) : this.title;
-//    }
-//
+    public GuiBase setParent(@Nullable GuiScreen parent) {
+        // Don't allow nesting the GUI with itself...
+        if (parent == null || parent.getClass() != this.getClass()) {
+            this.parent = parent;
+        }
+
+        return this;
+    }
+
+    @Nullable
+    public GuiScreen getParent() {
+        return this.parent;
+    }
+
+    public String getTitleString() {
+        return (this.useTitleHierarchy && this.parent instanceof GuiBase) ? (((GuiBase) this.parent).getTitleString() + " => " + this.title) : this.title;
+    }
+
+    //
 //    @Override
 //    public Text getTitle()
 //    {
 //        return Text.of(this.getTitleString());
 //    }
 //
-//    public void setTitle(String title)
-//    {
-//        this.title = title;
-//    }
-//
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
+
+
 //    @Override
-//    public boolean shouldPause()
-//    {
-//        return false;
-//    }
-//
-//    @Override
-//    public void resize(MinecraftClient mc, int width, int height)
-//    {
-//        if (this.getParent() != null)
-//        {
+//    public void resize(MinecraftClient mc, int width, int height) {
+//        if (this.getParent() != null) {
 //            this.getParent().resize(mc, width, height);
 //        }
 //
 //        super.resize(mc, width, height);
 //    }
-//
+
 //    @Override
-//    public void init()
-//    {
+//    public void init() {
 //        super.init();
 //
 //        this.initGui();
 //        this.openTime = System.nanoTime();
 //    }
-//
-//    public void initGui()
-//    {
-//        this.clearElements();
-//    }
-//
-//    protected void closeGui(boolean showParent)
-//    {
-//        if (showParent)
-//        {
-//            this.mc.setScreen(this.parent);
-//        }
-//        else
-//        {
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        this.clearElements();
+    }
+
+
+    protected void closeGui(boolean showParent) {
+        if (showParent) {
+            this.mc.displayGuiScreen(this.parent);
+        }
+//        else {
 //            this.close();
 //        }
-//    }
-//
+    }
+
 //    @Override
-//    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks)
-//    {
-//        // Use a custom DrawContext that doesn't always disable depth test when drawing...
+//    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        // Use a custom DrawContext that doesn't always disable depth test when drawing...
 //        drawContext = new MalilibDrawContext(this.client, drawContext.getVertexConsumers());
-//
-//        this.drawScreenBackground(mouseX, mouseY);
-//        this.drawTitle(drawContext, mouseX, mouseY, partialTicks);
-//
-//        // Draw base widgets
-//        this.drawWidgets(mouseX, mouseY, drawContext);
-//        this.drawTextFields(mouseX, mouseY, drawContext);
-//        this.drawButtons(mouseX, mouseY, partialTicks, drawContext);
-//
-//        this.drawContents(drawContext, mouseX, mouseY, partialTicks);
-//
-//        this.drawButtonHoverTexts(mouseX, mouseY, partialTicks, drawContext);
-//        this.drawHoveredWidget(mouseX, mouseY, drawContext);
-//        this.drawGuiMessages(drawContext);
-//    }
-//
-//    @Override
-//    public boolean mouseScrolled(double mouseX, double mouseY, double amount)
-//    {
-//        if (this.mouseWheelDeltaSum != 0.0 && Math.signum(amount) != Math.signum(this.mouseWheelDeltaSum))
-//        {
+        DrawContext drawContext = new DrawContext();
+
+        this.drawScreenBackground(mouseX, mouseY);
+        this.drawTitle(drawContext, mouseX, mouseY, partialTicks);
+
+        // Draw base widgets
+        this.drawWidgets(mouseX, mouseY, drawContext);
+        this.drawTextFields(mouseX, mouseY, drawContext);
+        this.drawButtons(mouseX, mouseY, partialTicks, drawContext);
+
+        this.drawContents(drawContext, mouseX, mouseY, partialTicks);
+
+        this.drawButtonHoverTexts(mouseX, mouseY, partialTicks, drawContext);
+        this.drawHoveredWidget(mouseX, mouseY, drawContext);
+        this.drawGuiMessages(drawContext);
+    }
+
+    //    @Override
+//    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+//        if (this.mouseWheelDeltaSum != 0.0 && Math.signum(amount) != Math.signum(this.mouseWheelDeltaSum)) {
 //            this.mouseWheelDeltaSum = 0.0;
 //        }
 //
 //        this.mouseWheelDeltaSum += amount;
 //        amount = (int) this.mouseWheelDeltaSum;
 //
-//        if (amount != 0.0)
-//        {
+//        if (amount != 0.0) {
 //            this.mouseWheelDeltaSum -= amount;
 //
-//            if (this.onMouseScrolled((int) mouseX, (int) mouseY, amount))
-//            {
+//            if (this.onMouseScrolled((int) mouseX, (int) mouseY, amount)) {
 //                return true;
 //            }
 //        }
@@ -183,34 +191,39 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //    }
 //
 //    @Override
-//    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton)
-//    {
-//        if (this.onMouseClicked((int) mouseX, (int) mouseY, mouseButton) == false)
-//        {
+//    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+//        if (this.onMouseClicked((int) mouseX, (int) mouseY, mouseButton) == false) {
 //            return super.mouseClicked(mouseX, mouseY, mouseButton);
 //        }
 //
 //        return false;
 //    }
+    @Override
+    protected final void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        if (mouseButton == 0) this.onMouseClicked(mouseX, mouseY, mouseButton);
+    }
 //
 //    @Override
-//    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton)
-//    {
-//        if (this.onMouseReleased((int) mouseX, (int) mouseY, mouseButton) == false)
-//        {
+//    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+//        if (this.onMouseReleased((int) mouseX, (int) mouseY, mouseButton) == false) {
 //            return super.mouseReleased(mouseX, mouseY, mouseButton);
 //        }
 //
 //        return false;
 //    }
-//
+
+    @Override
+    protected final void mouseMovedOrUp(int par1, int par2, int par3) {
+        super.mouseMovedOrUp(par1, par2, par3);
+        this.onMouseReleased(par1, par2, par3);
+    }
+
 //    @Override
-//    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
-//    {
+//    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 //        this.keyInputCount++;
 //
-//        if (this.onKeyTyped(keyCode, scanCode, modifiers))
-//        {
+//        if (this.onKeyTyped(keyCode, scanCode, modifiers)) {
 //            return true;
 //        }
 //
@@ -238,70 +251,61 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //
 //        return super.charTyped(charIn, modifiers);
 //    }
-//
-//    public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton)
-//    {
-//        for (ButtonBase button : this.buttons)
-//        {
-//            if (button.onMouseClicked(mouseX, mouseY, mouseButton))
-//            {
+
+    @Override
+    protected final void keyTyped(char par1, int par2) {
+        this.onCharTyped(par1, par2);
+    }
+
+    public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        for (ButtonBase button : this.buttons) {
+            if (button.onMouseClicked(mouseX, mouseY, mouseButton)) {
+                // Don't call super if the button press got handled
+                return true;
+            }
+        }
+
+        boolean handled = false;
+
+        for (TextFieldWrapper<?> entry : this.textFields) {
+            if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
+                // Don't call super if the button press got handled
+                handled = true;
+            }
+        }
+
+        if (handled == false) {
+            for (WidgetBase widget : this.widgets) {
+                if (widget.isMouseOver(mouseX, mouseY) && widget.onMouseClicked(mouseX, mouseY, mouseButton)) {
+                    // Don't call super if the button press got handled
+                    handled = true;
+                    break;
+                }
+            }
+        }
+
+        return handled;
+    }
+
+
+    public boolean onMouseReleased(int mouseX, int mouseY, int mouseButton) {
+        for (WidgetBase widget : this.widgets) {
+            widget.onMouseReleased(mouseX, mouseY, mouseButton);
+        }
+
+        return false;
+    }
+
+//    public boolean onMouseScrolled(int mouseX, int mouseY, double mouseWheelDelta) {
+//        for (ButtonBase button : this.buttons) {
+//            if (button.onMouseScrolled(mouseX, mouseY, mouseWheelDelta)) {
 //                // Don't call super if the button press got handled
 //                return true;
 //            }
 //        }
 //
-//        boolean handled = false;
-//
-//        for (TextFieldWrapper<?> entry : this.textFields)
-//        {
-//            if (entry.mouseClicked(mouseX, mouseY, mouseButton))
-//            {
-//                // Don't call super if the button press got handled
-//                handled = true;
-//            }
-//        }
-//
-//        if (handled == false)
-//        {
-//            for (WidgetBase widget : this.widgets)
-//            {
-//                if (widget.isMouseOver(mouseX, mouseY) && widget.onMouseClicked(mouseX, mouseY, mouseButton))
-//                {
-//                    // Don't call super if the button press got handled
-//                    handled = true;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return handled;
-//    }
-//
-//    public boolean onMouseReleased(int mouseX, int mouseY, int mouseButton)
-//    {
-//        for (WidgetBase widget : this.widgets)
-//        {
-//            widget.onMouseReleased(mouseX, mouseY, mouseButton);
-//        }
-//
-//        return false;
-//    }
-//
-//    public boolean onMouseScrolled(int mouseX, int mouseY, double mouseWheelDelta)
-//    {
-//        for (ButtonBase button : this.buttons)
-//        {
-//            if (button.onMouseScrolled(mouseX, mouseY, mouseWheelDelta))
-//            {
-//                // Don't call super if the button press got handled
-//                return true;
-//            }
-//        }
-//
-//        for (WidgetBase widget : this.widgets)
-//        {
-//            if (widget.onMouseScrolled(mouseX, mouseY, mouseWheelDelta))
-//            {
+//        for (WidgetBase widget : this.widgets) {
+//            if (widget.onMouseScrolled(mouseX, mouseY, mouseWheelDelta)) {
 //                // Don't call super if the action got handled
 //                return true;
 //            }
@@ -309,25 +313,19 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //
 //        return false;
 //    }
-//
-//    public boolean onKeyTyped(int keyCode, int scanCode, int modifiers)
-//    {
+
+//    public boolean onKeyTyped(int keyCode, int scanCode, int modifiers) {
 //        boolean handled = false;
 //        int selected = -1;
 //
-//        for (int i = 0; i < this.textFields.size(); ++i)
-//        {
+//        for (int i = 0; i < this.textFields.size(); ++i) {
 //            TextFieldWrapper<?> entry = this.textFields.get(i);
 //
-//            if (entry.isFocused())
-//            {
-//                if (keyCode == KeyCodes.KEY_TAB)
-//                {
+//            if (entry.isFocused()) {
+//                if (keyCode == KeyCodes.KEY_TAB) {
 //                    entry.setFocused(false);
 //                    selected = i;
-//                }
-//                else
-//                {
+//                } else {
 //                    entry.onKeyTyped(keyCode, scanCode, modifiers);
 //                }
 //
@@ -336,12 +334,9 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //            }
 //        }
 //
-//        if (handled == false)
-//        {
-//            for (WidgetBase widget : this.widgets)
-//            {
-//                if (widget.onKeyTyped(keyCode, scanCode, modifiers))
-//                {
+//        if (handled == false) {
+//            for (WidgetBase widget : this.widgets) {
+//                if (widget.onKeyTyped(keyCode, scanCode, modifiers)) {
 //                    // Don't call super if the button press got handled
 //                    handled = true;
 //                    break;
@@ -349,24 +344,18 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //            }
 //        }
 //
-//        if (handled == false)
-//        {
-//            if (keyCode == KeyCodes.KEY_ESCAPE)
-//            {
+//        if (handled == false) {
+//            if (keyCode == KeyCodes.KEY_ESCAPE) {
 //                this.closeGui(isShiftDown() == false);
 //
 //                return true;
 //            }
 //        }
 //
-//        if (selected >= 0)
-//        {
-//            if (isShiftDown())
-//            {
+//        if (selected >= 0) {
+//            if (isShiftDown()) {
 //                selected = selected > 0 ? selected - 1 : this.textFields.size() - 1;
-//            }
-//            else
-//            {
+//            } else {
 //                selected = (selected + 1) % this.textFields.size();
 //            }
 //
@@ -375,280 +364,227 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //
 //        return handled;
 //    }
-//
-//    public boolean onCharTyped(char charIn, int modifiers)
-//    {
-//        boolean handled = false;
-//
-//        for (TextFieldWrapper<?> entry : this.textFields)
-//        {
-//            if (entry.onCharTyped(charIn, modifiers))
-//            {
-//                handled = true;
-//                break;
-//            }
-//        }
-//
-//        if (handled == false)
-//        {
-//            for (WidgetBase widget : this.widgets)
-//            {
-//                if (widget.onCharTyped(charIn, modifiers))
-//                {
-//                    // Don't call super if the button press got handled
-//                    handled = true;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return handled;
-//    }
-//
-//    @Override
-//    public void setString(String string)
-//    {
-//        this.messageRenderer.addMessage(3000, string);
-//    }
-//
-//    @Override
-//    public void addMessage(MessageType type, String messageKey, Object... args)
-//    {
-//        this.addGuiMessage(type, 5000, messageKey, args);
-//    }
-//
-//    @Override
-//    public void addMessage(MessageType type, int lifeTime, String messageKey, Object... args)
-//    {
-//        this.addGuiMessage(type, lifeTime, messageKey, args);
-//    }
-//
-//    public void addGuiMessage(MessageType type, int displayTimeMs, String messageKey, Object... args)
-//    {
-//        this.messageRenderer.addMessage(type, displayTimeMs, messageKey, args);
-//    }
-//
-//    public void setNextMessageType(MessageType type)
-//    {
-//        this.messageRenderer.setNextMessageType(type);
-//    }
-//
-//    protected void drawGuiMessages(DrawContext drawContext)
-//    {
-//        this.messageRenderer.drawMessages(this.width / 2, this.height / 2, drawContext);
-//    }
-//
-//    public void bindTexture(Identifier texture)
-//    {
-//        RenderUtils.bindTexture(texture);
-//    }
-//
-//    public <T extends ButtonBase> T addButton(T button, IButtonActionListener listener)
-//    {
-//        button.setActionListener(listener);
-//        this.buttons.add(button);
-//        return button;
-//    }
-//
-//    public <T extends GuiTextFieldGeneric> TextFieldWrapper<T> addTextField(T textField, @Nullable ITextFieldListener<T> listener)
-//    {
-//        TextFieldWrapper<T> wrapper = new TextFieldWrapper<>(textField, listener);
-//        this.textFields.add(wrapper);
-//        return wrapper;
-//    }
-//
-//    public <T extends WidgetBase> T addWidget(T widget)
-//    {
-//        this.widgets.add(widget);
-//        return widget;
-//    }
-//
-//    public WidgetLabel addLabel(int x, int y, int width, int height, int textColor, String... lines)
-//    {
-//        return this.addLabel(x, y, width, height, textColor, Arrays.asList(lines));
-//    }
-//
-//    public WidgetLabel addLabel(int x, int y, int width, int height, int textColor, List<String> lines)
-//    {
-//        if (lines.size() > 0)
-//        {
-//            if (width == -1)
-//            {
-//                for (String line : lines)
-//                {
-//                    width = Math.max(width, this.getStringWidth(line));
-//                }
-//            }
-//        }
-//
-//        return this.addWidget(new WidgetLabel(x, y, width, height, textColor, lines));
-//    }
-//
-//    protected boolean removeWidget(WidgetBase widget)
-//    {
-//        if (widget != null && this.widgets.contains(widget))
-//        {
-//            this.widgets.remove(widget);
-//            return true;
-//        }
-//
-//        return false;
-//    }
-//
-//    protected void clearElements()
-//    {
-//        this.clearWidgets();
-//        this.clearButtons();
-//        this.clearTextFields();
-//    }
-//
-//    protected void clearWidgets()
-//    {
-//        this.widgets.clear();
-//    }
-//
-//    protected void clearButtons()
-//    {
-//        this.buttons.clear();
-//    }
-//
-//    protected void clearTextFields()
-//    {
-//        this.textFields.clear();
-//    }
-//
-//    protected void drawScreenBackground(int mouseX, int mouseY)
-//    {
-//        // Draw the dark background
-//        RenderUtils.drawRect(0, 0, this.width, this.height, TOOLTIP_BACKGROUND);
-//    }
-//
-//    protected void drawTitle(DrawContext drawContext, int mouseX, int mouseY, float partialTicks)
-//    {
-//        this.drawString(drawContext, this.getTitleString(), LEFT, TOP, COLOR_WHITE);
-//    }
-//
-//    protected void drawContents(DrawContext drawContext, int mouseX, int mouseY, float partialTicks)
-//    {
-//    }
-//
-//    protected void drawButtons(int mouseX, int mouseY, float partialTicks, DrawContext drawContext)
-//    {
-//        for (ButtonBase button : this.buttons)
-//        {
-//            button.render(mouseX, mouseY, button.isMouseOver(), drawContext);
-//        }
-//    }
-//
-//    protected void drawTextFields(int mouseX, int mouseY, DrawContext drawContext)
-//    {
-//        for (TextFieldWrapper<?> entry : this.textFields)
-//        {
-//            entry.draw(mouseX, mouseY, drawContext);
-//        }
-//    }
-//
-//    protected void drawWidgets(int mouseX, int mouseY, DrawContext drawContext)
-//    {
-//        this.hoveredWidget = null;
-//
-//        if (this.widgets.isEmpty() == false)
-//        {
-//            for (WidgetBase widget : this.widgets)
-//            {
-//                widget.render(mouseX, mouseY, false, drawContext);
-//
-//                if (widget.isMouseOver(mouseX, mouseY))
-//                {
-//                    this.hoveredWidget = widget;
-//                }
-//            }
-//        }
-//    }
-//
-//    protected void drawButtonHoverTexts(int mouseX, int mouseY, float partialTicks, DrawContext drawContext)
-//    {
-//        if (this.shouldRenderHoverStuff() == false)
-//        {
-//            return;
-//        }
-//
-//        for (ButtonBase button : this.buttons)
-//        {
-//            if (button.hasHoverText() && button.isMouseOver())
-//            {
-//                RenderUtils.drawHoverText(mouseX, mouseY, button.getHoverStrings(), drawContext);
-//            }
-//        }
-//    }
-//
-//    protected boolean shouldRenderHoverStuff()
-//    {
-//        return this.mc.currentScreen == this;
-//    }
-//
-//    protected void drawHoveredWidget(int mouseX, int mouseY, DrawContext drawContext)
-//    {
-//        if (this.shouldRenderHoverStuff() == false)
-//        {
-//            return;
-//        }
-//
-//        if (this.hoveredWidget != null)
-//        {
-//            this.hoveredWidget.postRenderHovered(mouseX, mouseY, false, drawContext);
-//        }
-//    }
-//
-//    public static boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height)
-//    {
-//        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
-//    }
-//
-//    public int getStringWidth(String text)
-//    {
-//        return this.textRenderer.getWidth(text);
-//    }
-//
-//    public void drawString(DrawContext drawContext, String text, int x, int y, int color)
-//    {
-//        drawContext.drawText(textRenderer, text, x, y, color, false);
-//    }
-//
-//    public void drawStringWithShadow(DrawContext drawContext, String text, int x, int y, int color)
-//    {
-//        drawContext.drawTextWithShadow(textRenderer, text, x, y, color);
-//    }
-//
-//    public int getMaxPrettyNameLength(List<? extends IConfigBase> configs)
-//    {
-//        int width = 0;
-//
-//        for (IConfigBase config : configs)
-//        {
-//            width = Math.max(width, this.getStringWidth(config.getConfigGuiDisplayName()));
-//        }
-//
-//        return width;
-//    }
-//
-//    public static void openGui(Screen gui)
-//    {
-//        MinecraftClient.getInstance().setScreen(gui);
-//    }
-//
-//    public static boolean isShiftDown()
-//    {
-//        return hasShiftDown();
-//    }
-//
-//    public static boolean isCtrlDown()
-//    {
-//        return hasControlDown();
-//    }
-//
-//    public static boolean isAltDown()
-//    {
-//        return hasAltDown();
-//    }
+
+    public boolean onCharTyped(char charIn, int modifiers) {
+        boolean handled = false;
+
+        for (TextFieldWrapper<?> entry : this.textFields) {
+            if (entry.onCharTyped(charIn, modifiers)) {
+                handled = true;
+                break;
+            }
+        }
+
+        if (handled == false) {
+            for (WidgetBase widget : this.widgets) {
+                if (widget.onCharTyped(charIn, modifiers)) {
+                    // Don't call super if the button press got handled
+                    handled = true;
+                    break;
+                }
+            }
+        }
+
+        return handled;
+    }
+
+
+    @Override
+    public void setString(String string) {
+        this.messageRenderer.addMessage(3000, string);
+    }
+
+    @Override
+    public void addMessage(MessageType type, String messageKey, Object... args) {
+        this.addGuiMessage(type, 5000, messageKey, args);
+    }
+
+    @Override
+    public void addMessage(MessageType type, int lifeTime, String messageKey, Object... args) {
+        this.addGuiMessage(type, lifeTime, messageKey, args);
+    }
+
+    public void addGuiMessage(MessageType type, int displayTimeMs, String messageKey, Object... args) {
+        this.messageRenderer.addMessage(type, displayTimeMs, messageKey, args);
+    }
+
+    public void setNextMessageType(MessageType type) {
+        this.messageRenderer.setNextMessageType(type);
+    }
+
+    protected void drawGuiMessages(DrawContext drawContext) {
+        this.messageRenderer.drawMessages(this.width / 2, this.height / 2, drawContext);
+    }
+
+    public void bindTexture(ResourceLocation texture) {
+        RenderUtils.bindTexture(texture);
+    }
+
+    public <T extends ButtonBase> T addButton(T button, IButtonActionListener listener) {
+        button.setActionListener(listener);
+        this.buttons.add(button);
+        return button;
+    }
+
+    public <T extends WidgetTextField> TextFieldWrapper<T> addTextField(T textField, @Nullable ITextFieldListener<T> listener) {
+        TextFieldWrapper<T> wrapper = new TextFieldWrapper<>(textField, listener);
+        this.textFields.add(wrapper);
+        return wrapper;
+    }
+
+    public <T extends WidgetBase> T addWidget(T widget) {
+        this.widgets.add(widget);
+        return widget;
+    }
+
+    public WidgetLabel addLabel(int x, int y, int width, int height, int textColor, String... lines) {
+        return this.addLabel(x, y, width, height, textColor, Arrays.asList(lines));
+    }
+
+    public WidgetLabel addLabel(int x, int y, int width, int height, int textColor, List<String> lines) {
+        if (lines.size() > 0) {
+            if (width == -1) {
+                for (String line : lines) {
+                    width = Math.max(width, this.getStringWidth(line));
+                }
+            }
+        }
+
+        return this.addWidget(new WidgetLabel(x, y, width, height, textColor, lines));
+    }
+
+
+    protected boolean removeWidget(WidgetBase widget) {
+        if (widget != null && this.widgets.contains(widget)) {
+            this.widgets.remove(widget);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected void clearElements() {
+        this.clearWidgets();
+        this.clearButtons();
+        this.clearTextFields();
+    }
+
+    protected void clearWidgets() {
+        this.widgets.clear();
+    }
+
+    protected void clearButtons() {
+        this.buttons.clear();
+    }
+
+    protected void clearTextFields() {
+        this.textFields.clear();
+    }
+
+
+    protected void drawScreenBackground(int mouseX, int mouseY) {
+        // Draw the dark background
+        RenderUtils.drawRect(0, 0, this.width, this.height, TOOLTIP_BACKGROUND);
+    }
+
+    protected void drawTitle(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+        this.drawString(drawContext, this.getTitleString(), LEFT, TOP, COLOR_WHITE);
+    }
+
+    protected void drawContents(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    }
+
+    protected void drawButtons(int mouseX, int mouseY, float partialTicks, DrawContext drawContext) {
+        for (ButtonBase button : this.buttons) {
+            button.render(mouseX, mouseY, button.isMouseOver(), drawContext);
+        }
+    }
+
+    protected void drawTextFields(int mouseX, int mouseY, DrawContext drawContext) {
+        for (TextFieldWrapper<?> entry : this.textFields) {
+            entry.draw(mouseX, mouseY, drawContext);
+        }
+    }
+
+    protected void drawWidgets(int mouseX, int mouseY, DrawContext drawContext) {
+        this.hoveredWidget = null;
+
+        if (this.widgets.isEmpty() == false) {
+            for (WidgetBase widget : this.widgets) {
+                widget.render(mouseX, mouseY, false, drawContext);
+
+                if (widget.isMouseOver(mouseX, mouseY)) {
+                    this.hoveredWidget = widget;
+                }
+            }
+        }
+    }
+
+    protected void drawButtonHoverTexts(int mouseX, int mouseY, float partialTicks, DrawContext drawContext) {
+        if (this.shouldRenderHoverStuff() == false) {
+            return;
+        }
+
+        for (ButtonBase button : this.buttons) {
+            if (button.hasHoverText() && button.isMouseOver()) {
+                RenderUtils.drawHoverText(mouseX, mouseY, button.getHoverStrings(), drawContext);
+            }
+        }
+    }
+
+    protected boolean shouldRenderHoverStuff() {
+        return this.mc.currentScreen == this;
+    }
+
+    protected void drawHoveredWidget(int mouseX, int mouseY, DrawContext drawContext) {
+        if (this.shouldRenderHoverStuff() == false) {
+            return;
+        }
+
+        if (this.hoveredWidget != null) {
+            this.hoveredWidget.postRenderHovered(mouseX, mouseY, false, drawContext);
+        }
+    }
+
+    public static boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
+        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    }
+
+    public int getStringWidth(String text) {
+        return this.textRenderer.getStringWidth(text);
+    }
+
+    public void drawString(DrawContext drawContext, String text, int x, int y, int color) {
+        drawContext.drawText(textRenderer, text, x, y, color, false);
+    }
+
+    public void drawStringWithShadow(DrawContext drawContext, String text, int x, int y, int color) {
+        drawContext.drawTextWithShadow(textRenderer, text, x, y, color);
+    }
+
+    public int getMaxPrettyNameLength(List<? extends IConfigBase> configs) {
+        int width = 0;
+
+        for (IConfigBase config : configs) {
+            width = Math.max(width, this.getStringWidth(config.getConfigGuiDisplayName()));
+        }
+
+        return width;
+    }
+
+    public static void openGui(GuiScreen gui) {
+        Minecraft.getMinecraft().displayGuiScreen(gui);
+    }
+
+    public static boolean isShiftDown() {
+        return GuiScreen.isShiftKeyDown();
+    }
+
+    public static boolean isCtrlDown() {
+        return GuiScreen.isCtrlKeyDown();
+    }
+
+    public static boolean isAltDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
+    }
 }

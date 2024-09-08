@@ -1,87 +1,97 @@
 package fi.dy.masa.malilib.gui.button;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.ManyLibIcons;
-import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
-import fi.dy.masa.malilib.gui.button.interfaces.ISuppressibleElement;
 import fi.dy.masa.malilib.gui.button.interfaces.IToggleableElement;
-import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
-import fi.dy.masa.malilib.gui.screen.interfaces.SearchableScreen;
-import fi.dy.masa.malilib.render.RenderUtils;
-import net.minecraft.GuiScreen;
-import net.minecraft.GuiTextField;
-import net.minecraft.I18n;
-import net.minecraft.Minecraft;
-import org.lwjgl.opengl.GL11;
+import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
+import fi.dy.masa.malilib.gui.widgets.WidgetTextField;
+import fi.dy.masa.malilib.util.StringUtils;
 
-public class SearchField<T extends GuiScreen & SearchableScreen> extends ButtonWidget implements ISuppressibleElement, IInteractiveElement, IToggleableElement {
-    private final GuiTextField guiTextField;
+public class SearchField extends ButtonGeneric implements IToggleableElement {
+    private final WidgetTextField textField;
 
     private boolean searchEnabled;
 
-    private final T screen;
+    private final Searchable searchable;
 
-    public SearchField(int x, int y, int boxWidth, int boxHeight, T screen) {
-        super(x, y, 9, 9, "", button -> ((SearchField<?>) button).toggle());
-        this.setTooltip(I18n.getString("manyLib.gui.button.search"));
-        this.guiTextField = new GuiTextField(screen.fontRenderer, x + 16, y - 2, boxWidth, boxHeight);
-        this.screen = screen;
+    public SearchField(int x, int y, int boxWidth, int boxHeight, Searchable searchable) {
+        super(x, y, 12, 12, "", button -> ((SearchField) button).toggle());
+        this.tooltip(StringUtils.translate("manyLib.gui.button.search"));
+        this.textField = new WidgetTextField(x + 16, y - 1, boxWidth, boxHeight);
+        this.searchable = searchable;
         this.setVisible(false);
+        this.icon = ManyLibIcons.SEARCH;
+        this.setRenderDefaultBackground(false);
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        if (this.guiTextField.isFocused()) {
-            String temp = this.guiTextField.getText();
-            this.guiTextField.textboxKeyTyped(c, i);
-            String after = this.guiTextField.getText();
+    protected boolean onCharTypedImpl(char charIn, int modifiers) {
+        if (this.textField.isFocused()) {
+            String temp = this.textField.getText();
+            this.textField.textboxKeyTyped(charIn, modifiers);
+            String after = this.textField.getText();
             if (!after.equals(temp)) {
-                this.screen.updateSearchResult(after);
+                this.searchable.updateSearchResult(after);
             }
-            if (i == 1 || i == 28 || i == 156) {
-                this.guiTextField.setFocused(false);
+            if (modifiers == 1 || modifiers == 28 || modifiers == 156) {
+                this.textField.setFocused(false);
             }
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void updateScreen() {
-        this.guiTextField.updateCursorCounter();
+    public boolean isMouseOver(int mouseX, int mouseY) {
+        return super.isMouseOver(mouseX, mouseY) || this.textField.isMouseOver(mouseX, mouseY);
     }
 
     @Override
-    public void mouseClicked(int par1, int par2, int par3) {
-        this.guiTextField.mouseClicked(par1, par2, par3);
+    public void update() {
+        super.update();
+        this.textField.updateCursorCounter();
     }
 
     @Override
-    public void drawButton(Minecraft minecraft, int par2, int par3) {
-        if (!this.drawButton) {
-            return;
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.isMouseOver(mouseX, mouseY) && super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
+            return true;
         }
-        IGuiIcon icon = ManyLibIcons.SearchButton;
-        RenderUtils.bindTexture(icon.getTexture());
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
-        icon.renderAt(this.xPosition, this.yPosition, 0, false, false);
-        this.tryDrawTooltip(this.screen, par2, par3);
-        this.guiTextField.drawTextBox();
+        if (this.textField.isMouseOver(mouseX, mouseY)) {
+            return this.textField.onMouseClicked(mouseX, mouseY, mouseButton);
+        }
+        return false;
+    }
+
+    @Override
+    protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
+        super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
+        if (this.textField.isFocused() && !this.isMouseOver(mouseX, mouseY)) this.textField.setFocused(false);
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
+        if (this.visible && this.searchEnabled) {
+            this.textField.render(mouseX, mouseY, selected, drawContext);
+        }
     }
 
     @Override
     public void toggle() {
         this.setVisible(!this.searchEnabled);
         if (this.searchEnabled) {
-            this.screen.resetSearchResult();
-            this.guiTextField.setText("");
+            this.searchable.resetSearchResult();
+            this.textField.setText("");
         } else {
-            this.guiTextField.setFocused(true);
+            this.textField.setFocused(true);
         }
         this.searchEnabled = !this.searchEnabled;
     }
 
     @Override
     public void setVisible(boolean visible) {
-        this.guiTextField.setVisible(visible);
-        this.guiTextField.setEnabled(visible);
+        this.textField.setVisible(visible);
+        this.textField.setEnabled(visible);
     }
 }

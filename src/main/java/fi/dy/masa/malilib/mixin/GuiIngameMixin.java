@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.mixin;
 import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.api.ManyLibGuiIngame;
 import fi.dy.masa.malilib.event.RenderEventHandler;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import net.minecraft.Gui;
 import net.minecraft.GuiIngame;
@@ -34,8 +35,7 @@ public abstract class GuiIngameMixin extends Gui implements ManyLibGuiIngame {
 
     @Inject(method = "renderGameOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/Minecraft;inDevMode()Z", shift = At.Shift.BEFORE))
     private void renderString(float par1, boolean par2, int par3, int par4, CallbackInfo ci) {
-        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost((GuiIngame) (Object) this);
-//        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(drawContext, this.client, partialTicks);
+        ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(new DrawContext(), this.mc, par1);
 
         ScaledResolution sr = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
         if (this.info == null) return;
@@ -44,7 +44,7 @@ public abstract class GuiIngameMixin extends Gui implements ManyLibGuiIngame {
                     (this.mc.fontRenderer,
                             this.info,
                             sr.getScaledWidth() / 2,
-                            sr.getScaledHeight() - ManyLibConfig.hoverTextYLevel.getIntegerValue(),
+                            sr.getScaledHeight() - ManyLibConfig.HoverTextYLevel.getIntegerValue(),
                             GuiBase.COLOR_WHITE + (this.getTransparency(this.renderCounter) << 24));
         }
     }

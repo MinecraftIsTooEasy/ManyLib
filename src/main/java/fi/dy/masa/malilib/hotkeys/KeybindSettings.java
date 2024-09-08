@@ -26,11 +26,11 @@ public class KeybindSettings {
 
     private final Context context;
     private final KeyAction activateOn;
-    private final boolean allowEmpty;
     private final boolean allowExtraKeys;
     private final boolean orderSensitive;
     private final boolean exclusive;
     private final boolean cancel;
+    private final boolean allowEmpty;
 
     private KeybindSettings(Context context, KeyAction activateOn, boolean allowExtraKeys, boolean orderSensitive, boolean exclusive, boolean cancel) {
         this(context, activateOn, allowExtraKeys, orderSensitive, exclusive, cancel, false);
@@ -85,13 +85,13 @@ public class KeybindSettings {
     public JsonObject toJson() {
         JsonObject obj = new JsonObject();
 
-        obj.addProperty("activate_on", this.activateOn.name());
         obj.addProperty("context", this.context.name());
-        obj.addProperty("allow_empty", this.allowEmpty);
+        obj.addProperty("activate_on", this.activateOn.name());
         obj.addProperty("allow_extra_keys", this.allowExtraKeys);
         obj.addProperty("order_sensitive", this.orderSensitive);
         obj.addProperty("exclusive", this.exclusive);
         obj.addProperty("cancel", this.cancel);
+        obj.addProperty("allow_empty", this.allowEmpty);
 
         return obj;
     }
@@ -120,11 +120,11 @@ public class KeybindSettings {
             }
         }
 
-        boolean allowEmpty = JsonUtils.getBoolean(obj, "allow_empty");
         boolean allowExtraKeys = JsonUtils.getBoolean(obj, "allow_extra_keys");
         boolean orderSensitive = JsonUtils.getBooleanOrDefault(obj, "order_sensitive", true);
         boolean exclusive = JsonUtils.getBooleanOrDefault(obj, "exclusive", true);
         boolean cancel = JsonUtils.getBooleanOrDefault(obj, "cancel", true);
+        boolean allowEmpty = JsonUtils.getBoolean(obj, "allow_empty");
 
         return create(context, activateOn, allowExtraKeys, orderSensitive, exclusive, cancel, allowEmpty);
     }
@@ -157,13 +157,13 @@ public class KeybindSettings {
 
     public List<String> toStringList() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(StringUtils.translate("manyLib.keybind.settings.activate_on") + ": " + this.activateOn.name());
         list.add(StringUtils.translate("manyLib.keybind.settings.context") + ": " + this.context.name());
-        list.add(StringUtils.translate("manyLib.keybind.settings.allow_empty") + ": " + this.allowEmpty);
+        list.add(StringUtils.translate("manyLib.keybind.settings.activate_on") + ": " + this.activateOn.name());
         list.add(StringUtils.translate("manyLib.keybind.settings.allow_extra_keys") + ": " + this.allowExtraKeys);
         list.add(StringUtils.translate("manyLib.keybind.settings.order_sensitive") + ": " + this.orderSensitive);
         list.add(StringUtils.translate("manyLib.keybind.settings.exclusive") + ": " + this.exclusive);
         list.add(StringUtils.translate("manyLib.keybind.settings.cancel") + ": " + this.cancel);
+        list.add(StringUtils.translate("manyLib.keybind.settings.allow_empty") + ": " + this.allowEmpty);
         return list;
     }
 

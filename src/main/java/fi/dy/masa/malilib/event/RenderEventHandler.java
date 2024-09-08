@@ -1,9 +1,10 @@
 package fi.dy.masa.malilib.event;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.InfoUtils;
-import net.minecraft.GuiIngame;
+import net.minecraft.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +44,13 @@ public class RenderEventHandler implements IRenderDispatcher {
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-//    public void onRenderGameOverlayPost(DrawContext drawContext, MinecraftClient mc, float partialTicks) {
-    public void onRenderGameOverlayPost(GuiIngame guiIngame) {
+    public void onRenderGameOverlayPost(DrawContext drawContext, Minecraft mc, float partialTicks) {
         if (this.overlayRenderers.isEmpty() == false) {
             for (IRenderer renderer : this.overlayRenderers) {
-                renderer.onRenderGameOverlayPost(guiIngame);
-//                renderer.onRenderGameOverlayPost(drawContext);
+                renderer.onRenderGameOverlayPost(drawContext);
             }
         }
-        InfoUtils.renderInGameMessages(guiIngame);
-//        InfoUtils.renderInGameMessages(drawContext);
+        InfoUtils.renderInGameMessages(drawContext);
     }
 
     /**

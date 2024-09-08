@@ -39,6 +39,10 @@ public class ConfigTab {
         return this.unlocalizedName;
     }
 
+    public String getTooltip() {
+        return StringUtils.getTranslatedOrFallback("config.tab." + this.unlocalizedName + ".comment", null);
+    }
+
     public List<ConfigBase<?>> getAllConfigs() {
         return this.allConfigs;
     }

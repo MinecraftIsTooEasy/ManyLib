@@ -1,22 +1,22 @@
 package fi.dy.masa.malilib.gui.button.interfaces;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.render.RenderUtils;
-import net.minecraft.GuiScreen;
 
 import javax.annotation.Nullable;
 
-public interface ITooltipElement {
-    void setTooltip(String tooltip);
+public interface TooltipWidget<T> {
+    T tooltip(String tooltip);
 
     @Nullable
     String getTooltip();
 
     boolean shouldDrawTooltip();
 
-    default boolean tryDrawTooltip(GuiScreen screen, int i, int j) {
+    default boolean tryDrawTooltip(int mouseX, int mouseY, DrawContext drawContext) {
         String tooltip = this.getTooltip();
         if (tooltip != null && !tooltip.isEmpty() && this.shouldDrawTooltip()) {
-            RenderUtils.drawCreativeTabHoveringText(screen, tooltip, i, j);
+            RenderUtils.drawCreativeTabHoveringText(tooltip, mouseX, mouseY, drawContext);
             return true;
         }
         return false;

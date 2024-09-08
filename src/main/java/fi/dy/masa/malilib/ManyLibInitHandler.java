@@ -2,7 +2,7 @@ package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.fml.ManyLibEventsFML;
-import fi.dy.masa.malilib.gui.screen.ValueMenu;
+import fi.dy.masa.malilib.gui.screen.FakeModMenu;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
@@ -15,16 +15,8 @@ public class ManyLibInitHandler implements IInitializationHandler {
     public void registerModHandlers() {
         MITEEvents.MITE_EVENT_BUS.register(new ManyLibEventsFML());
         ConfigManager.getInstance().registerConfig(ManyLibConfig.getInstance());
-//        ManyLibConfig.openValueMenu.setHotKeyPressCallBack(minecraft -> minecraft.displayGuiScreen(ValueMenu.getInstance(null)));
-//        ManyLibConfig.openHotkeyMenu.setHotKeyPressCallBack(minecraft -> minecraft.displayGuiScreen(HotKeyMenu.getInstance(null)));
-//        TickHandler.getInstance().registerClientTickHandler(mc ->
-//                ConfigManager.getInstance().getAllHotKeys().forEach(x -> {
-//                    if (x.isPressed()) {
-//                        x.onPressed(Minecraft.getMinecraft());
-//                    }
-//                }));
-        ManyLibConfig.openConfigMenu.getKeybind().setCallback(new CallbackOpenConfigGui());
-        ManyLibConfig.openModMenu.getKeybind().setCallback(new CallbackOpenModMenu());
+        ManyLibConfig.OpenConfigMenu.getKeybind().setCallback(new CallbackOpenConfigGui());
+        ManyLibConfig.OpenModMenu.getKeybind().setCallback(new CallbackOpenModMenu());
     }
 
     private static class CallbackOpenConfigGui implements IHotkeyCallback {
@@ -40,7 +32,7 @@ public class ManyLibInitHandler implements IInitializationHandler {
         @Override
         public boolean onKeyAction(KeyAction action, IKeybind key) {
             Minecraft minecraft = Minecraft.getMinecraft();
-            minecraft.displayGuiScreen(ValueMenu.getInstance(minecraft.currentScreen));
+            minecraft.displayGuiScreen(new FakeModMenu(minecraft.currentScreen));
             return true;
         }
     }

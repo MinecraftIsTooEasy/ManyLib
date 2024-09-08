@@ -1,12 +1,12 @@
 package fi.dy.masa.malilib.render;
 
 import fi.dy.masa.malilib.api.ManyLibGuiIngame;
-import net.minecraft.GuiScreen;
-import net.minecraft.Minecraft;
-import net.minecraft.ResourceLocation;
-import net.minecraft.Tessellator;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.util.GuiUtils;
+import net.minecraft.*;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,21 +19,22 @@ public class RenderUtils {
         ((ManyLibGuiIngame) Minecraft.getMinecraft().ingameGUI).manyLib$setInfo(string, duration);
     }
 
-    public static void drawCreativeTabHoveringText(GuiScreen screen, String string, int x, int y) {
+    public static void drawCreativeTabHoveringText(String string, int x, int y, DrawContext drawContext) {
         string = string.replace('（', '(').replace('）', ')');
         List<String> list = Arrays.stream(string.split("\\\\n")).map(String::trim).toList();
-        if (list.size() == 1 && screen.fontRenderer.getStringWidth(list.get(0)) > 300) {
+        if (list.size() == 1 && fontRenderer().getStringWidth(list.get(0)) > 300) {
             list = Arrays.stream(string.split("[,.，。]")).map(String::trim).toList();
         }
-        drawTextList(screen, list, x, y);
+        drawTextList(list, x, y, drawContext);
     }
 
-    public static void drawTextList(GuiScreen screen, List<String> stringList, int x, int y) {
-        drawTextList(screen, stringList, x, y, true);
+    public static void drawTextList(List<String> stringList, int x, int y, DrawContext drawContext) {
+        drawTextList(stringList, x, y, true, drawContext);
     }
 
-    public static void drawTextList(GuiScreen screen, List<String> stringList, int x, int y, boolean has_title) {
+    public static void drawTextList(List<String> stringList, int x, int y, boolean has_title, DrawContext drawContext) {
         if (stringList.isEmpty()) return;
+        FontRenderer fontRenderer = fontRenderer();
         GL11.glDisable(32826);
 //        RenderHelper.disableStandardItemLighting();// bad
 //        GL11.glDisable(2896);// bad
@@ -41,7 +42,7 @@ public class RenderUtils {
         int boxWidth = 0;
         int stringWidth;
         for (String textPart : stringList) {
-            stringWidth = screen.fontRenderer.getStringWidth(textPart);
+            stringWidth = fontRenderer.getStringWidth(textPart);
             if (stringWidth > boxWidth) {
                 boxWidth = stringWidth;
             }
@@ -55,36 +56,37 @@ public class RenderUtils {
         if (!has_title) {
             boxHeight -= 2;
         }
-        if (stringXPos + boxWidth > screen.width) {
+        if (stringXPos + boxWidth > GuiUtils.getScaledWindowWidth()) {
             stringXPos -= 28 + boxWidth;
         }
-        if (stringYPos + boxHeight + 6 > screen.height) {
-            stringYPos = screen.height - boxHeight - 6;
+        int height = GuiUtils.getScaledWindowHeight();
+        if (stringYPos + boxHeight + 6 > height) {
+            stringYPos = height - boxHeight - 6;
         }
-        screen.zLevel = 300.0F;
+//        screen.zLevel = 300.0F;
         int color_1 = -267386864;
         color_1 = color_1 & 16777215 | -369098752;
-        screen.drawGradientRect(stringXPos - 3, stringYPos - 4, stringXPos + boxWidth + 3, stringYPos - 3, color_1, color_1);
-        screen.drawGradientRect(stringXPos - 3, stringYPos + boxHeight + 3, stringXPos + boxWidth + 3, stringYPos + boxHeight + 4, color_1, color_1);
-        screen.drawGradientRect(stringXPos - 3, stringYPos - 3, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3, color_1, color_1);
-        screen.drawGradientRect(stringXPos - 4, stringYPos - 3, stringXPos - 3, stringYPos + boxHeight + 3, color_1, color_1);
-        screen.drawGradientRect(stringXPos + boxWidth + 3, stringYPos - 3, stringXPos + boxWidth + 4, stringYPos + boxHeight + 3, color_1, color_1);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos - 4, stringXPos + boxWidth + 3, stringYPos - 3, color_1, color_1);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos + boxHeight + 3, stringXPos + boxWidth + 3, stringYPos + boxHeight + 4, color_1, color_1);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos - 3, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3, color_1, color_1);
+        drawContext.drawGradientRect(stringXPos - 4, stringYPos - 3, stringXPos - 3, stringYPos + boxHeight + 3, color_1, color_1);
+        drawContext.drawGradientRect(stringXPos + boxWidth + 3, stringYPos - 3, stringXPos + boxWidth + 4, stringYPos + boxHeight + 3, color_1, color_1);
         int color_2 = 1347420415;
         int color_3 = (color_2 & 16711422) >> 1 | color_2 & -16777216;
-        screen.drawGradientRect(stringXPos - 3, stringYPos - 3 + 1, stringXPos - 3 + 1, stringYPos + boxHeight + 3 - 1, color_2, color_3);
-        screen.drawGradientRect(stringXPos + boxWidth + 2, stringYPos - 3 + 1, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3 - 1, color_2, color_3);
-        screen.drawGradientRect(stringXPos - 3, stringYPos - 3, stringXPos + boxWidth + 3, stringYPos - 3 + 1, color_2, color_2);
-        screen.drawGradientRect(stringXPos - 3, stringYPos + boxHeight + 2, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3, color_3, color_3);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos - 3 + 1, stringXPos - 3 + 1, stringYPos + boxHeight + 3 - 1, color_2, color_3);
+        drawContext.drawGradientRect(stringXPos + boxWidth + 2, stringYPos - 3 + 1, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3 - 1, color_2, color_3);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos - 3, stringXPos + boxWidth + 3, stringYPos - 3 + 1, color_2, color_2);
+        drawContext.drawGradientRect(stringXPos - 3, stringYPos + boxHeight + 2, stringXPos + boxWidth + 3, stringYPos + boxHeight + 3, color_3, color_3);
 
         for (int stringIndex = 0; stringIndex < stringList.size(); ++stringIndex) {
             String string = stringList.get(stringIndex);
-            screen.fontRenderer.drawStringWithShadow(string, stringXPos, stringYPos, -1);
+            fontRenderer.drawStringWithShadow(string, stringXPos, stringYPos, -1);
             if (stringIndex == 0 && has_title) {
                 stringYPos += 2;
             }
             stringYPos += 10;
         }
-        screen.zLevel = 0.0F;
+//        screen.zLevel = 0.0F;
 //        GL11.glEnable(2896);// bad
         GL11.glEnable(2929);// good
 //        RenderHelper.enableStandardItemLighting();// bad
@@ -112,11 +114,11 @@ public class RenderUtils {
         mc().getTextureManager().bindTexture(texture);
     }
 
+    public static void color(float r, float g, float b, float a) {
+        GL11.glColor4f(r, g, b, a);
+    }
+
     //
-//    public static void color(float r, float g, float b, float a) {
-//        RenderSystem.setShaderColor(r, g, b, a);
-//    }
-//
 //    public static void disableDiffuseLighting() {
 //        DiffuseLighting.disableGuiDepthLighting();
 //    }
@@ -129,18 +131,18 @@ public class RenderUtils {
 //        DiffuseLighting.enableGuiDepthLighting();
 //    }
 //
-//    public static void drawOutlinedBox(int x, int y, int width, int height, int colorBg, int colorBorder) {
-//        drawOutlinedBox(x, y, width, height, colorBg, colorBorder, 0f);
-//    }
-//
-//    public static void drawOutlinedBox(int x, int y, int width, int height, int colorBg, int colorBorder, float zLevel) {
-//        // Draw the background
-//        drawRect(x, y, width, height, colorBg, zLevel);
-//
-//        // Draw the border
-//        drawOutline(x - 1, y - 1, width + 2, height + 2, colorBorder, zLevel);
-//    }
-//
+    public static void drawOutlinedBox(int x, int y, int width, int height, int colorBg, int colorBorder) {
+        drawOutlinedBox(x, y, width, height, colorBg, colorBorder, 0f);
+    }
+
+    public static void drawOutlinedBox(int x, int y, int width, int height, int colorBg, int colorBorder, float zLevel) {
+        // Draw the background
+        drawRect(x, y, width, height, colorBg, zLevel);
+
+        // Draw the border
+        drawOutline(x - 1, y - 1, width + 2, height + 2, colorBorder, zLevel);
+    }
+
     public static void drawOutline(int x, int y, int width, int height, int colorBorder) {
         drawOutline(x, y, width, height, colorBorder, 0f);
     }
@@ -152,18 +154,18 @@ public class RenderUtils {
         drawRect(x + 1, y + height - 1, width - 2, 1, colorBorder, zLevel); // bottom edge
     }
 
-    //
-//    public static void drawOutline(int x, int y, int width, int height, int borderWidth, int colorBorder) {
-//        drawOutline(x, y, width, height, borderWidth, colorBorder, 0f);
-//    }
-//
-//    public static void drawOutline(int x, int y, int width, int height, int borderWidth, int colorBorder, float zLevel) {
-//        drawRect(x, y, borderWidth, height, colorBorder, zLevel); // left edge
-//        drawRect(x + width - borderWidth, y, borderWidth, height, colorBorder, zLevel); // right edge
-//        drawRect(x + borderWidth, y, width - 2 * borderWidth, borderWidth, colorBorder, zLevel); // top edge
-//        drawRect(x + borderWidth, y + height - borderWidth, width - 2 * borderWidth, borderWidth, colorBorder, zLevel); // bottom edge
-//    }
-//
+
+    public static void drawOutline(int x, int y, int width, int height, int borderWidth, int colorBorder) {
+        drawOutline(x, y, width, height, borderWidth, colorBorder, 0f);
+    }
+
+    public static void drawOutline(int x, int y, int width, int height, int borderWidth, int colorBorder, float zLevel) {
+        drawRect(x, y, borderWidth, height, colorBorder, zLevel); // left edge
+        drawRect(x + width - borderWidth, y, borderWidth, height, colorBorder, zLevel); // right edge
+        drawRect(x + borderWidth, y, width - 2 * borderWidth, borderWidth, colorBorder, zLevel); // top edge
+        drawRect(x + borderWidth, y + height - borderWidth, width - 2 * borderWidth, borderWidth, colorBorder, zLevel); // bottom edge
+    }
+
     public static void drawTexturedRect(int x, int y, int u, int v, int width, int height) {
         drawTexturedRect(x, y, u, v, width, height, 0);
     }
@@ -204,8 +206,8 @@ public class RenderUtils {
         tessellator.draw();
     }
 
-    //
-//    public static void drawTexturedRectBatched(int x, int y, int u, int v, int width, int height, BufferBuilder buffer) {
+
+    //    public static void drawTexturedRectBatched(int x, int y, int u, int v, int width, int height, BufferBuilder buffer) {
 //        drawTexturedRectBatched(x, y, u, v, width, height, 0, buffer);
 //    }
 //
@@ -218,77 +220,91 @@ public class RenderUtils {
 //        buffer.vertex(x, y, zLevel).texture(u * pixelWidth, v * pixelWidth).next();
 //    }
 //
-//    public static void drawHoverText(int x, int y, List<String> textLines, DrawContext drawContext) {
-//        MinecraftClient mc = mc();
-//
-//        if (textLines.isEmpty() == false && GuiUtils.getCurrentScreen() != null) {
+    public static void drawHoverText(int x, int y, List<String> textLines, DrawContext drawContext) {
+        Minecraft mc = mc();
+
+        if (textLines.isEmpty() == false && GuiUtils.getCurrentScreen() != null) {
 //            RenderSystem.enableDepthTest();
-//            TextRenderer font = mc.textRenderer;
-//            int maxLineLength = 0;
-//            int maxWidth = GuiUtils.getCurrentScreen().width;
-//            List<String> linesNew = new ArrayList<>();
-//
-//            for (String lineOrig : textLines) {
-//                String[] lines = lineOrig.split("\\n");
-//
-//                for (String line : lines) {
-//                    int length = font.getWidth(line);
-//
-//                    if (length > maxLineLength) {
-//                        maxLineLength = length;
-//                    }
-//
-//                    linesNew.add(line);
-//                }
-//            }
-//
-//            textLines = linesNew;
-//
-//            final int lineHeight = font.fontHeight + 1;
-//            int textHeight = textLines.size() * lineHeight - 2;
-//            int textStartX = x + 4;
-//            int textStartY = Math.max(8, y - textHeight - 6);
-//
-//            if (textStartX + maxLineLength + 6 > maxWidth) {
-//                textStartX = Math.max(2, maxWidth - maxLineLength - 8);
-//            }
-//
+
+            GL11.glDisable(32826);
+            GL11.glDisable(2929);// copied from ...
+
+            FontRenderer font = mc.fontRenderer;
+            int maxLineLength = 0;
+            int maxWidth = GuiUtils.getCurrentScreen().width;
+            List<String> linesNew = new ArrayList<>();
+
+            for (String lineOrig : textLines) {
+                String[] lines = lineOrig.split("\\n");
+
+                for (String line : lines) {
+                    int length = font.getStringWidth(line);
+
+                    if (length > maxLineLength) {
+                        maxLineLength = length;
+                    }
+
+                    linesNew.add(line);
+                }
+            }
+
+            textLines = linesNew;
+
+            final int lineHeight = font.FONT_HEIGHT + 1;
+            int textHeight = textLines.size() * lineHeight - 2;
+            int textStartX = x + 4;
+            int textStartY = Math.max(8, y - textHeight - 6);
+
+            if (textStartX + maxLineLength + 6 > maxWidth) {
+                textStartX = Math.max(2, maxWidth - maxLineLength - 8);
+            }
+
 //            MatrixStack matrixStack = drawContext.getMatrices();
 //            matrixStack.push();
 //            matrixStack.translate(0, 0, 300);
 //            RenderSystem.applyModelViewMatrix();
-//
-//            double zLevel = 300;
-//            int borderColor = 0xF0100010;
-//            drawGradientRect(textStartX - 3, textStartY - 4, textStartX + maxLineLength + 3, textStartY - 3, zLevel, borderColor, borderColor);
-//            drawGradientRect(textStartX - 3, textStartY + textHeight + 3, textStartX + maxLineLength + 3, textStartY + textHeight + 4, zLevel, borderColor, borderColor);
-//            drawGradientRect(textStartX - 3, textStartY - 3, textStartX + maxLineLength + 3, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
-//            drawGradientRect(textStartX - 4, textStartY - 3, textStartX - 3, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
-//            drawGradientRect(textStartX + maxLineLength + 3, textStartY - 3, textStartX + maxLineLength + 4, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
-//
-//            int fillColor1 = 0x505000FF;
-//            int fillColor2 = 0x5028007F;
-//            drawGradientRect(textStartX - 3, textStartY - 3 + 1, textStartX - 3 + 1, textStartY + textHeight + 3 - 1, zLevel, fillColor1, fillColor2);
-//            drawGradientRect(textStartX + maxLineLength + 2, textStartY - 3 + 1, textStartX + maxLineLength + 3, textStartY + textHeight + 3 - 1, zLevel, fillColor1, fillColor2);
-//            drawGradientRect(textStartX - 3, textStartY - 3, textStartX + maxLineLength + 3, textStartY - 3 + 1, zLevel, fillColor1, fillColor1);
-//            drawGradientRect(textStartX - 3, textStartY + textHeight + 2, textStartX + maxLineLength + 3, textStartY + textHeight + 3, zLevel, fillColor2, fillColor2);
-//
-//            for (int i = 0; i < textLines.size(); ++i) {
-//                String str = textLines.get(i);
-//
-//                drawContext.drawText(font, str, textStartX, textStartY, 0xFFFFFFFF, false);
-//                textStartY += lineHeight;
-//            }
-//
+
+            double zLevel = 300;
+            int borderColor = 0xF0100010;
+            drawGradientRect(textStartX - 3, textStartY - 4, textStartX + maxLineLength + 3, textStartY - 3, zLevel, borderColor, borderColor);
+            drawGradientRect(textStartX - 3, textStartY + textHeight + 3, textStartX + maxLineLength + 3, textStartY + textHeight + 4, zLevel, borderColor, borderColor);
+            drawGradientRect(textStartX - 3, textStartY - 3, textStartX + maxLineLength + 3, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
+            drawGradientRect(textStartX - 4, textStartY - 3, textStartX - 3, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
+            drawGradientRect(textStartX + maxLineLength + 3, textStartY - 3, textStartX + maxLineLength + 4, textStartY + textHeight + 3, zLevel, borderColor, borderColor);
+
+            int fillColor1 = 0x505000FF;
+            int fillColor2 = 0x5028007F;
+            drawGradientRect(textStartX - 3, textStartY - 3 + 1, textStartX - 3 + 1, textStartY + textHeight + 3 - 1, zLevel, fillColor1, fillColor2);
+            drawGradientRect(textStartX + maxLineLength + 2, textStartY - 3 + 1, textStartX + maxLineLength + 3, textStartY + textHeight + 3 - 1, zLevel, fillColor1, fillColor2);
+            drawGradientRect(textStartX - 3, textStartY - 3, textStartX + maxLineLength + 3, textStartY - 3 + 1, zLevel, fillColor1, fillColor1);
+            drawGradientRect(textStartX - 3, textStartY + textHeight + 2, textStartX + maxLineLength + 3, textStartY + textHeight + 3, zLevel, fillColor2, fillColor2);
+
+            for (int i = 0; i < textLines.size(); ++i) {
+                String str = textLines.get(i);
+
+                drawContext.drawText(font, str, textStartX, textStartY, 0xFFFFFFFF, false);
+                textStartY += lineHeight;
+            }
+
 //            matrixStack.pop();
 //            RenderSystem.applyModelViewMatrix();
-//
-//            //RenderSystem.enableDepthTest();
-//            //enableDiffuseLightingGui3D();
-//        }
-//    }
-//
-//    public static void drawGradientRect(int left, int top, int right, int bottom, double zLevel, int startColor, int endColor) {
+
+            GL11.glEnable(32826);
+            GL11.glEnable(2929);// copied from ...
+
+            //RenderSystem.enableDepthTest();
+            //enableDiffuseLightingGui3D();
+        }
+    }
+
+    public static void drawGradientRect(int left, int top, int right, int bottom, double zLevel, int startColor, int endColor) {
+        GuiScreen screen = mc().currentScreen;
+        if (screen != null) {
+            float zLevelBefore = screen.zLevel;
+            screen.zLevel = (float) zLevel;
+            screen.drawGradientRect(left, top, right, bottom, startColor, endColor);
+            screen.zLevel = zLevelBefore;
+        }
 //        int sa = (startColor >> 24 & 0xFF);
 //        int sr = (startColor >> 16 & 0xFF);
 //        int sg = (startColor >> 8 & 0xFF);
@@ -315,21 +331,22 @@ public class RenderUtils {
 //        tessellator.draw();
 //
 //        RenderSystem.disableBlend();
-//    }
-//
-//    public static void drawCenteredString(int x, int y, int color, String text, DrawContext drawContext) {
-//        TextRenderer textRenderer = mc().textRenderer;
-//        drawContext.drawCenteredTextWithShadow(textRenderer, text, x, y, color);
-//    }
-//
-//    public static void drawHorizontalLine(int x, int y, int width, int color) {
-//        drawRect(x, y, width, 1, color);
-//    }
-//
-//    public static void drawVerticalLine(int x, int y, int height, int color) {
-//        drawRect(x, y, 1, height, color);
-//    }
-//
+    }
+
+    public static void drawCenteredString(int x, int y, int color, String text, DrawContext drawContext) {
+        FontRenderer textRenderer = mc().fontRenderer;
+        drawContext.drawCenteredTextWithShadow(textRenderer, text, x, y, color);
+    }
+
+    public static void drawHorizontalLine(int x, int y, int width, int color) {
+        drawRect(x, y, width, 1, color);
+    }
+
+    public static void drawVerticalLine(int x, int y, int height, int color) {
+        drawRect(x, y, 1, height, color);
+    }
+
+    //
 //    public static void renderSprite(int x, int y, int width, int height, Identifier atlas, Identifier texture, DrawContext drawContext) {
 //        if (texture != null) {
 //            Sprite sprite = mc().getSpriteAtlas(atlas).apply(texture);
@@ -1172,6 +1189,10 @@ public class RenderUtils {
 //
     private static Minecraft mc() {
         return Minecraft.getMinecraft();
+    }
+
+    public static FontRenderer fontRenderer() {
+        return mc().fontRenderer;
     }
 //
 //    /*

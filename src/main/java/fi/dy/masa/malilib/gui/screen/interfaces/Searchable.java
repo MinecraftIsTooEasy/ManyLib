@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.screen.interfaces;
 
-public interface SearchableScreen {
+public interface Searchable {
     void updateSearchResult(String input);
     void resetSearchResult();
 }

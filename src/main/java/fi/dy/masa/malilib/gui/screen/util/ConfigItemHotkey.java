@@ -1,14 +1,11 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
-import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.button.ButtonWidget;
-import fi.dy.masa.malilib.gui.button.PeriodicButton;
-import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
-import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
-import fi.dy.masa.malilib.hotkeys.EnumKeybindSettingsPreSet;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.screen.KeySettingsScreen;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeybindCategory;
@@ -20,9 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
-    ButtonWidget hotkeyButton;
-    PeriodicButton<?> keyActionButton;
-    ConfigEnum<EnumKeybindSettingsPreSet> dummy;
+    ButtonBase hotkeyButton;
+    ButtonBase jumpToSettings;
     protected final List<String> overlapInfo = new ArrayList<>();
     boolean editing;
     IKeybind keybind;
@@ -36,14 +32,8 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     }
 
     private void addKeybindSettingsButton(int index) {
-        EnumKeybindSettingsPreSet mapped = EnumKeybindSettingsPreSet.mapToEnum(this.keybind.getSettings());
-        if (mapped == null) mapped = EnumKeybindSettingsPreSet.DEFAULT;
-        this.dummy = new ConfigEnum<>("dummy", mapped);
-        this.keyActionButton = ScreenConstants.getKeySettingButton(index, this.dummy, screen, button -> {
-            ((IButtonPeriodic) button).next();
-            this.keybind.setSettings(this.dummy.getEnumValue().keybindSettings);
-        });
-        this.buttons.add(this.keyActionButton);
+        this.jumpToSettings = ScreenConstants.getJumpButton(index, this.screen, button -> this.screen.mc.displayGuiScreen(new KeySettingsScreen(this.screen, this.config.getConfigGuiDisplayName(), this.keybind)));
+        this.buttons.add(this.jumpToSettings);
     }
 
     protected void addHotKeyButton(int index) {
@@ -56,61 +46,50 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     }
 
     @Override
-    public void customDraw(GuiScreen guiScreen, int x, int y) {
-    }
-
-    @Override
-    public void tryDrawComment(GuiScreen guiScreen, int x, int y) {
-        super.tryDrawComment(guiScreen, x, y);
-        if (this.overlapInfo.isEmpty() == false && this.hotkeyButton.func_82252_a()) {
-            RenderUtils.drawTextList(guiScreen, this.overlapInfo, x, y);
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        if (this.overlapInfo != null && !this.overlapInfo.isEmpty() && this.hotkeyButton.isMouseOver()) {
+            RenderUtils.drawTextList(GuiScreen.isShiftKeyDown() ? this.overlapInfo : List.of(StringUtils.translate("manyLib.gui.button.hover.hold_shift_for_info")), mouseX, mouseY, drawContext);
         }
-        if (this.keyActionButton.func_82252_a()) {
+        if (this.jumpToSettings.isMouseOver()) {
             List<String> strings = new ArrayList<>();
             strings.add(StringUtils.translate("manyLib.keybind.settings") + ":");
-            strings.addAll(this.dummy.getEnumValue().keybindSettings.toStringList());
-            RenderUtils.drawTextList(guiScreen, strings, x, y);
+            strings.addAll(this.keybind.getSettings().toStringList());
+            RenderUtils.drawTextList(strings, mouseX, mouseY, drawContext);
         }
     }
 
     @Override
-    public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
-        if (this.editing && !this.hotkeyButton.func_82252_a()) {
+    public void update() {
+        super.update();
+        this.updateConflicts();
+    }
+
+    @Override
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
+        if (this.editing && !this.hotkeyButton.isMouseOver()) {
             this.save();
+            return true;
         }
+        return false;
     }
 
     @Override
     public void resetButtonClicked() {
         this.updateDisplayStringByKeybind();
-        this.setDummyByKeyBind();
-        this.keyActionButton.updateString();
-    }
-
-    private void setDummyByKeyBind() {
-        EnumKeybindSettingsPreSet mapped = EnumKeybindSettingsPreSet.mapToEnum(this.keybind.getSettings());
-        if (mapped == null) mapped = EnumKeybindSettingsPreSet.DEFAULT;
-        this.dummy.setEnumValue(mapped);
     }
 
     @Override
-    public void customSetVisible(boolean visible) {
-
-    }
-
-    @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (!this.editing) return;
-        if (i == 1 || i == 28 || i == 156) {// esc and two enters
+    protected boolean onCharTypedImpl(char charIn, int modifiers) {
+        if (!this.editing) return false;
+        if (modifiers == 1 || modifiers == 28 || modifiers == 156) {// esc and two enters
             this.save();
-            if (i == 1) {
-                ((DefaultConfigScreen) this.screen).markCancelKeyType();
-            }
-            return;
+            return true;
         }
-        this.keybind.addKey(i);
+        this.keybind.addKey(modifiers);
         this.updateDisplayStringByKeybind();
+        return true;
     }
 
     private void save() {
@@ -127,16 +106,19 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
         if (this.editing) {
             string = GuiBase.TXT_YELLOW + "> " + string + " <";
         } else {
-            if (this.overlapInfo.isEmpty() == false) {
+            if (this.overlapInfo != null && !this.overlapInfo.isEmpty()) {
                 string = GuiBase.TXT_GOLD + string;
             }
         }
-        this.hotkeyButton.displayString = string;
+        this.hotkeyButton.setDisplayString(string);
     }
 
     protected void updateConflicts() {
         List<KeybindCategory> categories = InputEventHandler.getKeybindManager().getKeybindCategories();
         List<IHotkey> overlaps = new ArrayList<>();
+        if (this.overlapInfo == null) {
+            return;
+        }
         this.overlapInfo.clear();
 
         for (KeybindCategory category : categories) {

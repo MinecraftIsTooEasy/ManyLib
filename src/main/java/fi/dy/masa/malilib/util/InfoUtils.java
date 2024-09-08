@@ -1,10 +1,10 @@
 package fi.dy.masa.malilib.util;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.render.MessageRenderer;
 import fi.dy.masa.malilib.render.RenderUtils;
-import net.minecraft.GuiIngame;
 import net.minecraft.Minecraft;
 import net.minecraft.World;
 
@@ -166,12 +166,11 @@ public class InfoUtils {
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-//    public static void renderInGameMessages(net.minecraft.client.gui.DrawContext drawContext) {
-    public static void renderInGameMessages(GuiIngame guiIngame) {
+    public static void renderInGameMessages(DrawContext drawContext) {
         int x = GuiUtils.getScaledWindowWidth() / 2;
         int y = GuiUtils.getScaledWindowHeight() - 76;
-//        IN_GAME_MESSAGES.drawMessages(x, y, drawContext);
-        IN_GAME_MESSAGES.drawMessages(x, y, guiIngame);
+
+        IN_GAME_MESSAGES.drawMessages(x, y, drawContext);
     }
 
     public static void sendVanillaMessage(String message) {

@@ -2,19 +2,30 @@
 
 ---
 
-## 2.1.1
+## 2.2.1
 
-* 在`ConfigScreen`屏幕提供一个下拉按钮来切换不同模组[WIP]
-* 把模组菜单也改为滑动屏幕[WIP]
 * 加入取色板[WIP]
 * 加入`ConfigStringList`配置板[WIP]
-* 加入`KeybindSettings`配置板[WIP]
-* 对于Int设置, 提供了按钮来加减1[WIP]
+
+---
+
+## 2.2.0
+
+现在配置文件路径从`configs`改成`config`了, 你可以手动把旧的配置文件剪切过去以继续使用配置
+
+现在在检测到`modmenu`模组时会自动把本模组的菜单按钮隐藏
+
+重写了渲染, 现在都用一个`DrawContext`的参数了, 有一定兼容性影响
+
+新功能:
+* 在`DefaultConfigScreen`屏幕提供一个下拉按钮来切换不同模组
+* 加入`KeybindSettings`的配置屏幕
 * 将ConfigHotkey的双String构造器标记为`@Deprecated`, 因为第二个参数不知道是热键还是comment
 * 添加了`reload`和`reloadAll`命令以供服务器热切换配置
-* 现在拼音功能是由`PinIn-Lib`而非`craftguide`提供了
+* 现在拼音功能是由`PinIn-Lib`而非`craftguide`提供了(但仍然不作为依赖)
 * 现在按键的注册不在`SimpleConfigs`的构造器进行而是在`ConfigManager.register`进行
-* 略微重构了关于Button方面的代码
+* 通过使用例如`config.menu.name.Neodymium`的键名, MannyLib菜单的按钮也能翻译了
+* 在lang中写`config.tab.unlocalizedName.comment`可以给标签页按钮加悬浮框了
 
 ---
 

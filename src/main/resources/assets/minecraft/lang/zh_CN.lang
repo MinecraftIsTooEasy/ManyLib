@@ -7,12 +7,18 @@ manyLib.gui.button.pageDown=下一页
 manyLib.gui.button.search=搜索
 manyLib.gui.button.reset=重置
 manyLib.gui.button.reset_all=重置全部
+manyLib.gui.button.keySettings=按键设置
+manyLib.gui.button.other_mods=其它模组
+
+manyLib.gui.button.hover.hold_shift_for_info=§o按住SHIFT显示更多信息§r
 
 manyLib.gui.reset_hotkeys_question=确定要重置全部按键绑定吗?
 manyLib.gui.reset_values_question=确定要重置全部数值设置吗?
 manyLib.gui.reset_tab_question=确定要重置本标签页中的全部设置吗?
 manyLib.gui.title.options=ManyLib选项
 manyLib.gui.title.controls=ManyLib按键绑定
+manyLib.gui.title.keySettings=按键设置
+manyLib.gui.keySettings.configuring=正在配置
 
 manyLib.gui.comment.available_values=可用值
 

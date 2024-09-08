@@ -2,19 +2,19 @@ package fi.dy.masa.malilib.gui.screen.interfaces;
 
 import net.minecraft.GuiScreen;
 
-public abstract class GuiScreenPaged extends GuiScreenParented implements ScreenWithPages {
+public abstract class ScreenPaged extends ScreenParented implements ScreenWithPages {
     protected final int rows;
     protected int columns;
     protected int pageCapacity;
     protected int pageIndex;
     protected int pageCount;
 
-    public GuiScreenPaged(GuiScreen parentScreen, String screenTitle, int rows, int columns) {
-        this(parentScreen, screenTitle, rows, columns, 1);
+    public ScreenPaged(GuiScreen parentScreen, int rows, int columns) {
+        this(parentScreen, rows, columns, 1);
     }
 
-    public GuiScreenPaged(GuiScreen parentScreen, String screenTitle, int rows, int columns, int configSize) {
-        super(parentScreen, screenTitle);
+    public ScreenPaged(GuiScreen parentScreen, int rows, int columns, int configSize) {
+        super(parentScreen);
         this.rows = rows;
         this.columns = columns;
         this.pageCapacity = rows * columns;
@@ -40,7 +40,8 @@ public abstract class GuiScreenPaged extends GuiScreenParented implements Screen
     }
 
     @Override
-    public void updateScreen() {
+    protected void update() {
+        super.update();
         this.wheelListener();
     }
 

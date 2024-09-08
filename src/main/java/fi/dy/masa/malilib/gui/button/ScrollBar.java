@@ -1,13 +1,13 @@
 package fi.dy.masa.malilib.gui.button;
 
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.MathHelper;
-import net.minecraft.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget {
+public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonGeneric {
     protected boolean dragging;
     protected float sliderRatio;
     protected int maxStatus;
@@ -20,6 +20,7 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget 
         });
         this.updateArguments(maxStatus, pageCapacity);
         this.screen = screen;
+        this.setRenderDefaultBackground(false);
     }
 
     public void updateArguments(int pageCapacity, int total) {
@@ -36,43 +37,42 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget 
     }
 
     @Override
-    protected int getHoverState(boolean par1) {
+    protected int getTextureOffset(boolean isMouseOver) {
         return 0;
     }
 
     @Override
-    public void drawButton(Minecraft par1Minecraft, int par2, int par3) {
-        if (this.drawButton) {
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        if (this.visible) {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
             int backGroundColor = StringUtils.getColor("#C0404040", 0);
-            this.drawGradientRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, backGroundColor, backGroundColor);
-            this.mouseDragged(par1Minecraft, par2, par3);
+            this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, backGroundColor, backGroundColor);
         }
+        super.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
-    protected void mouseDragged(Minecraft minecraft, int mouseX, int mouseY) {
+    public void onMouseDraggedImpl(int mouseX, int mouseY) {
         if (this.enabled) {
-            if (this.drawButton) {
+            if (this.visible) {
                 if (this.dragging) {
                     this.sliderRatio = this.getRatioFromSlider(mouseY);
                     this.updateScreenByRatio();
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 int scrollColor = StringUtils.getColor("#FFFFFFFF", 0);
-                int y = this.yPosition + (int) (this.sliderRatio * (float) (this.height - 8));
-                if (y > this.yPosition + this.height - this.sliderHeight) {
-                    y = this.yPosition + this.height - this.sliderHeight;
+                int y = this.y + (int) (this.sliderRatio * (float) (this.height - 8));
+                if (y > this.y + this.height - this.sliderHeight) {
+                    y = this.y + this.height - this.sliderHeight;
                 }
-                this.drawGradientRect(this.xPosition + 1, y + 1, this.xPosition + this.width - 1, y + this.sliderHeight + 3, scrollColor, scrollColor);
+                this.drawGradientRect(this.x + 1, y + 1, this.x + this.width - 1, y + this.sliderHeight + 3, scrollColor, scrollColor);
             }
         }
     }
 
     @Override
-    public boolean mousePressed(Minecraft minecraft, int mouseX, int mouseY) {
-        if (super.mousePressed(minecraft, mouseX, mouseY)) {
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
             this.sliderRatio = this.getRatioFromSlider(mouseY);
             this.updateScreenByRatio();
             this.dragging = true;
@@ -83,7 +83,7 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget 
     }
 
     @Override
-    public void mouseReleased(int par1, int par2) {
+    public void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
         this.dragging = false;
     }
 
@@ -102,6 +102,6 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonWidget 
     }
 
     private float getRatioFromSlider(int mouseY) {
-        return MathHelper.clamp_float((float) (mouseY - (this.yPosition + 4)) / (float) (this.height - 8), 0.0F, 1.0F);
+        return MathHelper.clamp_float((float) (mouseY - (this.y + 4)) / (float) (this.height - 8), 0.0F, 1.0F);
     }
 }

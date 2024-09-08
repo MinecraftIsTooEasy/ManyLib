@@ -4,44 +4,40 @@ import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
-import fi.dy.masa.malilib.gui.button.ButtonWidget;
-import fi.dy.masa.malilib.gui.button.interfaces.ISliderButton;
-import net.minecraft.GuiButton;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.button.SliderButton;
 import net.minecraft.GuiScreen;
 
 class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDisplay & IStringRepresentable> extends ConfigItemInputBox<T> {
     boolean useSlider;
     final SlideableToggleButton slideableToggleButton;
-    final ISliderButton sliderButton;
+    final SliderButton<T> sliderButton;
 
     public ConfigItemSlideable(int index, T config, GuiScreen screen) {
         super(index, config, screen);
         this.inputBox = ScreenConstants.getInputBoxForSlideable(index, config, screen);
         this.useSlider = config.shouldUseSlider();
-        this.slideableToggleButton = ScreenConstants.getSlieableToggleButton(index, this.useSlider, screen, button -> {
-            this.toggle();
-        });
+        this.slideableToggleButton = ScreenConstants.getSlideableToggleButton(index, this.useSlider, screen, button -> this.toggle());
         this.buttons.add(this.slideableToggleButton);
         this.sliderButton = ScreenConstants.getSliderButton(index, config, screen);
     }
 
     @Override
-    public void customDraw(GuiScreen guiScreen, int x, int y) {
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.defaultRender(mouseX, mouseY, selected, drawContext);
         if (this.useSlider) {
-            ((GuiButton) this.sliderButton).drawButton(guiScreen.mc, x, y);
+            this.sliderButton.render(mouseX, mouseY, this.sliderButton.isMouseOver(), drawContext);
         } else {
-            super.customDraw(guiScreen, x, y);
+            this.inputBox.render(mouseX, mouseY, selected, drawContext);
         }
     }
 
     @Override
-    public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
-        if (this.useSlider) {
-            if (click == 0) {
-                this.buttonListen((ButtonWidget) this.sliderButton, guiScreen, mouseX, mouseY);
-            }
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (this.useSlider && mouseButton == 0 && this.sliderButton.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
         } else {
-            super.customMouseClicked(guiScreen, mouseX, mouseY, click);
+            return super.onMouseClickedImpl(mouseX, mouseY, mouseButton);
         }
     }
 
@@ -56,9 +52,17 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     }
 
     @Override
+    protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
+        super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
+        if (this.useSlider) {
+            this.sliderButton.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    @Override
     public void customSetVisible(boolean visible) {
         super.customSetVisible(visible);
-        ((GuiButton) this.sliderButton).drawButton = visible;
+        this.sliderButton.setVisible(visible);
     }
 
     @Override
@@ -73,23 +77,15 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
             this.inputBox.setTextByValue();
             this.inputBox.setValueByText();
             this.inputBox.setTextByValue();// translating?
-            this.setInputBoxStatus(true);
-            this.setSliderStatus(false);
+            this.inputBox.setVisible(true);
+            this.sliderButton.setVisible(false);
         } else {
             this.inputBox.setValueByText();
             this.sliderButton.updateString();
             this.sliderButton.updateSliderRatioByConfig();
-            this.setInputBoxStatus(false);
-            this.setSliderStatus(true);
+            this.inputBox.setVisible(false);
+            this.sliderButton.setVisible(true);
         }
         this.useSlider = !this.useSlider;
-    }
-
-    private void setInputBoxStatus(boolean active) {
-        super.customSetVisible(active);
-    }
-
-    private void setSliderStatus(boolean active) {
-        ((GuiButton) this.sliderButton).drawButton = active;
     }
 }

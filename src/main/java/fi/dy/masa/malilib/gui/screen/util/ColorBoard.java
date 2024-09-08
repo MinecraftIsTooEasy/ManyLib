@@ -1,59 +1,54 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigColor;
-import fi.dy.masa.malilib.gui.button.interfaces.IInteractiveElement;
-import fi.dy.masa.malilib.gui.button.interfaces.ITooltipElement;
-import net.minecraft.GuiScreen;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.button.interfaces.TooltipWidget;
+import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import org.jetbrains.annotations.Nullable;
 
-class ColorBoard implements ITooltipElement, IInteractiveElement {
+class ColorBoard extends WidgetBase implements TooltipWidget<ColorBoard> {
     ConfigColor configColor;
-    int xPos;
-    int yPos;
-    int width;
-    int height;
     boolean mouseOver;
+    String tooltip;
 
     ColorBoard(ConfigColor configColor, int xPos, int yPos, int width, int height) {
+        super(xPos, yPos, width, height);
         this.configColor = configColor;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.width = width;
-        this.height = height;
+//        this.tooltip("点我打开取色板");// TODO
     }
 
-    void draw(GuiScreen guiScreen, int x, int y) {
+    @Override
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
         int colorInteger = this.configColor.getColorInteger();
-        guiScreen.drawGradientRect(this.xPos, this.yPos, this.xPos + this.width, this.yPos + this.height, colorInteger, colorInteger);
-        this.mouseOver = x >= xPos && x <= xPos + width && y >= yPos && y <= yPos + height;
+        drawContext.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, colorInteger, colorInteger);
+        this.mouseOver = mouseX >= this.x && mouseX <= this.x + width && mouseY >= this.y && mouseY <= this.y + height;
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        this.tryDrawTooltip(mouseX, mouseY, drawContext);
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int click) {
-        if (this.mouseOver) {
-//            System.out.println("i will call the color board");
-        }
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
+//        Minecraft minecraft = Minecraft.getMinecraft();
+//        minecraft.displayGuiScreen(new ColorSelectScreen(minecraft.currentScreen));// TODO
+        return true;
     }
 
     @Override
-    public void updateScreen() {
-
-    }
-
-    @Override
-    public void setTooltip(String tooltip) {
-
+    public ColorBoard tooltip(String tooltip) {
+        this.tooltip = tooltip;
+        return this;
     }
 
     @Nullable
     @Override
     public String getTooltip() {
-        return "点我打开取色板";
+        return this.tooltip;
     }
 
     @Override

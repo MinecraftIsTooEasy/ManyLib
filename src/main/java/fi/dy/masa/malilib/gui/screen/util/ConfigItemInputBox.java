@@ -3,8 +3,9 @@ package fi.dy.masa.malilib.gui.screen.util;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
-import fi.dy.masa.malilib.gui.button.InputBox;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
+import fi.dy.masa.malilib.gui.widgets.InputBox;
 import net.minecraft.GuiScreen;
 
 class ConfigItemInputBox<T extends ConfigBase<?> & IStringRepresentable & IConfigDisplay> extends ConfigItem<T> implements AboutInputMethod {
@@ -16,18 +17,30 @@ class ConfigItemInputBox<T extends ConfigBase<?> & IStringRepresentable & IConfi
     }
 
     @Override
-    public void customDraw(GuiScreen guiScreen, int x, int y) {
-        this.inputBox.drawBox(x, y);
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
+        this.inputBox.render(mouseX, mouseY, selected, drawContext);
+    }
+
+    protected void defaultRender(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        this.inputBox.keyTyped(c, i);
+    public void update() {
+        super.update();
+        if (this.inputBox != null) this.inputBox.update();
     }
 
     @Override
-    public void customMouseClicked(GuiScreen guiScreen, int mouseX, int mouseY, int click) {
-        this.inputBox.mouseClicked(mouseX, mouseY, click);
+    protected boolean onCharTypedImpl(char charIn, int modifiers) {
+        return this.inputBox.onCharTyped(charIn, modifiers);
+    }
+
+    @Override
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
+        return this.inputBox.onMouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
