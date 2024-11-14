@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.util.GuiUtils;
 import net.minecraft.*;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,10 +36,10 @@ public class RenderUtils {
     public static void drawTextList(List<String> stringList, int x, int y, boolean has_title, DrawContext drawContext) {
         if (stringList.isEmpty()) return;
         FontRenderer fontRenderer = fontRenderer();
-        GL11.glDisable(32826);
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 //        RenderHelper.disableStandardItemLighting();// bad
-//        GL11.glDisable(2896);// bad
-        GL11.glDisable(2929);// good
+//        GL11.glDisable(GL11.GL_LIGHTING);// bad
+        GL11.glDisable(GL11.GL_DEPTH_TEST);// good
         int boxWidth = 0;
         int stringWidth;
         for (String textPart : stringList) {
@@ -87,10 +88,10 @@ public class RenderUtils {
             stringYPos += 10;
         }
 //        screen.zLevel = 0.0F;
-//        GL11.glEnable(2896);// bad
-        GL11.glEnable(2929);// good
+//        GL11.glEnable(GL11.GL_LIGHTING);// bad
+        GL11.glEnable(GL11.GL_DEPTH_TEST);// good
 //        RenderHelper.enableStandardItemLighting();// bad
-        GL11.glEnable(32826);
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     }
 
 
@@ -176,23 +177,74 @@ public class RenderUtils {
     }
 
     public static void drawRect(int x, int y, int width, int height, int color, float zLevel) {
-        float var10 = (float) (color >> 24 & 0xFF) / 255.0f;
-        float var6 = (float) (color >> 16 & 0xFF) / 255.0f;
-        float var7 = (float) (color >> 8 & 0xFF) / 255.0f;
-        float var8 = (float) (color & 0xFF) / 255.0f;
-        Tessellator var9 = Tessellator.instance;
-        GL11.glEnable(3042);
-        GL11.glDisable(3553);
-        GL11.glBlendFunc(770, 771);
-        GL11.glColor4f(var6, var7, var8, var10);
-        var9.startDrawingQuads();
-        var9.addVertex(x, y, zLevel);
-        var9.addVertex(x, y + height, zLevel);
-        var9.addVertex(x + width, y + height, zLevel);
-        var9.addVertex(x + width, y, zLevel);
-        var9.draw();
-        GL11.glEnable(3553);
-        GL11.glDisable(3042);
+        float a = (float) (color >> 24 & 0xFF) / 255.0f;
+        float r = (float) (color >> 16 & 0xFF) / 255.0f;
+        float g = (float) (color >> 8 & 0xFF) / 255.0f;
+        float b = (float) (color & 0xFF) / 255.0f;
+        Tessellator tessellator = Tessellator.instance;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(r, g, b, a);
+        tessellator.startDrawingQuads();
+        tessellator.addVertex(x, y, zLevel);
+        tessellator.addVertex(x, y + height, zLevel);
+        tessellator.addVertex(x + width, y + height, zLevel);
+        tessellator.addVertex(x + width, y, zLevel);
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public static void drawCircle(int x, int y, int radius, int color) {
+        drawCircle(x, y, radius, color, 0F);
+    }
+
+    public static void drawCircle(int x, int y, int radius, int color, float zLevel) {
+        float a = (float) (color >> 24 & 0xFF) / 255.0f;
+        float r = (float) (color >> 16 & 0xFF) / 255.0f;
+        float g = (float) (color >> 8 & 0xFF) / 255.0f;
+        float b = (float) (color & 0xFF) / 255.0f;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(r, g, b, a);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawing(GL11.GL_LINE_LOOP);
+        int drawNum = 360;
+        for (int i = 0; i < drawNum; i++) {
+            float angle = (float) (2 * Math.PI * i / drawNum);
+            tessellator.addVertex(x + radius * MathHelper.cos(angle), y - radius * MathHelper.sin(angle), zLevel);
+        }
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public static void drawDisk(int x, int y, float radius, int color) {
+        drawDisk(x, y, radius, color, 0F);
+    }
+
+    public static void drawDisk(int x, int y, float radius, int color, float zLevel) {
+        float a = (float) (color >> 24 & 0xFF) / 255.0f;
+        float r = (float) (color >> 16 & 0xFF) / 255.0f;
+        float g = (float) (color >> 8 & 0xFF) / 255.0f;
+        float b = (float) (color & 0xFF) / 255.0f;
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(r, g, b, a);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawing(GL11.GL_TRIANGLE_FAN);
+        tessellator.addVertex(x, y, zLevel);
+        int drawNum = 361;
+        for (int i = 0; i <= drawNum; i++) {
+            float angle = (float) (2 * Math.PI * i / drawNum);
+            tessellator.addVertex(x + radius * MathHelper.cos(angle), y - radius * MathHelper.sin(angle), zLevel);
+        }
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     public static void drawTexturedRect(int x, int y, int u, int v, int width, int height, float zLevel) {
@@ -204,6 +256,17 @@ public class RenderUtils {
         tessellator.addVertexWithUV(x + width, y, zLevel, (u + width) * pixelWidth, v * pixelWidth);
         tessellator.addVertexWithUV(x, y, zLevel, u * pixelWidth, v * pixelWidth);
         tessellator.draw();
+    }
+
+    public static void preDrawRect() {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    public static void postDrawRect() {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
 
@@ -226,8 +289,8 @@ public class RenderUtils {
         if (textLines.isEmpty() == false && GuiUtils.getCurrentScreen() != null) {
 //            RenderSystem.enableDepthTest();
 
-            GL11.glDisable(32826);
-            GL11.glDisable(2929);// copied from ...
+            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);// copied from ...
 
             FontRenderer font = mc.fontRenderer;
             int maxLineLength = 0;
@@ -289,8 +352,8 @@ public class RenderUtils {
 //            matrixStack.pop();
 //            RenderSystem.applyModelViewMatrix();
 
-            GL11.glEnable(32826);
-            GL11.glEnable(2929);// copied from ...
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);// copied from ...
 
             //RenderSystem.enableDepthTest();
             //enableDiffuseLightingGui3D();
@@ -298,13 +361,13 @@ public class RenderUtils {
     }
 
     public static void drawGradientRect(int left, int top, int right, int bottom, double zLevel, int startColor, int endColor) {
-        GuiScreen screen = mc().currentScreen;
-        if (screen != null) {
-            float zLevelBefore = screen.zLevel;
-            screen.zLevel = (float) zLevel;
-            screen.drawGradientRect(left, top, right, bottom, startColor, endColor);
-            screen.zLevel = zLevelBefore;
-        }
+        preRenderGradient();
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        bufferGradientVertical(left, top, right, bottom, zLevel, startColor, endColor, tessellator);
+        tessellator.draw();
+        postRenderGradient();
+
 //        int sa = (startColor >> 24 & 0xFF);
 //        int sr = (startColor >> 16 & 0xFF);
 //        int sg = (startColor >> 8 & 0xFF);
@@ -333,6 +396,55 @@ public class RenderUtils {
 //        RenderSystem.disableBlend();
     }
 
+    public static void preRenderGradient() {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+    }
+
+    public static void postRenderGradient() {
+        GL11.glShadeModel(GL11.GL_FLAT);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
+
+    public static void bufferGradientHorizontal(int left, int top, int right, int bottom, double zLevel, int startColor, int endColor, Tessellator tessellator) {
+        float startA = (float) (startColor >> 24 & 0xFF) / 255.0f;
+        float startR = (float) (startColor >> 16 & 0xFF) / 255.0f;
+        float startG = (float) (startColor >> 8 & 0xFF) / 255.0f;
+        float startB = (float) (startColor & 0xFF) / 255.0f;
+        float endA = (float) (endColor >> 24 & 0xFF) / 255.0f;
+        float endR = (float) (endColor >> 16 & 0xFF) / 255.0f;
+        float endG = (float) (endColor >> 8 & 0xFF) / 255.0f;
+        float endB = (float) (endColor & 0xFF) / 255.0f;
+        tessellator.setColorRGBA_F(startR, startG, startB, startA);
+        tessellator.addVertex(left, top, zLevel);
+        tessellator.addVertex(left, bottom, zLevel);
+        tessellator.setColorRGBA_F(endR, endG, endB, endA);
+        tessellator.addVertex(right, bottom, zLevel);
+        tessellator.addVertex(right, top, zLevel);
+    }
+
+    public static void bufferGradientVertical(int left, int top, int right, int bottom, double zLevel, int startColor, int endColor, Tessellator tessellator) {
+        float startA = (float) (startColor >> 24 & 0xFF) / 255.0f;
+        float startR = (float) (startColor >> 16 & 0xFF) / 255.0f;
+        float startG = (float) (startColor >> 8 & 0xFF) / 255.0f;
+        float startB = (float) (startColor & 0xFF) / 255.0f;
+        float endA = (float) (endColor >> 24 & 0xFF) / 255.0f;
+        float endR = (float) (endColor >> 16 & 0xFF) / 255.0f;
+        float endG = (float) (endColor >> 8 & 0xFF) / 255.0f;
+        float endB = (float) (endColor & 0xFF) / 255.0f;
+        tessellator.setColorRGBA_F(startR, startG, startB, startA);
+        tessellator.addVertex(right, top, zLevel);
+        tessellator.addVertex(left, top, zLevel);
+        tessellator.setColorRGBA_F(endR, endG, endB, endA);
+        tessellator.addVertex(left, bottom, zLevel);
+        tessellator.addVertex(right, bottom, zLevel);
+    }
+
     public static void drawCenteredString(int x, int y, int color, String text, DrawContext drawContext) {
         FontRenderer textRenderer = mc().fontRenderer;
         drawContext.drawCenteredTextWithShadow(textRenderer, text, x, y, color);
@@ -344,6 +456,18 @@ public class RenderUtils {
 
     public static void drawVerticalLine(int x, int y, int height, int color) {
         drawRect(x, y, 1, height, color);
+    }
+
+    public static void startScissor(int x, int y, int width, int height) {
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        int scaledWindowHeight = GuiUtils.getScaledWindowHeight();
+        y = scaledWindowHeight - y - height;// the gl count from left bottom
+        int scaleFactor = GuiUtils.getScaleFactor();
+        GL11.glScissor(x * scaleFactor, y * scaleFactor, width * scaleFactor, height * scaleFactor);
+    }
+
+    public static void endScissor() {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     //

@@ -6,7 +6,9 @@ import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.button.interfaces.ISliderButton;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -22,7 +24,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
         this.config = config;
         this.updateSliderRatioByConfig();
         this.isDouble = config.getType() == ConfigType.DOUBLE;
-        if (this.isDouble) this.tooltip(this.castDoubleString());
+        if (this.isDouble) this.setHoverStrings(this.castDoubleString());
     }
 
     @Override
@@ -40,8 +42,10 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
                     this.updateString();
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
-                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+                RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
+                RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+//                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
+//                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);// what does it do
             }
         }
     }
@@ -59,6 +63,14 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     }
 
     @Override
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        if (this.isMouseOver(mouseX, mouseY)) {
+            RenderUtils.drawHoverText(mouseX, mouseY, this.getHoverStrings(), drawContext);
+        }
+    }
+
+    @Override
     public void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
         this.dragging = false;
     }
@@ -66,7 +78,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     @Override
     public void updateString() {
         this.displayString = this.config.getDisplayText();
-        if (this.isDouble) this.tooltip(this.castDoubleString());
+        if (this.isDouble) this.setHoverStrings(this.castDoubleString());
     }
 
     @Override
@@ -83,7 +95,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
         String text = this.config.getStringValue();
         if (text.length() > 11) {
             double doubleValue = ((ConfigDouble) this.config).getDoubleValue();
-            text = String.format("%e", doubleValue);
+            text = String.format("%.8f", doubleValue);
         }
         return text;
     }

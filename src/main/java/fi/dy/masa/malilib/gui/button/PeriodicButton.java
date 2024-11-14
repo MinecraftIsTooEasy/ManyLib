@@ -15,7 +15,7 @@ public class PeriodicButton<T extends IConfigBase & IConfigPeriodic> extends But
     public PeriodicButton(int x, int y, int width, int height, T configPeriodic, IButtonActionListener onPress) {
         super(x, y, width, height, configPeriodic.getDisplayText(), onPress);
         this.configPeriodic = configPeriodic;
-        this.tooltip(configPeriodic.getConfigGuiDisplayComment());
+        this.setHoverStrings(configPeriodic.getConfigGuiDisplayComment());
     }
 
     @Override

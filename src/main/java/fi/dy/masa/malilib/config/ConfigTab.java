@@ -1,33 +1,29 @@
 package fi.dy.masa.malilib.config;
 
-import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.compat.PinyinHandler;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
 import fi.dy.masa.malilib.gui.screen.util.SortCategory;
 import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ConfigTab {
-    final static Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR, ConfigType.HOTKEY, ConfigType.TOGGLE);
     String unlocalizedName;
-    final List<ConfigBase<?>> allConfigs;
+    final ImmutableList<ConfigBase<?>> allConfigs;
     List<ConfigBase<?>> searchableConfigs;
     String searchText;
 
     public ConfigTab(String unlocalizedName, List<?> allConfigs) {
         this.unlocalizedName = unlocalizedName;
-        this.allConfigs = new ArrayList<>();
+        ImmutableList.Builder<ConfigBase<?>> builder = ImmutableList.builder();
         for (Object allConfig : allConfigs) {
             ConfigBase<?> config = (ConfigBase<?>) allConfig;
-            if (supportedConfigTypes.contains(config.getType())) {
-                this.allConfigs.add(config);
-            }
+            if (ConfigItem.supported(config)) builder.add(config);
         }
+        this.allConfigs = builder.build();
         this.searchableConfigs = new ArrayList<>(this.allConfigs);
     }
 
@@ -49,38 +45,25 @@ public class ConfigTab {
 
     public void sort(SortCategory sortCategory) {
         if (sortCategory == SortCategory.Default) {
-            if (this.searchText == null || this.searchText.isEmpty()) {
+            if (this.searchText == null || this.searchText.isEmpty()) {// not searching: default order
                 this.searchableConfigs = new ArrayList<>(this.allConfigs);
-            } else {
-                this.updateSearchableConfigs(this.searchText);
+            } else {//
+                this.updateSearchableConfigs(this.searchText);// searching: do one search
             }
-        } else {
+        } else {// with category
             this.searchableConfigs.sort(sortCategory.category);
         }
     }
 
     public void updateSearchableConfigs(String input) {
         this.searchText = input;
+        if (input.isEmpty()) {
+            this.resetSearchableConfigs();
+            return;
+        }
         this.searchableConfigs = this.allConfigs.stream()
-                .filter(configBase -> this.stringMatchesInput(configBase.getConfigGuiDisplayName(), input))
+                .filter(configBase -> StringUtils.stringMatchesInput(configBase.getConfigGuiDisplayName(), input))
                 .collect(Collectors.toList());
-    }
-
-    private boolean stringMatchesInput(String string, String input) {
-        if (string.toLowerCase().contains(input.toLowerCase())) {
-            return true;
-        }
-        PinyinHandler instance = PinyinHandler.getInstance();
-        if (instance.isValid()) {
-            try {
-                if (instance.contains(string, input)) {
-                    return true;
-                }
-            } catch (Exception e) {
-                ManyLib.logger.warn("PinyinHandler: failed to match input");
-            }
-        }
-        return false;
     }
 
     public void resetSearchableConfigs() {
@@ -93,13 +76,5 @@ public class ConfigTab {
 
     public ConfigBase<?> getSearchableConfig(int index) {
         return this.searchableConfigs.get(index);
-    }
-
-    public int getMaxStatusForScreen(int pageCapacity) {
-        if (this.getSearchableConfigSize() > pageCapacity) {
-            return this.getSearchableConfigSize() - pageCapacity;
-        } else {
-            return 0;
-        }
     }
 }

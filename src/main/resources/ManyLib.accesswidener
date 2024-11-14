@@ -14,3 +14,7 @@ accessible field net/minecraft/GuiTextField height I
 
 accessible field net/minecraft/GuiTextField enableBackgroundDrawing Z
 accessible field net/minecraft/GuiTextField fontRenderer Lnet/minecraft/FontRenderer;
+
+accessible field net/minecraft/GuiContainer theSlot Lnet/minecraft/Slot;
+
+accessible class net/minecraft/SlotCreativeInventory

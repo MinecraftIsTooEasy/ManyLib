@@ -96,7 +96,12 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfig
 
     @Override
     public void setIsOn(boolean status) {
+        boolean oldValue = this.status;
         this.status = status;
+
+        if (oldValue != this.status) {
+            this.onValueChanged();
+        }
     }
 
     @Override
@@ -116,6 +121,6 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfig
 
     @Override
     public void setBooleanValue(boolean value) {
-        this.status = value;
+        this.setIsOn(value);
     }
 }

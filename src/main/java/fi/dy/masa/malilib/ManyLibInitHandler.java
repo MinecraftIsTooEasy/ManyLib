@@ -3,6 +3,7 @@ package fi.dy.masa.malilib;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.fml.ManyLibEventsFML;
 import fi.dy.masa.malilib.gui.screen.FakeModMenu;
+import fi.dy.masa.malilib.gui.screen.GlobalSearchScreen;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
@@ -17,6 +18,7 @@ public class ManyLibInitHandler implements IInitializationHandler {
         ConfigManager.getInstance().registerConfig(ManyLibConfig.getInstance());
         ManyLibConfig.OpenConfigMenu.getKeybind().setCallback(new CallbackOpenConfigGui());
         ManyLibConfig.OpenModMenu.getKeybind().setCallback(new CallbackOpenModMenu());
+        ManyLibConfig.SearchAny.getKeybind().setCallback(new CallbackSearchAny());
     }
 
     private static class CallbackOpenConfigGui implements IHotkeyCallback {
@@ -33,6 +35,15 @@ public class ManyLibInitHandler implements IInitializationHandler {
         public boolean onKeyAction(KeyAction action, IKeybind key) {
             Minecraft minecraft = Minecraft.getMinecraft();
             minecraft.displayGuiScreen(new FakeModMenu(minecraft.currentScreen));
+            return true;
+        }
+    }
+
+    private static class CallbackSearchAny implements IHotkeyCallback {
+        @Override
+        public boolean onKeyAction(KeyAction action, IKeybind key) {
+            Minecraft minecraft = Minecraft.getMinecraft();
+            minecraft.displayGuiScreen(new GlobalSearchScreen(null));
             return true;
         }
     }

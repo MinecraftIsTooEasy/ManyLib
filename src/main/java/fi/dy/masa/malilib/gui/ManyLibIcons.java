@@ -10,6 +10,7 @@ public enum ManyLibIcons implements IGuiIcon {
     PageUpButton(40, 100, 20, 20, true),
     ToggleOn(0, 160, 20, 20),
     ToggleOff(0, 180, 20, 20),
+    MenuIcon(100, 100, 20, 20, true),
 
     ARROW_UP(108, 0, 15, 15),
     ARROW_DOWN(108, 15, 15, 15),
@@ -18,7 +19,8 @@ public enum ManyLibIcons implements IGuiIcon {
     BTN_SLIDER(153, 0, 16, 16),
     BTN_TXTFIELD(153, 16, 16, 16),
     BTN_PLUSMINUS_16(153, 32, 16, 16),
-    SEARCH(201, 0, 12, 12, 0, 0);;
+    SEARCH(201, 0, 12, 12, 0, 0),
+    ;
 
     public static final ResourceLocation TEXTURE = new ResourceLocation("textures/manyLib/gui/gui_widgets.png");
 

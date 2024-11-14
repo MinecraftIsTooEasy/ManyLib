@@ -23,14 +23,19 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonGeneric
         this.setRenderDefaultBackground(false);
     }
 
-    public void updateArguments(int pageCapacity, int total) {
+    public void updateArguments(boolean visible) {
+        this.setVisible(visible);
+        this.updateArguments(this.screen.getMaxCapacity(), this.screen.getContentSize());
+    }
+
+    private void updateArguments(int pageCapacity, int contentSize) {
         float temp;
-        if (total <= pageCapacity) {
+        if (contentSize <= pageCapacity) {
             temp = 1.0F;
             this.maxStatus = 0;
         } else {
-            temp = (float) pageCapacity / total;
-            this.maxStatus = total - pageCapacity;
+            temp = (float) pageCapacity / contentSize;
+            this.maxStatus = contentSize - pageCapacity;
         }
         this.percentage = temp;
         this.sliderHeight = (int) (height * temp);

@@ -2,15 +2,17 @@ package fi.dy.masa.malilib.gui.button;
 
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
+import fi.dy.masa.malilib.gui.button.interfaces.IButtonUpdateListener;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ButtonGeneric extends ButtonBase {
     @Nullable
     protected IGuiIcon icon;
-//    protected LeftRight alignment = LeftRight.LEFT;
+    //    protected LeftRight alignment = LeftRight.LEFT;
     protected boolean textCentered = true;
     protected boolean renderDefaultBackground = true;
 
@@ -37,6 +39,12 @@ public class ButtonGeneric extends ButtonBase {
         return this;
     }
 
+    @Override
+    public ButtonGeneric setOnUpdate(@Nullable IButtonUpdateListener updateListener) {
+        this.updateListener = updateListener;
+        return this;
+    }
+
 //    /**
 //     * Set the icon aligment.<br>
 //     * Note: Only LEFT and RIGHT alignments work properly.
@@ -57,6 +65,7 @@ public class ButtonGeneric extends ButtonBase {
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         if (this.visible) {
+            if (this.updateListener != null) this.updateListener.onUpdate(this);
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
             int buttonStyle = this.getTextureOffset(this.hovered);
@@ -113,14 +122,14 @@ public class ButtonGeneric extends ButtonBase {
     public static class Builder {
         private String message;
         private final IButtonActionListener action;
-        @Nullable
-        private String tooltip;
+        private String[] hoverStrings = new String[0];
         private int x;
         private int y;
         private int width = 150;
         private int height = 20;
         private IGuiIcon icon;
         private boolean renderDefaultBackground = true;
+        private IButtonUpdateListener updateListener;
 
         private Builder(String message, IButtonActionListener listener) {
             this.message = message;
@@ -155,8 +164,8 @@ public class ButtonGeneric extends ButtonBase {
             return this.position(x, y).size(width, height);
         }
 
-        public Builder tooltip(@Nullable String tooltip) {
-            this.tooltip = tooltip;
+        public Builder hoverStrings(String... hoverStrings) {
+            this.hoverStrings = hoverStrings;
             return this;
         }
 
@@ -165,12 +174,22 @@ public class ButtonGeneric extends ButtonBase {
             return this;
         }
 
+        public Builder onUpdate(IButtonUpdateListener updateListener) {
+            this.updateListener = updateListener;
+            return this;
+        }
+
         public ButtonGeneric build() {
             ButtonGeneric buttonGeneric = new ButtonGeneric(this.x, this.y, this.width, this.height, this.message, this.action);
-            buttonGeneric.tooltip(this.tooltip);
             buttonGeneric.icon = this.icon;
             buttonGeneric.renderDefaultBackground = this.renderDefaultBackground;
+            buttonGeneric.setOnUpdate(this.updateListener);
+            buttonGeneric.setHoverStrings(this.hoverStrings);
             return buttonGeneric;
+        }
+
+        public void addToList(List<ButtonGeneric> list) {
+            list.add(this.build());
         }
     }
 }

@@ -7,9 +7,7 @@ import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.EnumChatFormatting;
-import net.xiaoyu233.fml.FishModLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static fi.dy.masa.malilib.ManyLib.MOD_ID;
@@ -18,16 +16,18 @@ public class ManyLibConfig extends SimpleConfigs {
     private static final ManyLibConfig Instance;
     public static final List<ConfigHotkey> hotkeys;
     public static final List<ConfigBase<?>> values;//openValueMenu
-    public static final ConfigHotkey OpenConfigMenu = new ConfigHotkey("manyLib.openMenu", "M,C", "按下打开ManyLib数值配置页面");
-    public static final ConfigHotkey OpenModMenu = new ConfigHotkey("manyLib.openModMenu", KeybindMulti.fromStorageString("M", KeybindSettings.RELEASE), "按下打开使用ManyLib的模组的菜单");
+    public static final ConfigHotkey OpenConfigMenu = new ConfigHotkey("manyLib.openMenu", "M,C", "打开ManyLib自身配置页面");
+    public static final ConfigHotkey OpenModMenu = new ConfigHotkey("manyLib.openModMenu", KeybindMulti.fromStorageString("M", KeybindSettings.RELEASE), "打开ManyLib全部用户的菜单");
+    public static final ConfigHotkey SearchAny = new ConfigHotkey("manyLib.searchAny", "M,A", "ManyLib全局配置搜索");
     public static final ConfigBoolean HideConfigButton = new ConfigBoolean("manyLib.hideValueButton", false, "隐藏在游戏主界面以及暂停界面的数值配置按钮");
     public static final ConfigInteger HoverTextYLevel = new ConfigInteger("manyLib.hoverInfoY", 70, 0, 512, false, "从屏幕底部往上数");
     public static final ConfigColor HighlightColor = new ConfigColor("高亮颜色", "#77777777");
     public static final ConfigEnum<EnumChatFormatting> TitleFormat = new ConfigEnum<>("标题格式", EnumChatFormatting.WHITE);
+    public static final ConfigBoolean AutoSaveLoad = new ConfigBoolean("自动读存", true, "(对所有模组有效)进入世界时读取配置文件, 退出时保存");
 
-//    public static final ConfigDouble testDoubleBox = new ConfigDouble("Double文本框", 0.0d, -1.0d, 1.0d, false, "测试");
+    //    public static final ConfigDouble testDoubleBox = new ConfigDouble("Double文本框", 0.0d, -1.0d, 1.0d, false, "测试");
 //    public static final ConfigDouble testDoubleSlider = new ConfigDouble("Double滑块", 0.0d, -1.0d, 1.0d, true, "测试");
-//    public static final ConfigInteger testIntegerBox = new ConfigInteger("Integer文本框", 0, -2, 2, false, "测试");
+    //    public static final ConfigInteger testIntegerBox = new ConfigInteger("Integer文本框", 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false, "测试");
 //    public static final ConfigInteger testIntegerSlider = new ConfigInteger("Integer滑块", 0, -2, 2, true, "测试");
 //    public static final ConfigString testString = new ConfigString("String文本框", "文本", "测试");
 
@@ -39,9 +39,8 @@ public class ManyLibConfig extends SimpleConfigs {
     }
 
     static {
-        values = new ArrayList<>();
-        values.addAll(List.of(HideConfigButton, HoverTextYLevel, HighlightColor, TitleFormat));
-        hotkeys = List.of(OpenConfigMenu, OpenModMenu);
+        values = List.of(HideConfigButton, HoverTextYLevel, HighlightColor, TitleFormat, AutoSaveLoad);
+        hotkeys = List.of(OpenConfigMenu, OpenModMenu, SearchAny);
         Instance = new ManyLibConfig(MOD_ID, hotkeys, values);
     }
 
@@ -52,14 +51,6 @@ public class ManyLibConfig extends SimpleConfigs {
     @Override
     public String getMenuComment() {
         return StringUtils.translate("config.menu.comment." + this.name, OpenConfigMenu.getDisplayText());
-    }
-
-    @Override
-    public void load() {
-        super.load();
-        if (FishModLoader.hasMod("modmenu")) {
-            HideConfigButton.setBooleanValue(true);
-        }
     }
 
     public static class Debug {

@@ -30,15 +30,15 @@ public abstract class SimpleConfigs implements IConfigHandler {
         this.name = name;
         this.optionsFile = new File("config" + File.separator + name + ".json");
         if (values == null || values.isEmpty()) {
-            this.values = null;
+            this.values = List.of();
         } else {
             this.values = new ArrayList<>();
             castFill(this.values, values);
         }
         if (hotkeys == null || hotkeys.isEmpty()) {
-            this.hotkeys = null;
+            this.hotkeys = List.of();
         } else {
-            this.hotkeys = hotkeys;// below is registering
+            this.hotkeys = hotkeys;
         }
         this.menuComment = menuComment;
     }
@@ -57,16 +57,17 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     @Override
     public GuiScreen getConfigScreen(GuiScreen parentScreen) {
+//        return new DefaultConfigScreen(parentScreen, this);
         return new DefaultConfigScreen(parentScreen, this);
     }
 
     @Override
     public void save() {
         JsonObject configRoot = new JsonObject();
-        if (this.hotkeys != null && !this.hotkeys.isEmpty()) {
+        if (!this.hotkeys.isEmpty()) {
             ConfigUtils.writeConfigBase(configRoot, "HotKeys", this.hotkeys);
         }
-        if (this.values != null && !this.values.isEmpty()) {
+        if (!this.values.isEmpty()) {
             ConfigUtils.writeConfigBase(configRoot, "Values", this.values);
         }
         JsonUtils.writeJsonToFile(configRoot, this.optionsFile);
@@ -112,10 +113,10 @@ public abstract class SimpleConfigs implements IConfigHandler {
     @Override
     public List<ConfigTab> getConfigTabs() {
         List<ConfigTab> configTabs = new ArrayList<>();
-        if (this.values != null) {
+        if (!this.values.isEmpty()) {
             configTabs.add(new ConfigTab("generic", this.values));
         }
-        if (this.hotkeys != null) {
+        if (!this.hotkeys.isEmpty()) {
             List<ConfigBase<?>> temp = new ArrayList<>();
             castFill(temp, this.hotkeys);
             configTabs.add(new ConfigTab("hotkey", temp));

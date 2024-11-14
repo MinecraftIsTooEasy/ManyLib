@@ -42,6 +42,11 @@ public class KeybindMulti implements IKeybind {
     }
 
     @Override
+    public KeybindSettings getDefaultSettings() {
+        return this.defaultSettings;
+    }
+
+    @Override
     public void setSettings(KeybindSettings settings) {
         this.settings = settings;
     }

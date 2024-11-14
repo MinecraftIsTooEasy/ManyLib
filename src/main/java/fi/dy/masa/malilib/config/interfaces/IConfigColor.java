@@ -11,4 +11,8 @@ public interface IConfigColor {
     Color4f getColor();
 
     String getColorString();
+
+    void setColor(Color4f color);
+
+    Color4f getDefaultColor();
 }

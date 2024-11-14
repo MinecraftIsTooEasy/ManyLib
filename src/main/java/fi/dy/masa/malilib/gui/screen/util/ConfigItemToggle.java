@@ -13,23 +13,14 @@ class ConfigItemToggle extends ConfigItemHotkey {
         super(index, config, screen);
         this.toggleButton = ScreenConstants.getConfigToggleButton(index, screen, button -> {
             ((ConfigToggle) this.config).toggle();
-            this.updateStringByToggleStatus();
         });
-        this.updateStringByToggleStatus();
+        this.toggleButton.setOnUpdate(button -> {
+            if (((ConfigToggle) this.config).isOn()) {
+                this.toggleButton.setDisplayString(GuiBase.TXT_GREEN + StringUtils.translate("boolean.true"));
+            } else {
+                this.toggleButton.setDisplayString(GuiBase.TXT_RED + StringUtils.translate("boolean.false"));
+            }
+        });
         this.buttons.add(this.toggleButton);
-    }
-
-    @Override
-    public void resetButtonClicked() {
-        super.resetButtonClicked();
-        this.updateStringByToggleStatus();
-    }
-
-    private void updateStringByToggleStatus() {
-        if (((ConfigToggle) this.config).isOn()) {
-            this.toggleButton.setDisplayString(GuiBase.TXT_GREEN + StringUtils.translate("boolean.true"));
-        } else {
-            this.toggleButton.setDisplayString(GuiBase.TXT_RED + StringUtils.translate("boolean.false"));
-        }
     }
 }

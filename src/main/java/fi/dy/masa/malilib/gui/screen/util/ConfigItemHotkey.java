@@ -18,7 +18,7 @@ import java.util.List;
 
 class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     ButtonBase hotkeyButton;
-    ButtonBase jumpToSettings;
+    ButtonBase keybindSettingsButton;
     protected final List<String> overlapInfo = new ArrayList<>();
     boolean editing;
     IKeybind keybind;
@@ -28,30 +28,36 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
         this.keybind = config.getKeybind();
         this.addHotKeyButton(index);
         this.addKeybindSettingsButton(index);
-        this.updateDisplayStringByKeybind();
     }
 
     private void addKeybindSettingsButton(int index) {
-        this.jumpToSettings = ScreenConstants.getJumpButton(index, this.screen, button -> this.screen.mc.displayGuiScreen(new KeySettingsScreen(this.screen, this.config.getConfigGuiDisplayName(), this.keybind)));
-        this.buttons.add(this.jumpToSettings);
+        this.keybindSettingsButton = ScreenConstants.getJumpButton(index, this.screen, button -> this.screen.mc.displayGuiScreen(new KeySettingsScreen(this.screen, this.config.getConfigGuiDisplayName(), this.keybind)));
+        this.buttons.add(this.keybindSettingsButton);
     }
 
     protected void addHotKeyButton(int index) {
         this.hotkeyButton = ScreenConstants.getHotkeyButton(index, this.config, this.screen, button -> {
             this.editing = true;
             this.keybind.clearKeys();
-            this.updateDisplayStringByKeybind();
         });
+        this.hotkeyButton.setHoverInfoRequiresShift(true);
         this.buttons.add(this.hotkeyButton);
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        this.updateDisplayStringByKeybind();
+        super.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.postRenderHovered(mouseX, mouseY, selected, drawContext);
-        if (this.overlapInfo != null && !this.overlapInfo.isEmpty() && this.hotkeyButton.isMouseOver()) {
-            RenderUtils.drawTextList(GuiScreen.isShiftKeyDown() ? this.overlapInfo : List.of(StringUtils.translate("manyLib.gui.button.hover.hold_shift_for_info")), mouseX, mouseY, drawContext);
+        if (this.hotkeyButton.isMouseOver() && this.hotkeyButton.hasHoverText()) {
+            RenderUtils.drawHoverText(mouseX, mouseY, this.hotkeyButton.getHoverStrings(), drawContext);
         }
-        if (this.jumpToSettings.isMouseOver()) {
+        this.hotkeyButton.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        if (this.keybindSettingsButton.isMouseOver()) {
             List<String> strings = new ArrayList<>();
             strings.add(StringUtils.translate("manyLib.keybind.settings") + ":");
             strings.addAll(this.keybind.getSettings().toStringList());
@@ -60,41 +66,32 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     }
 
     @Override
-    public void update() {
-        super.update();
-        this.updateConflicts();
-    }
-
-    @Override
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
         if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
         if (this.editing && !this.hotkeyButton.isMouseOver()) {
-            this.save();
+            this.editing = false;
             return true;
         }
         return false;
     }
 
     @Override
-    public void resetButtonClicked() {
-        this.updateDisplayStringByKeybind();
-    }
-
-    @Override
     protected boolean onCharTypedImpl(char charIn, int modifiers) {
         if (!this.editing) return false;
         if (modifiers == 1 || modifiers == 28 || modifiers == 156) {// esc and two enters
-            this.save();
+            this.editing = false;
             return true;
         }
         this.keybind.addKey(modifiers);
-        this.updateDisplayStringByKeybind();
         return true;
     }
 
-    private void save() {
-        this.editing = false;
-        this.updateDisplayStringByKeybind();
+    @Override
+    protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
+        super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
+        if (!this.hotkeyButton.isMouseOver()) {
+            this.editing = false;
+        }
     }
 
     private void updateDisplayStringByKeybind() {
@@ -106,7 +103,7 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
         if (this.editing) {
             string = GuiBase.TXT_YELLOW + "> " + string + " <";
         } else {
-            if (this.overlapInfo != null && !this.overlapInfo.isEmpty()) {
+            if (!this.overlapInfo.isEmpty()) {
                 string = GuiBase.TXT_GOLD + string;
             }
         }
@@ -116,9 +113,6 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     protected void updateConflicts() {
         List<KeybindCategory> categories = InputEventHandler.getKeybindManager().getKeybindCategories();
         List<IHotkey> overlaps = new ArrayList<>();
-        if (this.overlapInfo == null) {
-            return;
-        }
         this.overlapInfo.clear();
 
         for (KeybindCategory category : categories) {
@@ -146,5 +140,8 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
                 overlaps.clear();
             }
         }
+
+        this.hotkeyButton.setHoverStrings(this.overlapInfo);
+
     }
 }

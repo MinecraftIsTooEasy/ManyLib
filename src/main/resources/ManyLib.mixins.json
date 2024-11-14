@@ -8,11 +8,15 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "ClientPlayerMixin",
+    "GuiContainerCreativeMixin",
+    "GuiContainerMixin",
     "GuiIngameMenuMixin",
     "GuiIngameMixin",
     "GuiMainMenuMixin",
     "GuiScreenMixin",
     "GuiTextFieldMixin",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "SlotCreativeInventoryMixin"
   ]
 }

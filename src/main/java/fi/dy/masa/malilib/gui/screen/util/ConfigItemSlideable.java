@@ -1,9 +1,11 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
+import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.button.SliderButton;
 import net.minecraft.GuiScreen;
@@ -15,7 +17,8 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
 
     public ConfigItemSlideable(int index, T config, GuiScreen screen) {
         super(index, config, screen);
-        this.inputBox = ScreenConstants.getInputBoxForSlideable(index, config, screen);
+        this.textFieldWrapper = ScreenConstants.getWrapperForSlideable(index, config, this::getConfigString, screen);
+        this.textFieldWrapper.setText(this.config.getStringValue());
         this.useSlider = config.shouldUseSlider();
         this.slideableToggleButton = ScreenConstants.getSlideableToggleButton(index, this.useSlider, screen, button -> this.toggle());
         this.buttons.add(this.slideableToggleButton);
@@ -28,8 +31,14 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
         if (this.useSlider) {
             this.sliderButton.render(mouseX, mouseY, this.sliderButton.isMouseOver(), drawContext);
         } else {
-            this.inputBox.render(mouseX, mouseY, selected, drawContext);
+            this.textFieldWrapper.render(mouseX, mouseY, drawContext);
         }
+    }
+
+    @Override
+    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
+        this.sliderButton.postRenderHovered(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
@@ -73,19 +82,28 @@ class ConfigItemSlideable<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     private void toggle() {
         this.slideableToggleButton.toggle();
         this.config.toggleUseSlider();
-        if (this.useSlider) {
-            this.inputBox.setTextByValue();
-            this.inputBox.setValueByText();
-            this.inputBox.setTextByValue();// translating?
-            this.inputBox.setVisible(true);
+        if (this.useSlider) {// now is slider; update the text field before using
+            String cast = this.getConfigString();
+            this.textFieldWrapper.setText(cast);
+            this.config.setValueFromString(cast);
+            this.textFieldWrapper.setVisible(true);
             this.sliderButton.setVisible(false);
-        } else {
-            this.inputBox.setValueByText();
+        } else {// now is text field; update the slider before using
+            this.config.setValueFromString(this.textFieldWrapper.getText());
             this.sliderButton.updateString();
             this.sliderButton.updateSliderRatioByConfig();
-            this.inputBox.setVisible(false);
+            this.textFieldWrapper.setVisible(false);
             this.sliderButton.setVisible(true);
         }
         this.useSlider = !this.useSlider;
+    }
+
+    private String getConfigString() {
+        String text = this.config.getStringValue();
+        if (this.config.getType() == ConfigType.DOUBLE && text.length() > 11) {
+            double doubleValue = ((ConfigDouble) this.config).getDoubleValue();
+            text = String.format("%.8f", doubleValue);
+        }
+        return text;
     }
 }

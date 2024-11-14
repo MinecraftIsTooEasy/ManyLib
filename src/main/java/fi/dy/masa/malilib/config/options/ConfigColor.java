@@ -12,15 +12,16 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigColor extends ConfigInteger implements IConfigColor {
     private Color4f color;
+    private Color4f defaultColor;
 
     public ConfigColor(String name, String defaultValue) {
-        super(name, StringUtils.getColor(defaultValue, 0), null);
-        this.color = Color4f.fromColor(this.getIntegerValue());
+        this(name, defaultValue, null);
     }
 
     public ConfigColor(String name, String defaultValue, String comment) {
         super(name, StringUtils.getColor(defaultValue, 0), comment);
-        this.color = Color4f.fromColor(this.getIntegerValue());
+        this.defaultColor = Color4f.fromColor(this.getIntegerValue());
+        this.color = this.defaultColor;
     }
 
     @Override
@@ -31,6 +32,11 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
     @Override
     public Color4f getColor() {
         return this.color;
+    }
+
+    @Override
+    public Color4f getDefaultColor() {
+        return this.defaultColor;
     }
 
     @Override
@@ -52,6 +58,11 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
     public void setIntegerValue(int value) {
         this.color = Color4f.fromColor(value);
         super.setIntegerValue(value); // This also calls the callback, if set
+    }
+
+    public void setColor(Color4f color) {
+        this.color = color;
+        super.setIntegerValue(color.intValue);
     }
 
     @Override

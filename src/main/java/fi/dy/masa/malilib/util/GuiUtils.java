@@ -27,6 +27,12 @@ public class GuiUtils {
         return Minecraft.getMinecraft().displayHeight;
     }
 
+    public static int getScaleFactor() {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        ScaledResolution scaledResolution = new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);
+        return scaledResolution.getScaleFactor();
+    }
+
     @Nullable
     public static GuiScreen getCurrentScreen() {
         return Minecraft.getMinecraft().currentScreen;

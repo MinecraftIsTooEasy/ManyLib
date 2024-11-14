@@ -1,5 +1,7 @@
 package fi.dy.masa.malilib.util;
 
+import fi.dy.masa.malilib.ManyLib;
+import fi.dy.masa.malilib.compat.PinyinHandler;
 import fi.dy.masa.malilib.gui.DrawContext;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -251,11 +253,6 @@ public class StringUtils {
         return I18n.getStringParams(translationKey, args);
     }
 
-    /**
-     * Just a wrapper to get the font height from the Font/TextRenderer
-     *
-     * @return
-     */
     public static int getFontHeight() {
         return Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     }
@@ -266,5 +263,22 @@ public class StringUtils {
 
     public static void drawString(int x, int y, int color, String text, DrawContext drawContext) {
         drawContext.drawText(Minecraft.getMinecraft().fontRenderer, text, x, y, color, false);
+    }
+
+    public static boolean stringMatchesInput(String string, String input) {
+        if (string.toLowerCase().contains(input.toLowerCase())) {
+            return true;
+        }
+        PinyinHandler instance = PinyinHandler.getInstance();
+        if (instance.isValid()) {
+            try {
+                if (instance.contains(string, input)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                ManyLib.logger.warn("PinyinHandler: failed to match input");
+            }
+        }
+        return false;
     }
 }

@@ -1,162 +1,158 @@
 package fi.dy.masa.malilib.gui.screen;
 
+import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.ConfigTab;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
+import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.button.ScrollBar;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.button.PullDownButton;
+import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
 import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
-import fi.dy.masa.malilib.gui.screen.interfaces.ScreenParented;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
 import fi.dy.masa.malilib.gui.screen.util.*;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
-import net.minecraft.MathHelper;
+import net.minecraft.GuiYesNoMITE;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-public class DefaultConfigScreen extends ScreenParented implements Searchable, StatusScreen {
+public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Searchable {
     public final IConfigHandler configInstance;
     public ConfigTab currentTab;
     public int currentTabIndex;
-    private final List<ConfigItem<?>> configItems = new ArrayList<>();
-    public ScrollBar<?> scrollBar;
-    private int status;
-    private int maxStatus;
-    private boolean singlePage;
-    public boolean needInit;
+    public boolean needSyncTab;
     private boolean firstSeen = true;
+    private final List<ConfigTab> configTabs;
 
     public DefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
-        super(parentScreen);
+        super();
+        this.setParent(parentScreen);
         this.configInstance = configInstance;
+        this.configTabs = configInstance.getConfigTabs();
         Keyboard.enableRepeatEvents(true);
-        this.container = new DefaultConfigScreenContainer(this);
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        if (this.firstSeen) {
-            this.currentTabIndex = ProgressSaving.getPage(this.configInstance.getName());
-        }
-        ((DefaultConfigScreenContainer) this.container).setCurrentTab(this.currentTabIndex);
-        this.updateConfigItemsAfterTabChange();
+        this.initElements();
+        this.setCurrentTab(this.firstSeen ? ProgressSaving.getPage(this.configInstance.getName()) : this.currentTabIndex);
+        this.needSyncTab = false;// first time special
+        this.onContentChange();
         if (this.firstSeen) {
             this.firstSeen = false;
             this.setStatus(ProgressSaving.getStatus(this.configInstance.getName()));
         }
         this.onStatusChange();
-        this.updateScreen();
     }
 
-    private void updateConfigItems() {
-        this.configItems.clear();
-        for (int i = this.status; i < this.currentTab.getSearchableConfigSize() && i < this.status + ScreenConstants.pageCapacity; i++) {
-            ConfigItem<?> configItem = ConfigItem.getConfigItem(i - this.status, this.currentTab.getSearchableConfig(i), this);
-            this.configItems.add(configItem);
+    protected void initElements() {
+        WidthAdder widthAdder = new WidthAdder(20);
+        this.addTabButtons(widthAdder);
+        String configInstanceName = this.configInstance.getName();
+        this.addButton(ScreenConstants.getResetAllButton(widthAdder, () -> this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified), button -> {
+            String question = StringUtils.translate("manyLib.gui.reset_tab_question"), yes = StringUtils.translate("gui.yes"), no = StringUtils.translate("gui.no");
+            GuiYesNoMITE var3 = new GuiYesNoMITE
+                    (this, question, configInstanceName + ": " + this.currentTab.getGuiDisplayName(), yes, no, ScreenConstants.confirmFlag);
+            this.mc.displayGuiScreen(var3);
+        }));
+        ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
+        this.addButton(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
+            ((IButtonPeriodic) button).next();
+            this.sort(sortCategoryConfigEnum.getEnumValue());
+        }));
+        this.addWidget(ScreenConstants.getSearchButton(this));
+        PullDownButton<?> pullDownButton = ScreenConstants.getPullDownButton(this, this.configInstance);
+        this.addButton(pullDownButton);
+        pullDownButton.initDropDownEntries(this.configInstance, this.getParent());
+        pullDownButton.addToList(this::addButton);
+    }
+
+    void addTabButtons(WidthAdder widthAdder) {
+        for (int index = 0; index < this.configTabs.size(); index++) {
+            ConfigTab configTab = this.configTabs.get(index);
+            String name = configTab.getGuiDisplayName();
+            int stringWidth = this.fontRenderer.getStringWidth(name);
+            int finalIndex = index;
+            this.addButton(ButtonGeneric.builder(name, button -> this.setCurrentTab(finalIndex))
+                    .onUpdate(button -> button.setEnabled(this.currentTabIndex != finalIndex))
+                    .dimensions(widthAdder.getWidth(), 30, stringWidth + 10, 20)
+                    .hoverStrings(configTab.getTooltip()).build());
+            widthAdder.addWidth(stringWidth + 14);
         }
     }
 
-    private void updateConfigItemsAfterTabChange() {
-        this.status = 0;
-        this.maxStatus = this.currentTab.getMaxStatusForScreen(ScreenConstants.pageCapacity);
-        this.singlePage = this.currentTab.getSearchableConfigSize() <= ScreenConstants.pageCapacity;
-        this.scrollBar.setVisible(!this.singlePage);
-        this.scrollBar.updateArguments(ScreenConstants.pageCapacity, this.currentTab.getSearchableConfigSize());
-        this.updateConfigItems();
+    void setCurrentTab(int index) {
+        this.needSyncTab = true;
+        this.currentTab = this.configTabs.get(index);
+        this.currentTabIndex = index;
     }
 
     @Override
-    protected void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
-        this.drawDefaultBackground();
-        this.getConfigItems().forEach(configItem -> configItem.render(mouseX, mouseY, false, drawContext));
-        this.container.render(mouseX, mouseY, false, drawContext);
-        this.getConfigItems().forEach(configItem -> configItem.postRenderHovered(mouseX, mouseY, false, drawContext));
-        this.container.postRenderHovered(mouseX, mouseY, false, drawContext);
+    protected void tickScreen() {
+        super.tickScreen();
+        this.setTitle(ManyLibConfig.TitleFormat.getEnumValue() + this.configInstance.getName() + " Configs");
     }
 
     @Override
-    protected void update() {
-        super.update();
-        if (!this.singlePage) this.wheelListener();
-        this.getConfigItems().forEach(ConfigItem::update);
+    protected ConfigItem<?> createEntry(int index) {
+        return ConfigItem.getConfigItem(index - this.status, this.currentTab.getSearchableConfig(index), this);
     }
 
     @Override
-    public void setStatus(int status) {
-        int oldStatus = this.status;
-        this.status = MathHelper.clamp_int(status, 0, this.maxStatus);
-        if (status != oldStatus) this.onStatusChange();
-    }
-
-    private void onStatusChange() {
-        this.updateConfigItems();
-        if (!this.singlePage) this.scrollBar.updateRatioByScreen(this.status);
-        this.updateScreen();
+    public int getContentSize() {
+        return this.currentTab.getSearchableConfigSize();
     }
 
     @Override
-    public int getStatus() {
-        return this.status;
+    public int getMaxCapacity() {
+        return 7;
     }
 
-    @Override
-    public int getMaxStatus() {
-        return this.maxStatus;
-    }
-
-    @Override
-    public void scroll(boolean isScrollDown) {
-        if (isScrollDown && this.status + ScreenConstants.pageCapacity < this.currentTab.getSearchableConfigSize()) {
-            this.addStatus(ScreenConstants.oneScroll);
-        }
-        if (!isScrollDown && this.status > 0) this.addStatus(-ScreenConstants.oneScroll);
-    }
-
-    //  Third block: only for compatibility with Modern Mite's IMBlocker, this block enables the input method.
-
+    //  Second block: only for compatibility with Modern Mite's IMBlocker, this block enables the input method.
     @Override
     protected boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
-            if (this.needInit) {
-                this.needInit = false;
+            if (this.needSyncTab) {
+                this.needSyncTab = false;
                 this.initGui();
             }
             return true;
         }
-        if (this.getConfigItems().anyMatch(configItem -> configItem.onMouseClicked(mouseX, mouseY, mouseButton)))
-            return true;
-        if (this.getConfigItems()
+        if (this.entries.stream()
                 .filter(configItem -> configItem instanceof AboutInputMethod)
                 .map(configItem -> (AboutInputMethod) configItem)
                 .anyMatch(aboutInputMethod -> aboutInputMethod.tryActivateIM(mouseX, mouseY, mouseButton))) return true;
         return false;
     }
 
+    private long lastShift = Long.MAX_VALUE;
+
     @Override
-    protected void onMouseReleased(int mouseX, int mouseY, int mouseButton) {
-        super.onMouseReleased(mouseX, mouseY, mouseButton);
-        this.getConfigItems().forEach(x -> x.onMouseReleased(mouseX, mouseY, mouseButton));
+    protected boolean onCharTyped(char charIn, int modifiers) {
+        if (super.onCharTyped(charIn, modifiers)) {
+            return true;
+        }
+        if (modifiers == Keyboard.KEY_LSHIFT) {
+            long time = System.currentTimeMillis();
+            if (time - this.lastShift < 200L) {
+                this.mc.displayGuiScreen(new GlobalSearchScreen(this));
+                return true;
+            } else {
+                this.lastShift = time;
+            }
+        }
+        return false;
     }
 
     @Override
     public void confirmClicked(boolean result, int flag) {
-        if (result && flag == ScreenConstants.confirmFlag) {
+        if (result && flag == ScreenConstants.confirmFlag)
             this.currentTab.getAllConfigs().forEach(IConfigResettable::resetToDefault);
-        }
         this.mc.displayGuiScreen(this);
-    }
-
-    @Override
-    protected boolean onCharTyped(char charIn, int modifiers) {
-        if (this.getConfigItems().anyMatch(configItem -> configItem.onCharTyped(charIn, modifiers))) return true;
-        if (super.onCharTyped(charIn, modifiers)) return true;
-        return false;
     }
 
     @Override
@@ -168,26 +164,16 @@ public class DefaultConfigScreen extends ScreenParented implements Searchable, S
         this.firstSeen = true;
     }
 
-    private Stream<ConfigItem<?>> getConfigItems() {
-        return this.configItems.stream();
-    }
-
-    public void sort(SortCategory sortCategory) {
+    void sort(SortCategory sortCategory) {
         this.currentTab.sort(sortCategory);
         this.status = 0;
-        this.updateConfigItems();
+        this.markShouldUpdateEntries();
     }
 
     @Override
     public void updateSearchResult(String input) {
         this.currentTab.updateSearchableConfigs(input);
-        this.updateConfigItemsAfterTabChange();
-    }
-
-    @Override
-    public void resetSearchResult() {
-        this.currentTab.resetSearchableConfigs();
-        this.updateConfigItemsAfterTabChange();
+        this.onContentChange();
     }
 
 }

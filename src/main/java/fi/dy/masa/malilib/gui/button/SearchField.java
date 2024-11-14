@@ -5,10 +5,15 @@ import fi.dy.masa.malilib.gui.ManyLibIcons;
 import fi.dy.masa.malilib.gui.button.interfaces.IToggleableElement;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.gui.widgets.WidgetTextField;
+import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.util.SystemUtils;
+
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 public class SearchField extends ButtonGeneric implements IToggleableElement {
-    private final WidgetTextField textField;
+    private final TextFieldWrapper<WidgetTextField> textFieldWrapper;
 
     private boolean searchEnabled;
 
@@ -16,9 +21,12 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
 
     public SearchField(int x, int y, int boxWidth, int boxHeight, Searchable searchable) {
         super(x, y, 12, 12, "", button -> ((SearchField) button).toggle());
-        this.tooltip(StringUtils.translate("manyLib.gui.button.search"));
-        this.textField = new WidgetTextField(x + 16, y - 1, boxWidth, boxHeight);
+        this.setHoverStrings(StringUtils.translate("manyLib.gui.button.search"));
         this.searchable = searchable;
+        this.textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(x + 16, y - 1, boxWidth, boxHeight), textField -> {
+            searchable.updateSearchResult(textField.getText());
+            return true;
+        });
         this.setVisible(false);
         this.icon = ManyLibIcons.SEARCH;
         this.setRenderDefaultBackground(false);
@@ -26,30 +34,34 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
 
     @Override
     protected boolean onCharTypedImpl(char charIn, int modifiers) {
-        if (this.textField.isFocused()) {
-            String temp = this.textField.getText();
-            this.textField.textboxKeyTyped(charIn, modifiers);
-            String after = this.textField.getText();
-            if (!after.equals(temp)) {
-                this.searchable.updateSearchResult(after);
-            }
-            if (modifiers == 1 || modifiers == 28 || modifiers == 156) {
-                this.textField.setFocused(false);
-            }
-            return true;
+        return this.textFieldWrapper.onCharTyped(charIn, modifiers);
+    }
+
+    public void initialSearch() {
+        this.toggle();// make visible
+        String content = "";
+        try {
+            content = SystemUtils.getClipboardContent();
+        } catch (IOException | UnsupportedFlavorException ignored) {
         }
-        return false;
+        this.textFieldWrapper.getTextField().setText(content);
+        this.selectAll();
+        this.searchable.updateSearchResult(content);
+    }
+
+    private void selectAll() {
+        this.textFieldWrapper.getTextField().charTyped('\u0001', 0);
     }
 
     @Override
     public boolean isMouseOver(int mouseX, int mouseY) {
-        return super.isMouseOver(mouseX, mouseY) || this.textField.isMouseOver(mouseX, mouseY);
+        return super.isMouseOver(mouseX, mouseY) || this.textFieldWrapper.getTextField().isMouseOver(mouseX, mouseY);
     }
 
     @Override
-    public void update() {
-        super.update();
-        this.textField.updateCursorCounter();
+    public void tickScreen() {
+        super.tickScreen();
+        this.textFieldWrapper.tickScreen();
     }
 
     @Override
@@ -57,23 +69,21 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
         if (super.isMouseOver(mouseX, mouseY) && super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
             return true;
         }
-        if (this.textField.isMouseOver(mouseX, mouseY)) {
-            return this.textField.onMouseClicked(mouseX, mouseY, mouseButton);
-        }
-        return false;
+        return this.textFieldWrapper.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
         super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
-        if (this.textField.isFocused() && !this.isMouseOver(mouseX, mouseY)) this.textField.setFocused(false);
+        if (this.textFieldWrapper.isFocused() && !this.isMouseOver(mouseX, mouseY))
+            this.textFieldWrapper.setFocused(false);
     }
 
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.render(mouseX, mouseY, selected, drawContext);
         if (this.visible && this.searchEnabled) {
-            this.textField.render(mouseX, mouseY, selected, drawContext);
+            this.textFieldWrapper.render(mouseX, mouseY, drawContext);
         }
     }
 
@@ -81,17 +91,17 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
     public void toggle() {
         this.setVisible(!this.searchEnabled);
         if (this.searchEnabled) {
-            this.searchable.resetSearchResult();
-            this.textField.setText("");
+            this.textFieldWrapper.getTextField().setText("");
+            this.searchable.updateSearchResult("");
         } else {
-            this.textField.setFocused(true);
+            this.textFieldWrapper.setFocused(true);
         }
         this.searchEnabled = !this.searchEnabled;
     }
 
     @Override
     public void setVisible(boolean visible) {
-        this.textField.setVisible(visible);
-        this.textField.setEnabled(visible);
+        this.textFieldWrapper.getTextField().setVisible(visible);
+        this.textFieldWrapper.getTextField().setEnabled(visible);
     }
 }

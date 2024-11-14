@@ -1,26 +1,40 @@
 package fi.dy.masa.malilib.gui.button;
 
 import fi.dy.masa.malilib.ManyLibConfig;
+import fi.dy.masa.malilib.config.ConfigManager;
+import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.ManyLibIcons;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
+import fi.dy.masa.malilib.gui.screen.util.DropDownEntry;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
+import net.minecraft.GuiScreen;
 
-public class PullDownButton extends ButtonGeneric {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+public class PullDownButton<T extends DropDownEntry> extends ButtonGeneric {
 
     private boolean expand;
 
-    public PullDownButton(int x, int y, int width, int height, String message, String tooltip, IButtonActionListener listener) {
+    List<T> dropDownEntries = new ArrayList<>();
+
+    Constructor<T> constructor;
+
+    public PullDownButton(int x, int y, int width, int height, String message, String tooltip, Constructor<T> constructor) {
         super(x, y, width, height, message, null);
         this.actionListener = button -> {
-            listener.actionPerformedWithButton(button);
+            this.dropDownEntries.forEach(dropDownEntry -> dropDownEntry.setVisible(!dropDownEntry.isVisible()));
             this.expand = !this.expand;
         };
-        this.tooltip(tooltip);
+        this.setHoverStrings(tooltip);
         this.setTextCentered(false);
         this.setRenderDefaultBackground(false);
+        this.constructor = constructor;
     }
 
     @Override
@@ -40,5 +54,35 @@ public class PullDownButton extends ButtonGeneric {
     protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
         super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
         if (this.expand && !this.isMouseOver(mouseX, mouseY)) this.actionListener.actionPerformedWithButton(this);
+    }
+
+    public void initDropDownEntries(IConfigHandler currentConfigInstance, GuiScreen parent) {
+        this.dropDownEntries.clear();
+        Map<String, IConfigHandler> configMap = ConfigManager.getInstance().getConfigMap();
+
+        String[] array = configMap.keySet().toArray(String[]::new);
+
+        for (int i = 0; i < array.length; i++) {
+            String key = array[i];
+            IConfigHandler iConfigHandler = configMap.get(key);
+            this.dropDownEntries.add(
+                    this.constructor.createEntry(
+                            i, this.x, this.y + this.height, iConfigHandler == currentConfigInstance, iConfigHandler.getName(),
+                            button -> this.mc.displayGuiScreen(iConfigHandler.getConfigScreen(parent))));
+        }
+    }
+
+    @Override
+    protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+        return super.onMouseClickedImpl(mouseX, mouseY, mouseButton);
+    }
+
+    public void addToList(Consumer<T> consumer) {
+        this.dropDownEntries.forEach(consumer);
+    }
+
+    @FunctionalInterface
+    public interface Constructor<T> {
+        T createEntry(int index, int startX, int startY, boolean present, String content, IButtonActionListener listener);
     }
 }

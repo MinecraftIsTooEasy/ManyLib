@@ -13,19 +13,22 @@ public enum SortCategory {
         PinyinHandler instance = PinyinHandler.getInstance();
         if (instance.isValid()) {
             try {
-                return instance.compareTheInit(a.getConfigGuiDisplayName(), b.getConfigGuiDisplayName());
+                return instance.compareTheInit(a, b);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 ManyLib.logger.warn("PinyinHandler: failed to compare config names");
             }
         }
-        return Default.category.compare(a, b);
+        return Default.stringComparator.compare(a, b);
     }),
-    Alphabetical((a, b) -> a.getConfigGuiDisplayName().compareToIgnoreCase(b.getConfigGuiDisplayName())),
-    Inverted((a, b) -> -Alphabetical.category.compare(a, b)),
+    Alphabetical(String::compareToIgnoreCase),
+    Inverted((a, b) -> -Alphabetical.stringComparator.compare(a, b)),
     ;
+    private final Comparator<String> stringComparator;
+
     public final Comparator<ConfigBase<?>> category;
 
-    SortCategory(Comparator<ConfigBase<?>> category) {
-        this.category = category;
+    SortCategory(Comparator<String> category) {
+        this.stringComparator = category;
+        this.category = (a, b) -> category.compare(a.getConfigGuiDisplayName(), b.getConfigGuiDisplayName());
     }
 }

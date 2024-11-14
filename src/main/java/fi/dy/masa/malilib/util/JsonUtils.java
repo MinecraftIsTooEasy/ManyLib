@@ -266,6 +266,10 @@ public class JsonUtils {
     }
 
     public static boolean writeJsonToFile(JsonObject root, File file) {
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
         File fileTmp = new File(file.getParentFile(), file.getName() + ".tmp");
 
         if (fileTmp.exists()) {

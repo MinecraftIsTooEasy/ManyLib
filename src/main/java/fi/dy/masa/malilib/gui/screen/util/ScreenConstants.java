@@ -7,15 +7,17 @@ import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
-import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
+import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.widgets.InputBox;
-import fi.dy.masa.malilib.gui.widgets.WidgetText;
+import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
+import fi.dy.masa.malilib.gui.widgets.*;
+import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.FontRenderer;
 import net.minecraft.GuiScreen;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class ScreenConstants {
     private static final int commonButtonXFromRight = -200;
@@ -29,16 +31,20 @@ public class ScreenConstants {
     private static final int scrollBarXFromRight = -40;
     private static final int configToggleButtonXWidth = 40;
     private static final int nameX = 20;
-    private static final int scrollBarHeight = 152;
     private static final int pullDownButtonXFromRight = -120;
-    public static final int pageCapacity = 7;
     public static final int oneScroll = 3;
     public static final int confirmFlag = 0;
     public static final int commonButtonHeight = 20;
     public static final int commentedTextShift = 6;
 
     static int getYPos(int index, GuiScreen screen) {
-        return screen.height / 6 + 22 * index + 32;
+        int capacity;
+        if (screen instanceof StatusScreen statusScreen) {
+            capacity = statusScreen.getMaxCapacity();
+        } else {
+            capacity = 7;
+        }
+        return screen.height / 6 + 22 * index + 32 - capacity * 22 + 7 * 22;
     }
 
     static <T extends ConfigBase<?> & IConfigDisplay> WidgetText getCommentedText(int index, T config, GuiScreen screen) {
@@ -55,19 +61,45 @@ public class ScreenConstants {
     }
 
     static <T extends IConfigResettable> ButtonGeneric getResetButton(int index, GuiScreen screen, T config, IButtonActionListener onPress) {
-        return (ButtonGeneric) new ResetButton(screen.width + resetButtonXFromRight, getYPos(index, screen), config::isModified, onPress).tooltip(StringUtils.translate("manyLib.gui.button.reset"));
+        ButtonGeneric buttonGeneric = new ResetButton(screen.width + resetButtonXFromRight, getYPos(index, screen), config::isModified, onPress);
+        buttonGeneric.setHoverStrings(StringUtils.translate("manyLib.gui.button.reset"));
+        return buttonGeneric;
     }
 
-    static <T extends ConfigBase<?> & IStringRepresentable> InputBox<T> getInputBox(int index, T config, GuiScreen screen) {
-        return new InputBox<>(config, screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 2, 18);
+    static <T extends ConfigBase<?> & IStringRepresentable> TextFieldWrapper<WidgetTextField> getTextFieldWrapper(int index, T config, GuiScreen screen) {
+        return new TextFieldWrapper<>(new WidgetTextField(screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 2, 18), textField -> {
+            config.setValueFromString(textField.getText());
+            return true;
+        });
     }
 
-    static <T extends ConfigBase<T> & IStringRepresentable> InputBox<T> getInputBoxForSlideable(int index, T config, GuiScreen screen) {
-        return new InputBox<>(config, screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 22, 18);
+    static <T extends ConfigBase<T> & IStringRepresentable> TextFieldWrapper<WidgetTextField> getWrapperForSlideable(int index, T config, Supplier<String> setStringOnFinish, GuiScreen screen) {
+        ConfigType type = config.getType();
+        WidgetTextField widgetTextField;
+        if (type == ConfigType.DOUBLE) {
+            widgetTextField = new WidgetTextFieldDouble(screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 22, 18);
+        } else {
+            widgetTextField = new WidgetTextFieldInteger(screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 22, 18);
+        }
+        return new TextFieldWrapper<>(widgetTextField, new ITextFieldListener<>() {
+            @Override
+            public boolean onTextChange(WidgetTextField textField) {
+                config.setValueFromString(textField.getText());
+                return true;
+            }
+
+            @Override
+            public void onFinish(WidgetTextField textField) {
+                textField.setText(setStringOnFinish.get());
+            }
+        });
     }
 
-    static InputBox<ConfigColor> getInputBoxForColor(int index, ConfigColor config, GuiScreen screen) {
-        return new InputBox<>(config, screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 22, 18);
+    static TextFieldWrapper<WidgetTextFieldColor> getWrapperForColor(int index, ConfigColor config, GuiScreen screen) {
+        return new TextFieldWrapper<>(new WidgetTextFieldColor(screen.width + commonButtonXFromRight + 2, getYPos(index, screen) + 1, commonButtonWidth - 22, 18), textField -> {
+            config.setValueFromString(textField.getText());
+            return true;
+        });
     }
 
     static ColorBoard getColorBoard(int index, ConfigColor configColor, GuiScreen screen) {
@@ -101,25 +133,32 @@ public class ScreenConstants {
         return new SlideableToggleButton(screen.width + commonButtonXFromRight + commonButtonWidth - 15, getYPos(index, screen) + 2, useSlider, onPress);
     }
 
-    static PullDownButton getPullDownButton(GuiScreen screen, String message, IButtonActionListener listener) {
-        return new PullDownButton(screen.width + pullDownButtonXFromRight, 10, 100, 16, message, StringUtils.translate("manyLib.gui.button.other_mods"), listener);
+    public static PullDownButton<DropDownEntry> getPullDownButton(GuiScreen screen, IConfigHandler configInstance) {
+        return new PullDownButton<>(screen.width + pullDownButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"),
+                new PullDownButton.Constructor<DropDownEntry>() {
+                    @Override
+                    public DropDownEntry createEntry(int index, int startX, int startY, boolean present, String content, IButtonActionListener listener) {
+                        return new DropDownEntry(startX, startY + index * DropDownEntry.HeightUnit, present, content, listener);
+                    }
+                });
     }
 
-    static ScrollBar<?> getScrollBar(DefaultConfigScreen screen, int pageCapacity, int maxStatus) {
-        return new ScrollBar<>(screen.width + scrollBarXFromRight, getYPos(0, screen), 8, scrollBarHeight, pageCapacity, maxStatus, screen);
+    public static <T extends GuiScreen & StatusScreen> ScrollBar<?> getScrollBar(T screen, int pageCapacity, int maxStatus) {
+        return new ScrollBar<>(screen.width + scrollBarXFromRight, getYPos(0, screen), 8, 22 * screen.getMaxCapacity() - 2, pageCapacity, maxStatus, screen);
     }
 
-    static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
-        ButtonBase buttonBase = new ResetButton(widthAdder.getWidth(), 30, predicate, onPress).tooltip(StringUtils.translate("manyLib.gui.button.reset_all"));
+    public static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
+        ButtonGeneric resetButton = new ResetButton(widthAdder.getWidth(), 30, predicate, onPress);
+        resetButton.setHoverStrings(StringUtils.translate("manyLib.gui.button.reset_all"));
         widthAdder.addWidth(25);
-        return (ButtonGeneric) buttonBase;
+        return resetButton;
     }
 
-    public static PeriodicButton<?> getSortButton(GuiScreen screen, WidthAdder widthAdder, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
+    public static PeriodicButton<?> getSortButton(GuiScreen screen, WidthAdder widthAdder, int y, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
         int stringWidth = getMaxStringWidth(screen.fontRenderer, sortCategory);
         int width = widthAdder.getWidth();
         widthAdder.addWidth(stringWidth + 15);
-        return new PeriodicButton<>(width, 30, stringWidth + 10, commonButtonHeight, sortCategory, onPress);
+        return new PeriodicButton<>(width, y, stringWidth + 10, commonButtonHeight, sortCategory, onPress);
     }
 
     private static int getMaxStringWidth(FontRenderer fontRenderer, ConfigEnum<SortCategory> sortCategory) {
@@ -134,7 +173,11 @@ public class ScreenConstants {
         return maxWidth;
     }
 
-    public static <T extends GuiScreen & Searchable> SearchField getSearchButton(T screen) {
-        return new SearchField(23, 57, screen.width - 95, 13, screen);// TODO
+    public static <T extends GuiScreen & Searchable & StatusScreen> SearchField getSearchButton(T screen) {
+        return new SearchField(23, getSearchFieldY(screen), screen.width - 95, 13, screen);
+    }
+
+    static <T extends GuiScreen & Searchable & StatusScreen> int getSearchFieldY(T screen) {
+        return 35 - 22 * screen.getMaxCapacity() + 22 * 8;
     }
 }

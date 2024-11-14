@@ -32,7 +32,7 @@ loom {
 }
 
 runClient {
-
+    args("--username", "De6ris", "--session", "a.a.a.a", "--width", 854, "--height", 480)
 }
 
 dependencies {
@@ -42,14 +42,14 @@ dependencies {
 
     implementation files(loom.getFML().toPath())
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ModernMite.jar")
-    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\OhMyMiteClient.jar")
+    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ommc.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\GammaFree.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\MITEDevHackMod-FML3.0.0.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\Neodymium.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\FPSPlus.jar")
-    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\DebrisHUD.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\PinIn-Lib.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ModMenu.jar")
+    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ExtraGui.jar")
 }
 
 processResources {

@@ -39,14 +39,14 @@ public abstract class MinecraftMixin {
     private void onLoadWorldPre(WorldClient worldClientIn, String par2Str, CallbackInfo ci) {
         if (this.theWorld != null) {
             this.worldBefore = this.theWorld;
-            ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.theWorld, worldClientIn, (Minecraft) (Object) this);
         }
+        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPre(this.theWorld, worldClientIn, (Minecraft) (Object) this);
     }
 
     @Inject(method = "loadWorld(Lnet/minecraft/WorldClient;Ljava/lang/String;)V", at = @At("RETURN"))
     private void onLoadWorldPost(WorldClient worldClientIn, String par2Str, CallbackInfo ci) {
+        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, worldClientIn, (Minecraft) (Object) this);
         if (this.worldBefore != null) {
-            ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadPost(this.worldBefore, worldClientIn, (Minecraft) (Object) this);
             this.worldBefore = null;
         }
     }

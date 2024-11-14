@@ -1,11 +1,18 @@
 package fi.dy.masa.malilib.gui.widgets;
 
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.FontRenderer;
 import net.minecraft.Gui;
 import net.minecraft.Minecraft;
 import net.minecraft.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class WidgetBase extends Gui {
     protected final Minecraft mc;
@@ -16,6 +23,9 @@ public abstract class WidgetBase extends Gui {
     protected int width;
     protected int height;
     protected int zLevel;
+    protected final List<String> hoverStrings = new ArrayList<>();
+    protected boolean hoverInfoRequiresShift;
+    protected final ImmutableList<String> hoverHelp;
 
     public WidgetBase(int x, int y, int width, int height) {
         this.x = x;
@@ -25,6 +35,7 @@ public abstract class WidgetBase extends Gui {
         this.mc = Minecraft.getMinecraft();
         this.fontRenderer = this.mc.fontRenderer;
         this.fontHeight = this.fontRenderer.FONT_HEIGHT;
+        this.hoverHelp = ImmutableList.of(StringUtils.translate("manyLib.gui.button.hover.hold_shift_for_info"));
     }
 
     public int getX() {
@@ -73,7 +84,45 @@ public abstract class WidgetBase extends Gui {
                 mouseY >= this.y && mouseY < this.y + this.height;
     }
 
-    public void update() {
+    public void tickScreen() {
+    }
+
+    public boolean hasHoverText() {
+        return this.hoverStrings.isEmpty() == false;
+    }
+
+    public void setHoverInfoRequiresShift(boolean requireShift) {
+        this.hoverInfoRequiresShift = requireShift;
+    }
+
+    public void setHoverStrings(String... hoverStrings) {
+        this.setHoverStrings(Arrays.asList(hoverStrings));
+    }
+
+    public void setHoverStrings(List<String> hoverStrings) {
+        this.hoverStrings.clear();
+
+        for (String str : hoverStrings) {
+            str = StringUtils.translate(str);
+            if (str == null) continue;
+            String[] parts = str.split("\\\\n");
+
+            for (String part : parts) {
+                this.hoverStrings.add(StringUtils.translate(part));
+            }
+        }
+    }
+
+    public List<String> getHoverStrings() {
+        if (this.hoverInfoRequiresShift && GuiBase.isShiftDown() == false) {
+            return this.hoverHelp;
+        }
+
+        return this.hoverStrings;
+    }
+
+    public void clearHoverStrings() {
+        this.hoverStrings.clear();
     }
 
     public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {

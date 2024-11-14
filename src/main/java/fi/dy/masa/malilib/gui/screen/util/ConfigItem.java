@@ -2,9 +2,11 @@ package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.ManyLibConfig;
+import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.screen.interfaces.ScreenParented;
@@ -16,6 +18,7 @@ import net.minecraft.GuiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> extends WidgetBase {
     final T config;
@@ -35,22 +38,40 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
         });
         this.y = this.resetButton.getY();
         this.height = this.resetButton.getHeight();
-        this.update();
         this.widgetText = ScreenConstants.getCommentedText(index, config, screen);
         this.buttons.add(this.resetButton);
+    }
+
+    public T getConfig() {
+        return this.config;
+    }
+
+    public void addTooltip(String tooltip) {
+        this.widgetText.addTooltip(tooltip, false);
+    }
+
+    public void addTooltip(String tooltip, boolean head) {
+        this.widgetText.addTooltip(tooltip, head);
     }
 
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.render(mouseX, mouseY, selected, drawContext);
         if (this.visible) {
-            int color = ManyLibConfig.HighlightColor.getColorInteger();
-            if (((ScreenParented) this.screen).getHoveredSubWidget() == null && this.isMouseOver(mouseX, mouseY)) {
-                RenderUtils.drawRect(0, this.y, GuiUtils.getScaledWindowWidth(), this.height, color);
+            if (this.shouldDrawHighlight(mouseX, mouseY)) {
+                RenderUtils.drawRect(0, this.y, GuiUtils.getScaledWindowWidth(), this.height, ManyLibConfig.HighlightColor.getColorInteger());
             }
             this.widgetText.render(mouseX, mouseY, selected, drawContext);
             this.buttons.forEach(guiButton -> guiButton.render(mouseX, mouseY, guiButton.isMouseOver(), drawContext));
         }
+    }
+
+    private boolean shouldDrawHighlight(int mouseX, int mouseY) {
+        if (!this.isMouseOver(mouseX, mouseY)) return false;
+        if (this.screen instanceof ScreenParented screenParented && screenParented.getHoveredSubWidget() == null)
+            return true;
+        if (this.screen instanceof GuiBase guiBase && guiBase.getHoveredWidget() == null) return true;
+        return false;
     }
 
     @Override
@@ -69,12 +90,6 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
     protected void onMouseReleasedImpl(int mouseX, int mouseY, int mouseButton) {
         super.onMouseReleasedImpl(mouseX, mouseY, mouseButton);
         this.buttons.forEach(x -> x.onMouseReleased(mouseX, mouseY, mouseButton));
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        this.resetButton.update();
     }
 
     public void resetButtonClicked() {
@@ -100,8 +115,14 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
             case TOGGLE -> new ConfigItemToggle(index, (ConfigToggle) config, screen);
             default -> {
                 ManyLib.logger.error("unsupported config type");
-                yield null;
+                throw new UnsupportedOperationException();
             }
         };
+    }
+
+    private static final Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR, ConfigType.HOTKEY, ConfigType.TOGGLE);
+
+    public static boolean supported(ConfigBase<?> config) {
+        return supportedConfigTypes.contains(config.getType());
     }
 }

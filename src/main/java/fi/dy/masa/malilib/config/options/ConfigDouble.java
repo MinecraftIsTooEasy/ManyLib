@@ -17,11 +17,11 @@ public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDou
     private boolean useSlider;
 
     public ConfigDouble(String name, double defaultValue) {
-        this(name, defaultValue, Double.MIN_VALUE, Double.MAX_VALUE, null);
+        this(name, defaultValue, -Double.MAX_VALUE, Double.MAX_VALUE, null);
     }
 
     public ConfigDouble(String name, double defaultValue, String comment) {
-        this(name, defaultValue, Double.MIN_VALUE, Double.MAX_VALUE, comment);
+        this(name, defaultValue, -Double.MAX_VALUE, Double.MAX_VALUE, comment);
     }
 
     public ConfigDouble(String name, double defaultValue, double minValue, double maxValue) {

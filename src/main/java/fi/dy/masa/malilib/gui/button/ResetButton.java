@@ -14,11 +14,6 @@ public class ResetButton extends ButtonGeneric {
         this.predicate = predicate;
         this.icon = ManyLibIcons.ResetButton;
         this.renderDefaultBackground = false;
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        this.setEnabled(this.predicate.getAsBoolean());
+        this.setOnUpdate(button -> this.setEnabled(this.predicate.getAsBoolean()));
     }
 }

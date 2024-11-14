@@ -11,8 +11,8 @@ public class WidgetTextFieldWithDefaultText extends WidgetTextField {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
-        super.render(mouseX, mouseY, selected, drawContext);
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+        super.render(drawContext, mouseX, mouseY, partialTicks);
         if (this.getVisible() && this.getText().isEmpty()) {
             int var7 = this.enableBackgroundDrawing ? this.xPos + 4 : this.xPos;
             int var8 = this.enableBackgroundDrawing ? this.yPos + (this.height - 8) / 2 : this.yPos;

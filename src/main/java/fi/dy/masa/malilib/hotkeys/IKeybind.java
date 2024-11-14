@@ -35,6 +35,8 @@ public interface IKeybind extends IConfigResettable, IStringRepresentable {
 
     KeybindSettings getSettings();
 
+    KeybindSettings getDefaultSettings();
+
     /**
      * Set the settings for this keybind.
      *

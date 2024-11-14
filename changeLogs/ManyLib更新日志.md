@@ -2,10 +2,44 @@
 
 ---
 
+## 2.2.2
+
+* 加入`ConfigStringList`配置板[WIP]
+* 加入`Client`标识
+
+---
+
 ## 2.2.1
 
-* 加入取色板[WIP]
-* 加入`ConfigStringList`配置板[WIP]
+### 新特性
+
+* 现在在主菜单和游戏暂停菜单又有按钮能直接进入本模组的配置了, 解决玩家找不到的问题
+* 加入了取色板
+* 又大幅修改了`DefaultConfigScreen`, 以便开发者添加自选内容
+    * 目前只建议覆写`initElements`方法, 调用`addButton`或`addWidget`即可添加内容
+    * 至于怎么填参数, 可以研究`ButtonGeneric.builder`, 它会建造一个按钮
+* 加入了全局设置搜索
+    * 在任意本模组配置界面双击`shift`可打开界面
+    * 在游戏中按`M,A`(可配置)也可打开界面
+* 添加了一点物品栏操作的工具类
+* 添加了配置`自动读存`, 所有模组进入世界时读取配置文件, 退出时保存
+
+### 优化
+
+* 重置全部设置的屏幕中, 补充了当前标签页的名字
+* 现在按键设置页面, 重置按钮会自动锁定了
+* 在我忘记了的地方优化了用户体验
+* 现在`ConfigDouble`的默认最小值从0改成负无穷了
+* 不知道什么时候消失的`Double`滑动条的提示框, 现在复活了
+* 给`ConfigColor`加了`setColor`和`getDefaultColor`方法
+* 现在`config`文件夹不存在, 或者你自定义的路径不存在的时候, 也能尝试先创建父文件夹了
+
+### 修复
+
+* 修复了`WorldLoadHandler`监听不生效的问题
+* 修复了`ConfigToggle`没有`ValueChangeCallback`的问题
+* 修复了菜单的按钮无法翻译的问题
+* 修复了`ConfigHotKey`的`String,I`构造器会将`comment`设置为`name`的问题
 
 ---
 
@@ -18,13 +52,14 @@
 重写了渲染, 现在都用一个`DrawContext`的参数了, 有一定兼容性影响
 
 新功能:
+
 * 在`DefaultConfigScreen`屏幕提供一个下拉按钮来切换不同模组
 * 加入`KeybindSettings`的配置屏幕
 * 将ConfigHotkey的双String构造器标记为`@Deprecated`, 因为第二个参数不知道是热键还是comment
 * 添加了`reload`和`reloadAll`命令以供服务器热切换配置
 * 现在拼音功能是由`PinIn-Lib`而非`craftguide`提供了(但仍然不作为依赖)
 * 现在按键的注册不在`SimpleConfigs`的构造器进行而是在`ConfigManager.register`进行
-* 通过使用例如`config.menu.name.Neodymium`的键名, MannyLib菜单的按钮也能翻译了
+* 通过使用例如`config.menu.name.Neodymium`的键名, ManyLib菜单的按钮也能翻译了
 * 在lang中写`config.tab.unlocalizedName.comment`可以给标签页按钮加悬浮框了
 
 ---

@@ -1,14 +1,16 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.button.interfaces.TooltipWidget;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
+import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.Color4f;
-import org.jetbrains.annotations.Nullable;
 
-public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class WidgetText extends WidgetBase {
     String content;
-    String tooltip;
+    List<String> tooltipList = new ArrayList<>();
     boolean visible = true;
     boolean isMouseOver;
     boolean centered;
@@ -19,7 +21,7 @@ public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> 
     public WidgetText(int x, int y, String content, String tooltip, Color4f color4f) {
         super(x, y, 0, 0);
         this.content = content;
-        this.tooltip = tooltip;
+        this.addTooltip(tooltip);
         this.commentIntervalX = new Interval(0, this.fontRenderer.getStringWidth(this.content));
         this.commentIntervalY = new Interval(-ScreenConstants.commentedTextShift, ScreenConstants.commonButtonHeight - ScreenConstants.commentedTextShift);
         this.color4f = color4f;
@@ -27,8 +29,8 @@ public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> 
         this.height = this.fontRenderer.FONT_HEIGHT;
     }
 
-    public static WidgetText of(String message) {
-        return new WidgetText(0, 0, message, null, Color4f.fromColor(16777215));
+    public static WidgetText of(String content) {
+        return new WidgetText(0, 0, content, null, Color4f.fromColor(16777215));
     }
 
     public WidgetText position(int x, int y) {
@@ -37,8 +39,8 @@ public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> 
         return this;
     }
 
-    public WidgetText centered(boolean centered) {
-        this.centered = centered;
+    public WidgetText centered() {
+        this.centered = true;
         return this;
     }
 
@@ -63,7 +65,6 @@ public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> 
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         if (this.visible) {
-            this.isMouseOver = this.commentIntervalX.containsInclusive(mouseX - this.x) && this.commentIntervalY.containsInclusive(mouseY - this.y);
             if (this.centered) {
                 this.drawCenteredString(this.fontRenderer, this.content, this.x, this.y, this.color4f.intValue);
             } else {
@@ -75,28 +76,27 @@ public class WidgetText extends WidgetBase implements TooltipWidget<WidgetText> 
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.postRenderHovered(mouseX, mouseY, selected, drawContext);
-        this.tryDrawTooltip(mouseX, mouseY, drawContext);
+        if (this.visible && this.tooltipList != null && this.commentIntervalX.containsInclusive(mouseX - this.x) && this.commentIntervalY.containsInclusive(mouseY - this.y)) {
+            RenderUtils.drawHoverText(mouseX, mouseY, this.tooltipList, drawContext);
+        }
+    }
+
+    public void addTooltip(String tooltip) {
+        this.addTooltip(tooltip, false);
+    }
+
+    public void addTooltip(String tooltip, boolean head) {
+        if (tooltip != null) {
+            if (head) {
+                this.tooltipList.add(0, tooltip);
+            } else {
+                this.tooltipList.add(tooltip);
+            }
+        }
     }
 
     public void setVisible(boolean visible) {
         this.visible = visible;
-    }
-
-    @Override
-    public WidgetText tooltip(String tooltip) {
-        this.tooltip = tooltip;
-        return this;
-    }
-
-    @Nullable
-    @Override
-    public String getTooltip() {
-        return this.tooltip;
-    }
-
-    @Override
-    public boolean shouldDrawTooltip() {
-        return this.visible && this.isMouseOver;
     }
 
     private record Interval(int min, int max) {

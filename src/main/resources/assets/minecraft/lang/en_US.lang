@@ -18,9 +18,13 @@ manyLib.gui.reset_tab_question=Are you sure you want to reset all configs in thi
 manyLib.gui.title.options=ManyLib Options
 manyLib.gui.title.controls=ManyLib Controls
 manyLib.gui.title.keySettings=Keybind Settings
-manyLib.gui.keySettings.configuring=Configuring
+manyLib.gui.title.globalSearching=Global Searching
+manyLib.gui.title.selectColor=Color Selecting
+manyLib.gui.configuring=Configuring
+manyLib.gui.rightClickToCopy=Right Click To Copy
 
 manyLib.gui.comment.available_values=Available Values
+manyLib.gui.comment.clickToSelectColor=Click To Select Color
 
 manyLib.configToggle.toggle=%s has been changed to: %s
 
@@ -40,11 +44,13 @@ manyLib.keybind.settings.cancel=Cancel
 
 ## configs
 config.name.manyLib.openMenu=Open ManyLib Menu
-config.comment.manyLib.openMenu=Press to display ManyLib config menu
+config.comment.manyLib.openMenu=Display manyLib' own config menu
 config.name.manyLib.openModMenu=Open ManyLib Mods Menu
-config.comment.manyLib.openModMenu=Press to display ManyLib Mods Menu
-config.name.manyLib.hideValueButton=Hide Value Button
-config.comment.manyLib.hideValueButton=Hide the button added at the main menu and pause screen
+config.comment.manyLib.openModMenu=Display manyLib relative mods menu
+config.name.manyLib.searchAny=Search ManyLib Global Config
+config.comment.manyLib.searchAny=Search manyLib relative mods config
+config.name.manyLib.hideValueButton=Hide Config Button
+config.comment.manyLib.hideValueButton=Hide the button added at the main menu and pause screen, you'd better hide when you have mod menu
 config.name.manyLib.hoverInfoY=Hovering Info Y Level
 config.comment.manyLib.hoverInfoY=Count up from the bottom
 config.comment.manyLib.sortCategory=Sort Category
@@ -64,3 +70,11 @@ toggle.off=Off
 
 boolean.true=True
 boolean.false=False
+
+color.alpha=Alpha
+color.red=§cRed
+color.green=§aGreen
+color.blue=§9Blue
+color.hue=Hue
+color.saturation=Saturation
+color.brightness=Brightness

@@ -4,13 +4,34 @@ import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.GuiTextField;
 
+import java.util.function.Predicate;
+
 public class WidgetTextField extends GuiTextField {
+
+    Predicate<String> predicate = s -> true;
 
     public WidgetTextField(int x, int y, int width, int height) {
         super(RenderUtils.fontRenderer(), x, y, width, height);
     }
 
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+    public void setTextPredicate(Predicate<String> predicate) {
+        this.predicate = predicate;
+    }
+
+    @Override
+    public void setText(String string) {
+        if (this.predicate.test(string)) {
+            super.setText(string);
+        }
+    }
+
+    //    @Override
+//    public final void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+//        super.mouseClicked(mouseX, mouseY, mouseButton);
+//        this.onMouseClicked(mouseX, mouseY, mouseButton);
+//    }
+
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
         this.drawTextBox();// checked visible in impl
     }
 
@@ -25,7 +46,7 @@ public class WidgetTextField extends GuiTextField {
         }
     }
 
-    public boolean onCharTyped(char charIn, int modifiers) {
+    public boolean charTyped(char charIn, int modifiers) {
         return this.textboxKeyTyped(charIn, modifiers);
     }
 

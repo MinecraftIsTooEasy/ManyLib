@@ -5,13 +5,16 @@ import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetContainer;
 import net.minecraft.GuiScreen;
 
-public class ScreenParented extends GuiScreen implements ScreenWithParent {
+public abstract class ScreenParented extends GuiScreen implements ScreenWithParent {
     protected GuiScreen parentScreen;
     protected WidgetContainer container;
 
     public ScreenParented(GuiScreen parentScreen) {
         this.parentScreen = parentScreen;
+        this.initContainer();
     }
+
+    protected abstract void initContainer();
 
     @Override
     public final void drawScreen(int i, int j, float f) {
@@ -42,7 +45,7 @@ public class ScreenParented extends GuiScreen implements ScreenWithParent {
     }
 
     protected void update() {
-        if (this.container != null) this.container.update();
+        if (this.container != null) this.container.tickScreen();
     }
 
     @Override

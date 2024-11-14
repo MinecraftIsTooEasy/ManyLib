@@ -1,5 +1,7 @@
 package fi.dy.masa.malilib.event;
 
+import fi.dy.masa.malilib.ManyLibConfig;
+import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IWorldLoadListener;
 import fi.dy.masa.malilib.interfaces.IWorldLoadManager;
 import net.minecraft.Minecraft;
@@ -58,14 +60,17 @@ public class WorldLoadHandler implements IWorldLoadManager {
      * NOT PUBLIC API - DO NOT CALL
      */
     public void onWorldLoadPost(@Nullable WorldClient worldBefore, @Nullable WorldClient worldAfter, Minecraft mc) {
-        // Save all the configs when exiting a world
-//        if (worldBefore != null && worldAfter == null) {
-//            ConfigManager.getInstance().saveAllConfigs();
-//        }
-        // (Re-)Load all the configs from file when entering a world
-//        else
-        if (worldBefore == null && worldAfter != null) {
-//            ConfigManager.getInstance().loadAllConfigs();
+//         Save all the configs when exiting a world
+        if (worldBefore != null && worldAfter == null) {
+            if (ManyLibConfig.AutoSaveLoad.getBooleanValue()) {
+                ConfigManager.getInstance().saveAllConfigs();
+            }
+        }
+//         (Re-)Load all the configs from file when entering a world
+        else if (worldBefore == null && worldAfter != null) {
+            if (ManyLibConfig.AutoSaveLoad.getBooleanValue()) {
+                ConfigManager.getInstance().loadAllConfigs();
+            }
             InputEventHandler.getKeybindManager().updateUsedKeys();
         }
 

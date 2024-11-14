@@ -9,4 +9,7 @@ public interface ITextFieldListener<T extends WidgetTextField> {
     }
 
     boolean onTextChange(T textField);
+
+    default void onFinish(T textField) {
+    }
 }

@@ -32,7 +32,7 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey, I
     }
 
     public ConfigHotkey(String name, int hotkey) {
-        this(name, hotkey, name);
+        this(name, hotkey, null);
     }
 
     public ConfigHotkey(String name, int defaultKey, String comment) {

@@ -23,18 +23,8 @@ public abstract class WidgetContainer extends WidgetBase {
         return widget;
     }
 
-    public <T extends WidgetBase> void removeWidget(T widget) {
+    protected <T extends WidgetBase> void removeWidget(T widget) {
         this.subWidgets.remove(widget);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (this.subWidgets.isEmpty() == false) {
-            for (WidgetBase subWidget : this.subWidgets) {
-                subWidget.update();
-            }
-        }
     }
 
     public void syncSize(int width, int height) {
@@ -42,7 +32,8 @@ public abstract class WidgetContainer extends WidgetBase {
         this.height = height;
     }
 
-    public abstract void initWidgets();
+    public void initWidgets() {
+    }
 
     public void addLabel(int x, int y, int width, int height, int textColor, String... lines) {
         if (lines != null && lines.length >= 1) {
