@@ -60,6 +60,10 @@ config.enum.manyLib.sortCategory.Default=Default
 config.enum.manyLib.sortCategory.PinYin=Chinese PinYin
 config.enum.manyLib.sortCategory.Alphabetical=Alphabetical
 config.enum.manyLib.sortCategory.Inverted=Inverted
+config.name.manyLib.highlightColor=Highlight color
+config.name.manyLib.titleFormat=Title Format
+config.name.manyLib.autoSaveLoad=Auto Save Load
+config.comment.manyLib.autoSaveLoad=(Works for all)read the config while entering a world, and save while quitting.
 
 config.menu.comment.ManyLib=Click me to hide the ManyLib button\n You can still press %s to open it
 

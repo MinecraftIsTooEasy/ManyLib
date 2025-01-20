@@ -21,9 +21,9 @@ public class ManyLibConfig extends SimpleConfigs {
     public static final ConfigHotkey SearchAny = new ConfigHotkey("manyLib.searchAny", "M,A", "ManyLib全局配置搜索");
     public static final ConfigBoolean HideConfigButton = new ConfigBoolean("manyLib.hideValueButton", false, "隐藏在游戏主界面以及暂停界面的数值配置按钮");
     public static final ConfigInteger HoverTextYLevel = new ConfigInteger("manyLib.hoverInfoY", 70, 0, 512, false, "从屏幕底部往上数");
-    public static final ConfigColor HighlightColor = new ConfigColor("高亮颜色", "#77777777");
-    public static final ConfigEnum<EnumChatFormatting> TitleFormat = new ConfigEnum<>("标题格式", EnumChatFormatting.WHITE);
-    public static final ConfigBoolean AutoSaveLoad = new ConfigBoolean("自动读存", true, "(对所有模组有效)进入世界时读取配置文件, 退出时保存");
+    public static final ConfigColor HighlightColor = new ConfigColor("manyLib.highlightColor", "#77777777");
+    public static final ConfigEnum<EnumChatFormatting> TitleFormat = new ConfigEnum<>("manyLib.titleFormat", EnumChatFormatting.WHITE);
+    public static final ConfigBoolean AutoSaveLoad = new ConfigBoolean("manyLib.autoSaveLoad", true, "(对所有模组有效)进入世界时读取配置文件, 退出时保存");
 
     //    public static final ConfigDouble testDoubleBox = new ConfigDouble("Double文本框", 0.0d, -1.0d, 1.0d, false, "测试");
 //    public static final ConfigDouble testDoubleSlider = new ConfigDouble("Double滑块", 0.0d, -1.0d, 1.0d, true, "测试");
