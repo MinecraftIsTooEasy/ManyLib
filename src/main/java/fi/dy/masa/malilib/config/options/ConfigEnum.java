@@ -13,7 +13,7 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
     E value;
     final E defaultValue;
     final Class<E> enumClass;
-    final E[] status;
+    final E[] allValues;
     final int capacity;
 
     public ConfigEnum(String name, E defaultValue) {
@@ -25,8 +25,8 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
         this.value = defaultValue;
         this.defaultValue = defaultValue;
         this.enumClass = defaultValue.getDeclaringClass();
-        this.status = this.enumClass.getEnumConstants();
-        this.capacity = this.status.length;
+        this.allValues = this.enumClass.getEnumConstants();
+        this.capacity = this.allValues.length;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
 
     @Override
     public E getNext() {
-        return this.status[(this.value.ordinal() + 1) % this.capacity];
+        return this.allValues[(this.value.ordinal() + 1) % this.capacity];
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
 
     @Override
     public E[] getAllEnumValues() {
-        return this.status;
+        return this.allValues;
     }
 
     @Override

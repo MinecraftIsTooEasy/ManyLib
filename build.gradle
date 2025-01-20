@@ -50,6 +50,7 @@ dependencies {
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\PinIn-Lib.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ModMenu.jar")
     implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\ExtraGui.jar")
+    implementation files("D:\\Code\\Java\\FML3.0.0\\lib\\RustedIronCore.jar")
 }
 
 processResources {

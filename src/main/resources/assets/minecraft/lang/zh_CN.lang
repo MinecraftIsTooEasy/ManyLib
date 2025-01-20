@@ -20,11 +20,13 @@ manyLib.gui.title.controls=ManyLib按键绑定
 manyLib.gui.title.keySettings=按键设置
 manyLib.gui.title.globalSearching=全局搜索
 manyLib.gui.title.selectColor=取色板
+manyLib.gui.title.editStringList=配置字符串列表
 manyLib.gui.configuring=正在配置
 manyLib.gui.rightClickToCopy=右键复制
 
 manyLib.gui.comment.available_values=可用值
 manyLib.gui.comment.clickToSelectColor=点击打开取色板
+manyLib.gui.comment.clickToEditStringList=点击配置字符串列表
 
 manyLib.configToggle.toggle=功能%s已切换为: %s
 

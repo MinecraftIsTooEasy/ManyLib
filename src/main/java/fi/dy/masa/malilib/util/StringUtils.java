@@ -8,6 +8,7 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.I18n;
 import net.minecraft.Minecraft;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.SocketAddress;
 import java.util.List;
@@ -265,7 +266,7 @@ public class StringUtils {
         drawContext.drawText(Minecraft.getMinecraft().fontRenderer, text, x, y, color, false);
     }
 
-    public static boolean stringMatchesInput(String string, String input) {
+    public static boolean stringMatchesInput(@Nonnull String string, @Nonnull String input) {
         if (string.toLowerCase().contains(input.toLowerCase())) {
             return true;
         }

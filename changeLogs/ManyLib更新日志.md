@@ -4,8 +4,9 @@
 
 ## 2.2.2
 
-* 加入`ConfigStringList`配置板[WIP]
-* 加入`Client`标识
+* 加入`ConfigStringList`的配置屏幕
+* 修复了全局搜索仅按一次`Shift`就触发的问题
+* 删除了`inventory`包下的所有代码, 现在它只在`ommc`中实现.
 
 ---
 

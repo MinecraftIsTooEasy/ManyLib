@@ -6,13 +6,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigStringList;
 import fi.dy.masa.malilib.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigStringList extends ConfigBase<ConfigStringList> implements IConfigStringList {
+public class ConfigStringList extends ConfigBase<ConfigStringList> implements IConfigStringList, IConfigDisplay {
     final List<String> defaultValue;
     final List<String> value;
 
@@ -77,5 +78,10 @@ public class ConfigStringList extends ConfigBase<ConfigStringList> implements IC
     @Override
     public List<String> getDefaultStringListValue() {
         return this.defaultValue;
+    }
+
+    @Override
+    public String getDisplayText() {
+        return this.value.toString();
     }
 }

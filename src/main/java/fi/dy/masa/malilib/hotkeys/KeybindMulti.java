@@ -144,7 +144,6 @@ public class KeybindMulti implements IKeybind {
 
             if (pressedLast && this.callback != null && (activateOn == KeyAction.RELEASE || activateOn == KeyAction.BOTH)) {
                 cancel = this.callback.onKeyAction(KeyAction.RELEASE, this);
-                System.out.println("on key action!");
             }
         } else if (pressedLast == false && this.heldTime == 0) {
 //            if (this.keyCodes.contains(KeyCodes.KEY_F3)) {

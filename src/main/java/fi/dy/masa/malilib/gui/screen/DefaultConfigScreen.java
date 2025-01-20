@@ -32,7 +32,6 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         this.setParent(parentScreen);
         this.configInstance = configInstance;
         this.configTabs = configInstance.getConfigTabs();
-        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -47,6 +46,7 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
             this.setStatus(ProgressSaving.getStatus(this.configInstance.getName()));
         }
         this.onStatusChange();
+        Keyboard.enableRepeatEvents(true);
     }
 
     protected void initElements() {
@@ -98,8 +98,8 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
     }
 
     @Override
-    protected ConfigItem<?> createEntry(int index) {
-        return ConfigItem.getConfigItem(index - this.status, this.currentTab.getSearchableConfig(index), this);
+    protected ConfigItem<?> createEntry(int realIndex, int relativeIndex) {
+        return ConfigItem.getConfigItem(relativeIndex, this.currentTab.getSearchableConfig(realIndex), this);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         return false;
     }
 
-    private long lastShift = Long.MAX_VALUE;
+    private long lastShift = 0L;
 
     @Override
     protected boolean onCharTyped(char charIn, int modifiers) {
@@ -160,13 +160,13 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         Keyboard.enableRepeatEvents(false);
         this.configInstance.save();
         InputEventHandler.getKeybindManager().updateUsedKeys();
-        ProgressSaving.saveProgress(this.configInstance.getName(), this.currentTabIndex, this.status);
+        ProgressSaving.saveProgress(this.configInstance.getName(), this.currentTabIndex, this.getStatus());
         this.firstSeen = true;
     }
 
     void sort(SortCategory sortCategory) {
         this.currentTab.sort(sortCategory);
-        this.status = 0;
+        this.resetStatus();
         this.markShouldUpdateEntries();
     }
 

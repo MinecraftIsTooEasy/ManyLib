@@ -20,11 +20,13 @@ manyLib.gui.title.controls=ManyLib Controls
 manyLib.gui.title.keySettings=Keybind Settings
 manyLib.gui.title.globalSearching=Global Searching
 manyLib.gui.title.selectColor=Color Selecting
+manyLib.gui.title.editStringList=Edit String List
 manyLib.gui.configuring=Configuring
 manyLib.gui.rightClickToCopy=Right Click To Copy
 
 manyLib.gui.comment.available_values=Available Values
 manyLib.gui.comment.clickToSelectColor=Click To Select Color
+manyLib.gui.comment.clickToEditStringList=Click To Edit String List
 
 manyLib.configToggle.toggle=%s has been changed to: %s
 

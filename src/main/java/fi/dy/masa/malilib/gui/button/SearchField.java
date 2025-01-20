@@ -23,10 +23,7 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
         super(x, y, 12, 12, "", button -> ((SearchField) button).toggle());
         this.setHoverStrings(StringUtils.translate("manyLib.gui.button.search"));
         this.searchable = searchable;
-        this.textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(x + 16, y - 1, boxWidth, boxHeight), textField -> {
-            searchable.updateSearchResult(textField.getText());
-            return true;
-        });
+        this.textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(x + 16, y - 1, boxWidth, boxHeight), textField -> searchable.updateSearchResult(textField.getText()));
         this.setVisible(false);
         this.icon = ManyLibIcons.SEARCH;
         this.setRenderDefaultBackground(false);

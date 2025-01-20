@@ -28,7 +28,6 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
     public GlobalSearchScreen(GuiScreen parentScreen) {
         super();
         this.setParent(parentScreen);
-        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -48,12 +47,13 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
         searchField.initialSearch();
         this.addWidget(searchField);
         this.onStatusChange();
+        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
-    protected ConfigItem<?> createEntry(int index) {
-        SearchResult searchResult = this.searchResults.get(index);
-        ConfigItem<?> configItem = ConfigItem.getConfigItem(index - this.status, searchResult.configBase(), this);
+    protected ConfigItem<?> createEntry(int realIndex, int relativeIndex) {
+        SearchResult searchResult = this.searchResults.get(realIndex);
+        ConfigItem<?> configItem = ConfigItem.getConfigItem(relativeIndex, searchResult.configBase(), this);
         configItem.addTooltip(GuiBase.TXT_AQUA + "<" + searchResult.mod() + ">", true);
         return configItem;
     }
@@ -86,9 +86,11 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
 
     private boolean matchResult(SearchResult searchResult, String input) {
         if (input.isEmpty()) return true;
-        if (StringUtils.stringMatchesInput(searchResult.configBase().getConfigGuiDisplayName(), input))
+        String configGuiDisplayName = searchResult.configBase().getConfigGuiDisplayName();
+        if (configGuiDisplayName != null && StringUtils.stringMatchesInput(configGuiDisplayName, input))
             return true;// match the name
-        if (StringUtils.stringMatchesInput(searchResult.configBase().getConfigGuiDisplayComment(), input))
+        String configGuiDisplayComment = searchResult.configBase().getConfigGuiDisplayComment();
+        if (configGuiDisplayComment != null && StringUtils.stringMatchesInput(configGuiDisplayComment, input))
             return true;// match the comment
         return false;
     }
@@ -100,7 +102,7 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
         } else {
             this.searchResults.sort((x, y) -> sortCategory.category.compare(x.configBase(), y.configBase()));
         }
-        this.status = 0;
+        this.resetStatus();
         this.markShouldUpdateEntries();
     }
 

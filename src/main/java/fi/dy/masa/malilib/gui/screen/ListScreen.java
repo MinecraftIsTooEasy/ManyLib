@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ListScreen<T extends WidgetBase> extends GuiBase implements StatusScreen {
-    protected int status;
+    private int status;
     protected boolean singlePage;
     protected ScrollBar<?> scrollBar;
     protected final List<T> entries = new ArrayList<>();
@@ -32,7 +32,7 @@ public abstract class ListScreen<T extends WidgetBase> extends GuiBase implement
             this.entries.forEach(this::removeWidget);
             this.entries.clear();
             for (int i = this.status; i < this.getContentSize() && i < this.status + this.getMaxCapacity(); i++) {
-                T entry = this.createEntry(i);
+                T entry = this.createEntry(i, i - this.status);
                 this.entries.add(entry);
                 this.addWidget(entry);
             }
@@ -41,7 +41,7 @@ public abstract class ListScreen<T extends WidgetBase> extends GuiBase implement
         if (!this.singlePage) this.wheelListener();
     }
 
-    protected abstract T createEntry(int index);
+    protected abstract T createEntry(int realIndex, int relativeIndex);
 
     @Override
     public void setStatus(int status) {
@@ -69,5 +69,9 @@ public abstract class ListScreen<T extends WidgetBase> extends GuiBase implement
 
     protected void markShouldUpdateEntries() {
         this.shouldUpdateEntries = true;
+    }
+
+    protected void resetStatus(){
+        this.status = 0;
     }
 }

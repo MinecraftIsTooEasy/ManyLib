@@ -33,7 +33,6 @@ public class LegacyConfigScreen extends ScreenParented implements Searchable, St
     public LegacyConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
         super(parentScreen);
         this.configInstance = configInstance;
-        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -55,6 +54,7 @@ public class LegacyConfigScreen extends ScreenParented implements Searchable, St
         }
         this.onStatusChange();
         this.updateScreen();
+        Keyboard.enableRepeatEvents(true);
     }
 
     private void updateConfigItems() {

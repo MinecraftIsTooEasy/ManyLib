@@ -11,9 +11,7 @@ class ConfigItemToggle extends ConfigItemHotkey {
 
     public ConfigItemToggle(int index, ConfigToggle config, GuiScreen screen) {
         super(index, config, screen);
-        this.toggleButton = ScreenConstants.getConfigToggleButton(index, screen, button -> {
-            ((ConfigToggle) this.config).toggle();
-        });
+        this.toggleButton = ScreenConstants.getConfigToggleButton(index, screen, button -> ((ConfigToggle) this.config).toggle());
         this.toggleButton.setOnUpdate(button -> {
             if (((ConfigToggle) this.config).isOn()) {
                 this.toggleButton.setDisplayString(GuiBase.TXT_GREEN + StringUtils.translate("boolean.true"));

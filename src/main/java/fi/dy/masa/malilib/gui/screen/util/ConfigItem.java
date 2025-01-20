@@ -113,6 +113,7 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
             case COLOR -> new ConfigItemColor(index, (ConfigColor) config, screen);
             case HOTKEY -> new ConfigItemHotkey(index, (ConfigHotkey) config, screen);
             case TOGGLE -> new ConfigItemToggle(index, (ConfigToggle) config, screen);
+            case STRINGLIST -> new ConfigItemStringList(index, (ConfigStringList) config, screen);
             default -> {
                 ManyLib.logger.error("unsupported config type");
                 throw new UnsupportedOperationException();
@@ -120,7 +121,7 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
         };
     }
 
-    private static final Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR, ConfigType.HOTKEY, ConfigType.TOGGLE);
+    private static final Set<ConfigType> supportedConfigTypes = Set.of(ConfigType.DOUBLE, ConfigType.BOOLEAN, ConfigType.INTEGER, ConfigType.STRING, ConfigType.ENUM, ConfigType.COLOR, ConfigType.HOTKEY, ConfigType.TOGGLE, ConfigType.STRINGLIST);
 
     public static boolean supported(ConfigBase<?> config) {
         return supportedConfigTypes.contains(config.getType());
