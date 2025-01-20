@@ -109,7 +109,7 @@ public class ScreenConstants {
 
     static ButtonBase getHotkeyButton(int index, ConfigHotkey config, GuiScreen screen, IButtonActionListener onPress) {
         boolean isShort = config.getType() == ConfigType.TOGGLE;
-        int xPos = isShort ? screen.width + hotKeyFirstButtonXFromRight + configToggleButtonXWidth + 5 : screen.width + hotKeyFirstButtonXFromRight;
+        int xPos = screen.width + hotKeyFirstButtonXFromRight;
         int width = isShort ? shortHotkeyButtonWidth : commonHotkeyButtonWidth;
         return ButtonGeneric.builder("", onPress).dimensions(xPos, getYPos(index, screen), width, commonButtonHeight).build();
     }
@@ -127,7 +127,7 @@ public class ScreenConstants {
     }
 
     static ButtonBase getConfigToggleButton(int index, GuiScreen screen, IButtonActionListener onPress) {
-        return ButtonGeneric.builder("", onPress).dimensions(screen.width + keySettingButtonXFromRight, getYPos(index, screen), configToggleButtonXWidth, commonButtonHeight).build();
+        return ButtonGeneric.builder("", onPress).dimensions(screen.width + hotKeyFirstButtonXFromRight + shortHotkeyButtonWidth + 5, getYPos(index, screen), configToggleButtonXWidth, commonButtonHeight).build();
     }
 
     public static PullDownButton<DropDownEntry> getPullDownButton(GuiScreen screen, IConfigHandler configInstance) {

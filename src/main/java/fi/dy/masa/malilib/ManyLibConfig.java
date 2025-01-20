@@ -15,7 +15,7 @@ import static fi.dy.masa.malilib.ManyLib.MOD_ID;
 public class ManyLibConfig extends SimpleConfigs {
     private static final ManyLibConfig Instance;
     public static final List<ConfigHotkey> hotkeys;
-    public static final List<ConfigBase<?>> values;//openValueMenu
+    public static final List<ConfigBase<?>> values;
     public static final ConfigHotkey OpenConfigMenu = new ConfigHotkey("manyLib.openMenu", "M,C", "打开ManyLib自身配置页面");
     public static final ConfigHotkey OpenModMenu = new ConfigHotkey("manyLib.openModMenu", KeybindMulti.fromStorageString("M", KeybindSettings.RELEASE), "打开ManyLib全部用户的菜单");
     public static final ConfigHotkey SearchAny = new ConfigHotkey("manyLib.searchAny", "M,A", "ManyLib全局配置搜索");
