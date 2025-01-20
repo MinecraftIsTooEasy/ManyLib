@@ -22,7 +22,7 @@ public enum ManyLibIcons implements IGuiIcon {
     SEARCH(201, 0, 12, 12, 0, 0),
     ;
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation("textures/manyLib/gui/gui_widgets.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation("manyLib", "textures/gui/gui_widgets.png");
 
     private final int u;
     private final int v;

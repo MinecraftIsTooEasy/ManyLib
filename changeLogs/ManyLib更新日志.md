@@ -4,9 +4,12 @@
 
 ## 2.2.2
 
+需要fml3.4.1
+
 * 加入`ConfigStringList`的配置屏幕
 * 修复了全局搜索仅按一次`Shift`就触发的问题
 * 删除了`inventory`包下的所有代码, 现在它只在`ommc`中实现.
+* 现在本模组的资源不再在`minecraft`包下
 
 ---
 
