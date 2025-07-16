@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.gui.screen.util;
+package fi.dy.masa.malilib.feat;
 
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.compat.PinyinHandler;

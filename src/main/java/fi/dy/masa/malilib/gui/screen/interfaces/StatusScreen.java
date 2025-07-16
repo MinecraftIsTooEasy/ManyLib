@@ -7,8 +7,14 @@ public interface StatusScreen extends ScrollableScreen {
 
     int getStatus();
 
+    /**
+     * @return Total number of elements
+     */
     int getContentSize();
 
+    /**
+     * @return The number of elements to show in the screen
+     */
     int getMaxCapacity();
 
     @Override

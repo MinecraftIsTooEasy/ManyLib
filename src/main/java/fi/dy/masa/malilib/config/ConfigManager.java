@@ -6,13 +6,14 @@ import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class ConfigManager {
     private static final ConfigManager INSTANCE = new ConfigManager();
-    private final Map<String, IConfigHandler> configInstances = new HashMap<>();
+    private final SortedMap<String, IConfigHandler> configInstances = new TreeMap<>();
 
     public static ConfigManager getInstance() {
         return INSTANCE;

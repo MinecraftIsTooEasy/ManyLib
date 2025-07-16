@@ -2,8 +2,8 @@ package fi.dy.masa.malilib.config;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.feat.SortCategory;
 import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
-import fi.dy.masa.malilib.gui.screen.util.SortCategory;
 import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.ArrayList;

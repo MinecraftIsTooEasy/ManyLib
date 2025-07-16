@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.gui.screen.util;
+package fi.dy.masa.malilib.feat;
 
 import java.util.HashMap;
 import java.util.Map;

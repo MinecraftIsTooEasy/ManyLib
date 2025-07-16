@@ -1,17 +1,20 @@
 package fi.dy.masa.malilib.gui.screen;
 
-import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.ConfigTab;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.feat.ProgressSaving;
+import fi.dy.masa.malilib.feat.SortCategory;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.PullDownButton;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
 import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.screen.util.*;
+import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
+import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
+import fi.dy.masa.malilib.gui.screen.util.WidthAdder;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.GuiYesNoMITE;
@@ -30,8 +33,10 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
     public DefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
         super();
         this.setParent(parentScreen);
+        this.useTitleHierarchy = false;
         this.configInstance = configInstance;
         this.configTabs = configInstance.getConfigTabs();
+        this.setTitle(this.createTitle());
     }
 
     @Override
@@ -51,7 +56,9 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
 
     protected void initElements() {
         WidthAdder widthAdder = new WidthAdder(20);
+
         this.addTabButtons(widthAdder);
+
         String configInstanceName = this.configInstance.getName();
         this.addButton(ScreenConstants.getResetAllButton(widthAdder, () -> this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified), button -> {
             String question = StringUtils.translate("manyLib.gui.reset_tab_question"), yes = StringUtils.translate("gui.yes"), no = StringUtils.translate("gui.no");
@@ -65,6 +72,7 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
             this.sort(sortCategoryConfigEnum.getEnumValue());
         }));
         this.addWidget(ScreenConstants.getSearchButton(this));
+
         PullDownButton<?> pullDownButton = ScreenConstants.getPullDownButton(this, this.configInstance);
         this.addButton(pullDownButton);
         pullDownButton.initDropDownEntries(this.configInstance, this.getParent());
@@ -89,12 +97,6 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         this.needSyncTab = true;
         this.currentTab = this.configTabs.get(index);
         this.currentTabIndex = index;
-    }
-
-    @Override
-    protected void tickScreen() {
-        super.tickScreen();
-        this.setTitle(ManyLibConfig.TitleFormat.getEnumValue() + this.configInstance.getName() + " Configs");
     }
 
     @Override
@@ -176,4 +178,7 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         this.onContentChange();
     }
 
+    public String createTitle() {
+        return this.configInstance.getName() + " Configs";
+    }
 }

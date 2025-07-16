@@ -1,20 +1,22 @@
 package fi.dy.masa.malilib.gui.screen.interfaces;
 
+import fi.dy.masa.malilib.gui.GuiBase;
 import net.minecraft.GuiScreen;
 
-public abstract class ScreenPaged extends ScreenParented implements ScreenWithPages {
+public abstract class ScreenPaged extends GuiBase implements ScreenWithPages {
     protected final int rows;
     protected int columns;
     protected int pageCapacity;
     protected int pageIndex;
-    protected int pageCount;
+    protected int maxPageIndex;
 
-    public ScreenPaged(GuiScreen parentScreen, int rows, int columns) {
-        this(parentScreen, rows, columns, 1);
+    public ScreenPaged(GuiScreen parent, int rows, int columns) {
+        this(parent, rows, columns, 1);
     }
 
-    public ScreenPaged(GuiScreen parentScreen, int rows, int columns, int configSize) {
-        super(parentScreen);
+    public ScreenPaged(GuiScreen parent, int rows, int columns, int configSize) {
+        super();
+        this.setParent(parent);
         this.rows = rows;
         this.columns = columns;
         this.pageCapacity = rows * columns;
@@ -22,7 +24,7 @@ public abstract class ScreenPaged extends ScreenParented implements ScreenWithPa
     }
 
     protected void updatePageCount(int configSize) {
-        this.pageCount = (configSize - 1) / this.pageCapacity;
+        this.maxPageIndex = (configSize - 1) / this.pageCapacity;
     }
 
     protected int getLeftBorder() {
@@ -40,8 +42,8 @@ public abstract class ScreenPaged extends ScreenParented implements ScreenWithPa
     }
 
     @Override
-    protected void update() {
-        super.update();
+    protected void tickScreen() {
+        super.tickScreen();
         this.wheelListener();
     }
 
@@ -50,17 +52,21 @@ public abstract class ScreenPaged extends ScreenParented implements ScreenWithPa
     }
 
     public void scroll(boolean isPageDown) {
-        if (this.pageCount == 0) return;
-        if (isPageDown) {
+        if (this.maxPageIndex == 0) return;
+        if (isPageDown && this.canPageDown()) {
             this.pageIndex++;
-        } else {
+        }
+        if (!isPageDown && this.canPageUp()) {
             this.pageIndex--;
         }
-        if (this.pageIndex > this.pageCount) {
-            this.pageIndex = 0;
-        } else if (this.pageIndex < 0) {
-            this.pageIndex = this.pageCount;
-        }
         this.setVisibilities();
+    }
+
+    protected boolean canPageUp() {
+        return this.pageIndex > 0;
+    }
+
+    protected boolean canPageDown() {
+        return this.pageIndex < this.maxPageIndex;
     }
 }

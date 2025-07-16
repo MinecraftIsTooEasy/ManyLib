@@ -9,7 +9,6 @@ import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.screen.interfaces.ScreenParented;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetText;
 import fi.dy.masa.malilib.render.RenderUtils;
@@ -68,8 +67,6 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
 
     private boolean shouldDrawHighlight(int mouseX, int mouseY) {
         if (!this.isMouseOver(mouseX, mouseY)) return false;
-        if (this.screen instanceof ScreenParented screenParented && screenParented.getHoveredSubWidget() == null)
-            return true;
         if (this.screen instanceof GuiBase guiBase && guiBase.getHoveredWidget() == null) return true;
         return false;
     }

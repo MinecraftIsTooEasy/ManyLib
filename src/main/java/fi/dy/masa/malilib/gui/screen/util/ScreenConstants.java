@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.feat.SortCategory;
 import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;

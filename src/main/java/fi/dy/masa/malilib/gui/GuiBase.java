@@ -60,9 +60,9 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
     public final Minecraft mc = Minecraft.getMinecraft();
     public final FontRenderer textRenderer = this.mc.fontRenderer;
     public final int fontHeight = this.textRenderer.FONT_HEIGHT;
-    private final List<ButtonBase> buttons = new ArrayList<>();
-    private final List<WidgetBase> widgets = new ArrayList<>();
-    private final List<TextFieldWrapper<? extends WidgetTextField>> textFields = new ArrayList<>();
+    protected final List<ButtonBase> buttons = new ArrayList<>();
+    protected final List<WidgetBase> widgets = new ArrayList<>();
+    protected final List<TextFieldWrapper<? extends WidgetTextField>> textFields = new ArrayList<>();
     private final MessageRenderer messageRenderer = new MessageRenderer(0xDD000000, COLOR_HORIZONTAL_BAR);
     //    private long openTime;
     protected WidgetBase hoveredWidget = null;
