@@ -84,7 +84,7 @@ public abstract class WidgetBase extends Gui {
                 mouseY >= this.y && mouseY < this.y + this.height;
     }
 
-    public void tickScreen() {
+    public void tick() {
     }
 
     public boolean hasHoverText() {

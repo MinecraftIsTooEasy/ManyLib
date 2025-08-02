@@ -1,28 +1,26 @@
 package fi.dy.masa.malilib.gui.screen;
 
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ScrollBar;
-import fi.dy.masa.malilib.gui.layer.Layer;
 import fi.dy.masa.malilib.gui.screen.interfaces.PagedElement;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
-import fi.dy.masa.malilib.gui.widgets.WidgetPageTurner;
 import net.minecraft.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListScreen<T extends WidgetBase> extends LayeredScreen implements PagedElement {
-    private int status;
+public abstract class LegacyListScreen<T extends WidgetBase> extends GuiBase implements PagedElement {
+    private int page;
     protected boolean singlePage;
     protected ScrollBar<?> scrollBar;
     protected final List<T> entries = new ArrayList<>();
 
     @Override
-    protected void initBaseLayer(Layer layer) {
-        super.initBaseLayer(layer);
+    public void initGui() {
+        super.initGui();
         this.scrollBar = ScreenConstants.getScrollBar(this, this.getPageCapacity(), 0);// dummy
-        layer.addWidget(this.scrollBar);
-        layer.addWidget(new WidgetPageTurner(this));
+        this.addWidget(this.scrollBar);
     }
 
     private boolean dirty;
@@ -31,13 +29,12 @@ public abstract class ListScreen<T extends WidgetBase> extends LayeredScreen imp
     protected void tick() {
         super.tick();
         if (this.dirty) {
-            Layer layer = this.getBaseLayer();
-            this.entries.forEach(layer::removeWidget);
+            this.entries.forEach(this::removeWidget);
             this.entries.clear();
-            for (int i = this.status; i < this.getContentSize() && i < this.status + this.getPageCapacity(); i++) {
-                T entry = this.createEntry(i, i - this.status);
+            for (int i = this.page; i < this.getContentSize() && i < this.page + this.getPageCapacity(); i++) {
+                T entry = this.createEntry(i, i - this.page);
                 this.entries.add(entry);
-                layer.addWidget(entry);
+                this.addWidget(entry);
             }
             this.dirty = false;
         }
@@ -48,23 +45,23 @@ public abstract class ListScreen<T extends WidgetBase> extends LayeredScreen imp
 
     @Override
     public void setPage(int page) {
-        int oldStatus = this.status;
-        this.status = MathHelper.clamp_int(page, 0, this.getMaxPage());
-        if (page != oldStatus) this.onPageChange();
+        int oldSPage = this.page;
+        this.page = MathHelper.clamp_int(page, 0, this.getMaxPage());
+        if (page != oldSPage) this.onPageChange();
     }
 
     @Override
     public int getPage() {
-        return this.status;
+        return this.page;
     }
 
     protected void onPageChange() {
         this.markDirty();
-        if (!this.singlePage) this.scrollBar.updateRatioByScreen(this.status);
+        if (!this.singlePage) this.scrollBar.updateRatioByScreen(this.page);
     }
 
     protected void onContentChange() {
-        this.status = 0;
+        this.page = 0;
         this.singlePage = this.getContentSize() <= this.getPageCapacity();
         this.scrollBar.updateArguments(!this.singlePage);
         this.markDirty();
@@ -74,8 +71,7 @@ public abstract class ListScreen<T extends WidgetBase> extends LayeredScreen imp
         this.dirty = true;
     }
 
-    protected void resetPage() {
-        this.status = 0;
+    protected void resetPage(){
+        this.page = 0;
     }
 }
-

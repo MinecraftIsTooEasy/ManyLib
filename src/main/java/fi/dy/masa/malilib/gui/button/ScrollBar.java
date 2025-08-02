@@ -1,41 +1,40 @@
 package fi.dy.masa.malilib.gui.button;
 
 import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
+import fi.dy.masa.malilib.gui.screen.interfaces.PagedElement;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.GuiScreen;
 import net.minecraft.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonGeneric {
+public class ScrollBar<T extends PagedElement> extends ButtonGeneric {
     protected boolean dragging;
     protected float sliderRatio;
-    protected int maxStatus;
+    protected int maxPage;
     protected float percentage;
     protected int sliderHeight;
-    protected final T screen;
+    protected final T target;
 
-    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int maxStatus, T screen) {
+    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int contentSize, T target) {
         super(xPos, yPos, width, height, "", button -> {
         });
-        this.updateArguments(maxStatus, pageCapacity);
-        this.screen = screen;
+        this.updateArguments(pageCapacity, contentSize);
+        this.target = target;
         this.setRenderDefaultBackground(false);
     }
 
     public void updateArguments(boolean visible) {
         this.setVisible(visible);
-        this.updateArguments(this.screen.getMaxCapacity(), this.screen.getContentSize());
+        this.updateArguments(this.target.getPageCapacity(), this.target.getContentSize());
     }
 
     private void updateArguments(int pageCapacity, int contentSize) {
         float temp;
         if (contentSize <= pageCapacity) {
             temp = 1.0F;
-            this.maxStatus = 0;
+            this.maxPage = 0;
         } else {
             temp = (float) pageCapacity / contentSize;
-            this.maxStatus = contentSize - pageCapacity;
+            this.maxPage = contentSize - pageCapacity;
         }
         this.percentage = temp;
         this.sliderHeight = (int) (height * temp);
@@ -92,9 +91,9 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonGeneric
         this.dragging = false;
     }
 
-    public void updateRatioByScreen(int status) {
-        if (this.maxStatus > 0) {
-            this.sliderRatio = (1 - this.percentage) * ((float) status / this.maxStatus);
+    public void updateRatioByScreen(int page) {
+        if (this.maxPage > 0) {
+            this.sliderRatio = (1 - this.percentage) * ((float) page / this.maxPage);
         }
     }
 
@@ -103,7 +102,7 @@ public class ScrollBar<T extends GuiScreen & StatusScreen> extends ButtonGeneric
         if (this.sliderRatio < 1.0F - this.percentage) {
             temp = this.sliderRatio / (1.0F - this.percentage);
         }
-        this.screen.setStatusByRatio(temp);
+        this.target.setPageByRatio(temp);
     }
 
     private float getRatioFromSlider(int mouseY) {

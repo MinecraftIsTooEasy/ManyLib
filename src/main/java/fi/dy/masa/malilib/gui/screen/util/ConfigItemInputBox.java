@@ -29,8 +29,8 @@ class ConfigItemInputBox<T extends ConfigBase<?> & IStringRepresentable & IConfi
     }
 
     @Override
-    public void tickScreen() {
-        super.tickScreen();
+    public void tick() {
+        super.tick();
         this.textFieldWrapper.tickScreen();
     }
 

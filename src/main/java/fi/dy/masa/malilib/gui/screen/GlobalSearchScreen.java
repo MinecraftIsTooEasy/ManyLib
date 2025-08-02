@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Searchable {
+public class GlobalSearchScreen extends LegacyListScreen<ConfigItem<?>> implements Searchable {
     private final List<SearchResult> searchResultsCache = new ArrayList<>();
     private final List<SearchResult> searchResults = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
         SearchField searchField = ScreenConstants.getSearchButton(this);
         searchField.initialSearch();
         this.addWidget(searchField);
-        this.onStatusChange();
+        this.onPageChange();
         Keyboard.enableRepeatEvents(true);
     }
 
@@ -59,7 +59,7 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
     }
 
     @Override
-    public int getMaxCapacity() {
+    public int getPageCapacity() {
         return 8;
     }
 
@@ -102,8 +102,8 @@ public class GlobalSearchScreen extends ListScreen<ConfigItem<?>> implements Sea
         } else {
             this.searchResults.sort((x, y) -> sortCategory.category.compare(x.configBase(), y.configBase()));
         }
-        this.resetStatus();
-        this.markShouldUpdateEntries();
+        this.resetPage();
+        this.markDirty();
     }
 
     @Override

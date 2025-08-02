@@ -2,7 +2,6 @@ package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.fml.ManyLibEventsFML;
-import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
 import fi.dy.masa.malilib.gui.screen.FakeModMenu;
 import fi.dy.masa.malilib.gui.screen.GlobalSearchScreen;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
@@ -24,8 +23,8 @@ public class ManyLibInitHandler implements IInitializationHandler {
         ManyLibConfig.SearchAny.getKeybind().setCallback(new CallbackSearchAny());
         ManyLibConfig.TitleFormat.setValueChangeCallback(config -> {
             GuiScreen screen = GuiUtils.getCurrentScreen();
-            if (screen instanceof DefaultConfigScreen defaultConfigScreen) {
-                defaultConfigScreen.setTitle(config.getEnumValue() + defaultConfigScreen.createTitle());
+            if (screen instanceof ManyLibConfigScreen configScreen) {
+                configScreen.updateTitle();
             }
         });
     }

@@ -4,6 +4,8 @@ import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.ResourceLocation;
 
+import static fi.dy.masa.malilib.ManyLib.RESOURCE_DOMAIN;
+
 public enum ManyLibIcons implements IGuiIcon {
     ResetButton(0, 100, 20, 20, true),
     PageDownButton(20, 100, 20, 20, true),
@@ -22,7 +24,7 @@ public enum ManyLibIcons implements IGuiIcon {
     SEARCH(201, 0, 12, 12, 0, 0),
     ;
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation("manyLib", "textures/gui/gui_widgets.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(RESOURCE_DOMAIN, "textures/gui/gui_widgets.png");
 
     private final int u;
     private final int v;

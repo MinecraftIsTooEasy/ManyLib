@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
+import fi.dy.masa.malilib.gui.screen.ModernScreen;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetLabel;
 import fi.dy.masa.malilib.gui.widgets.WidgetTextField;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class GuiBase extends GuiScreen implements IMessageConsumer, IStringConsumer {
+public abstract class GuiBase extends ModernScreen implements IMessageConsumer, IStringConsumer {
     public static final String TXT_AQUA = EnumChatFormatting.AQUA.toString();
     public static final String TXT_BLACK = EnumChatFormatting.BLACK.toString();
     public static final String TXT_BLUE = EnumChatFormatting.BLUE.toString();
@@ -150,11 +151,7 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
     }
 
     @Override
-    public final void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.render(new DrawContext(), mouseX, mouseY, partialTicks);
-    }
-
-    protected void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
         // Use a custom DrawContext that doesn't always disable depth test when drawing...
 //        drawContext = new MalilibDrawContext(this.client, drawContext.getVertexConsumers());
 
@@ -193,34 +190,25 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //        return super.mouseScrolled(mouseX, mouseY, amount);
 //    }
 //
-//    @Override
-//    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-//        if (this.onMouseClicked((int) mouseX, (int) mouseY, mouseButton) == false) {
-//            return super.mouseClicked(mouseX, mouseY, mouseButton);
-//        }
-//
-//        return false;
-//    }
     @Override
-    protected final void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        this.onMouseClicked(mouseX, mouseY, mouseButton);
-    }
-//
-//    @Override
-//    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
-//        if (this.onMouseReleased((int) mouseX, (int) mouseY, mouseButton) == false) {
-//            return super.mouseReleased(mouseX, mouseY, mouseButton);
-//        }
-//
-//        return false;
-//    }
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (this.onMouseClicked((int) mouseX, (int) mouseY, mouseButton) == false) {
+            return super.mouseClicked(mouseX, mouseY, mouseButton);
+        }
 
-    @Override
-    protected final void mouseMovedOrUp(int par1, int par2, int par3) {
-        this.onMouseReleased(par1, par2, par3);
+        return false;
     }
 
-//    @Override
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+        if (this.onMouseReleased((int) mouseX, (int) mouseY, mouseButton) == false) {
+            return super.mouseReleased(mouseX, mouseY, mouseButton);
+        }
+
+        return false;
+    }
+
+    //    @Override
 //    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 //        this.keyInputCount++;
 //
@@ -231,31 +219,24 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //        return super.keyPressed(keyCode, scanCode, modifiers);
 //    }
 //
-//    @Override
-//    public boolean charTyped(char charIn, int modifiers)
-//    {
-//        // This is an ugly fix for the issue that the key press from the hotkey that
-//        // opens a GUI would then also get into any text fields or search bars, as the
-//        // charTyped() event always fires after the keyPressed() event in any case >_>
-//        // The 100ms timeout is to not indefinitely block the first character,
-//        // as otherwise IME methods wouldn't work at all, as they don't trigger a key press.
+    @Override
+    public boolean charTyped(char charIn, int modifiers) {
+        // This is an ugly fix for the issue that the key press from the hotkey that
+        // opens a GUI would then also get into any text fields or search bars, as the
+        // charTyped() event always fires after the keyPressed() event in any case >_>
+        // The 100ms timeout is to not indefinitely block the first character,
+        // as otherwise IME methods wouldn't work at all, as they don't trigger a key press.
 //        if (this.keyInputCount <= 0 && System.nanoTime() - this.openTime <= 100000000)
 //        {
 //            this.keyInputCount++;
 //            return true;
 //        }
-//
-//        if (this.onCharTyped(charIn, modifiers))
-//        {
-//            return true;
-//        }
-//
-//        return super.charTyped(charIn, modifiers);
-//    }
 
-    @Override
-    protected final void keyTyped(char par1, int par2) {
-        this.onCharTyped(par1, par2);
+        if (this.onCharTyped(charIn, modifiers)) {
+            return true;
+        }
+
+        return super.charTyped(charIn, modifiers);
     }
 
     protected boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -287,7 +268,6 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 
         return handled;
     }
-
 
     protected boolean onMouseReleased(int mouseX, int mouseY, int mouseButton) {
         for (WidgetBase widget : this.widgets) {
@@ -369,11 +349,11 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 //        return handled;
 //    }
 
-    protected boolean onCharTyped(char charIn, int modifiers) {
+    protected boolean onCharTyped(char charIn, int keyCode) {
         boolean handled = false;
 
         for (TextFieldWrapper<?> entry : this.textFields) {
-            if (entry.onCharTyped(charIn, modifiers)) {
+            if (entry.onCharTyped(charIn, keyCode)) {
                 handled = true;
                 break;
             }
@@ -381,7 +361,7 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
 
         if (handled == false) {
             for (WidgetBase widget : this.widgets) {
-                if (widget.onCharTyped(charIn, modifiers)) {
+                if (widget.onCharTyped(charIn, keyCode)) {
                     // Don't call super if the button press got handled
                     handled = true;
                     break;
@@ -389,7 +369,7 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
             }
         }
 
-        if (handled == false && modifiers == 1) {
+        if (handled == false && keyCode == 1) {
             this.closeGui(true);
             return true;
         }
@@ -476,13 +456,9 @@ public abstract class GuiBase extends GuiScreen implements IMessageConsumer, ISt
     }
 
     @Override
-    public final void updateScreen() {
-        this.tickScreen();
-    }
-
-    protected void tickScreen() {
-        this.widgets.forEach(WidgetBase::tickScreen);
-        this.buttons.forEach(WidgetBase::tickScreen);
+    protected void tick() {
+        this.widgets.forEach(WidgetBase::tick);
+        this.buttons.forEach(WidgetBase::tick);
 //        this.textFields.forEach(WidgetBase::update);
     }
 

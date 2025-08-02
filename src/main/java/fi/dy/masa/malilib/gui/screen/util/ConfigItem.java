@@ -6,7 +6,6 @@ import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
@@ -57,18 +56,12 @@ public abstract class ConfigItem<T extends ConfigBase<?> & IConfigDisplay> exten
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.render(mouseX, mouseY, selected, drawContext);
         if (this.visible) {
-            if (this.shouldDrawHighlight(mouseX, mouseY)) {
+            if (drawContext.isTopLayer() && this.isMouseOver(mouseX, mouseY)) {
                 RenderUtils.drawRect(0, this.y, GuiUtils.getScaledWindowWidth(), this.height, ManyLibConfig.HighlightColor.getColorInteger());
             }
             this.widgetText.render(mouseX, mouseY, selected, drawContext);
             this.buttons.forEach(guiButton -> guiButton.render(mouseX, mouseY, guiButton.isMouseOver(), drawContext));
         }
-    }
-
-    private boolean shouldDrawHighlight(int mouseX, int mouseY) {
-        if (!this.isMouseOver(mouseX, mouseY)) return false;
-        if (this.screen instanceof GuiBase guiBase && guiBase.getHoveredWidget() == null) return true;
-        return false;
     }
 
     @Override

@@ -70,7 +70,12 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
 
     @Override
     public void setEnumValue(E value) {
+        E oldValue = this.value;
         this.value = value;
+
+        if (oldValue != this.value) {
+            this.onValueChanged();
+        }
     }
 
     @Override
@@ -95,7 +100,7 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
 
     @Override
     public void resetToDefault() {
-        this.value = this.defaultValue;
+        this.setEnumValue(this.defaultValue);
     }
 
     @Override

@@ -42,8 +42,8 @@ public abstract class ScreenPaged extends GuiBase implements ScreenWithPages {
     }
 
     @Override
-    protected void tickScreen() {
-        super.tickScreen();
+    protected void tick() {
+        super.tick();
         this.wheelListener();
     }
 

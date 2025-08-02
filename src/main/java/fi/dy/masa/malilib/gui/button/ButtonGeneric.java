@@ -66,7 +66,7 @@ public class ButtonGeneric extends ButtonBase {
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         if (this.visible) {
             if (this.updateListener != null) this.updateListener.onUpdate(this);
-            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.hovered = drawContext.isTopLayer() && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
             int buttonStyle = this.getTextureOffset(this.hovered);
 

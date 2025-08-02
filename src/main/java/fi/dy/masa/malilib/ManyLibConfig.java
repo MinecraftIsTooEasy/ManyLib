@@ -7,10 +7,11 @@ import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.EnumChatFormatting;
+import net.minecraft.GuiScreen;
 
 import java.util.List;
 
-import static fi.dy.masa.malilib.ManyLib.MOD_ID;
+import static fi.dy.masa.malilib.ManyLib.MOD_NAME;
 
 public class ManyLibConfig extends SimpleConfigs {
     private static final ManyLibConfig Instance;
@@ -41,7 +42,7 @@ public class ManyLibConfig extends SimpleConfigs {
     static {
         values = List.of(HideConfigButton, HoverTextYLevel, HighlightColor, TitleFormat, AutoSaveLoad);
         hotkeys = List.of(OpenConfigMenu, OpenModMenu, SearchAny);
-        Instance = new ManyLibConfig(MOD_ID, hotkeys, values);
+        Instance = new ManyLibConfig(MOD_NAME, hotkeys, values);
     }
 
     public static ManyLibConfig getInstance() {
@@ -51,6 +52,11 @@ public class ManyLibConfig extends SimpleConfigs {
     @Override
     public String getMenuComment() {
         return StringUtils.translate("config.menu.comment." + this.name, OpenConfigMenu.getDisplayText());
+    }
+
+    @Override
+    public GuiScreen getConfigScreen(GuiScreen parentScreen) {
+        return new ManyLibConfigScreen(parentScreen, this);
     }
 
     public static class Debug {

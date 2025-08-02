@@ -7,7 +7,7 @@ import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.ManyLibIcons;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
-import fi.dy.masa.malilib.gui.screen.util.DropDownEntry;
+import fi.dy.masa.malilib.gui.screen.util.ModLinkEntry;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.GuiUtils;
 import net.minecraft.GuiScreen;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class PullDownButton<T extends DropDownEntry> extends ButtonGeneric {
+public class LegacyModLinkButton<T extends ModLinkEntry> extends ButtonGeneric {
 
     private boolean expand;
 
@@ -25,7 +25,7 @@ public class PullDownButton<T extends DropDownEntry> extends ButtonGeneric {
 
     Constructor<T> constructor;
 
-    public PullDownButton(int x, int y, int width, int height, String message, String tooltip, Constructor<T> constructor) {
+    public LegacyModLinkButton(int x, int y, int width, int height, String message, String tooltip, Constructor<T> constructor) {
         super(x, y, width, height, message, null);
         this.actionListener = button -> {
             this.dropDownEntries.forEach(dropDownEntry -> dropDownEntry.setVisible(!dropDownEntry.isVisible()));

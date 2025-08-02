@@ -6,11 +6,11 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.render.RenderUtils;
 
-public class DropDownEntry extends ButtonGeneric {
+public class ModLinkEntry extends ButtonGeneric {
     public static final int Width = 100;
     public static final int HeightUnit = 16;
 
-    public DropDownEntry(int x, int y, boolean present, String content, IButtonActionListener listener) {
+    public ModLinkEntry(int x, int y, boolean present, String content, IButtonActionListener listener) {
         super(x, y, Width, HeightUnit, content, listener);
         if (present) this.setDisplayString(GuiBase.TXT_AQUA + this.displayString);
         this.setTextCentered(false);

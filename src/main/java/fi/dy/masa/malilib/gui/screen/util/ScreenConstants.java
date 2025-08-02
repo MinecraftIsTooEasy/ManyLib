@@ -10,7 +10,7 @@ import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.screen.interfaces.StatusScreen;
+import fi.dy.masa.malilib.gui.screen.interfaces.PagedElement;
 import fi.dy.masa.malilib.gui.widgets.*;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -32,7 +32,7 @@ public class ScreenConstants {
     private static final int scrollBarXFromRight = -40;
     private static final int configToggleButtonXWidth = 40;
     private static final int nameX = 20;
-    private static final int pullDownButtonXFromRight = -120;
+    private static final int modLinkButtonXFromRight = -120;
     public static final int oneScroll = 3;
     public static final int confirmFlag = 0;
     public static final int commonButtonHeight = 20;
@@ -40,8 +40,8 @@ public class ScreenConstants {
 
     public static int getYPos(int index, GuiScreen screen) {
         int capacity;
-        if (screen instanceof StatusScreen statusScreen) {
-            capacity = statusScreen.getMaxCapacity();
+        if (screen instanceof PagedElement pagedElement) {
+            capacity = pagedElement.getPageCapacity();
         } else {
             capacity = 7;
         }
@@ -131,13 +131,17 @@ public class ScreenConstants {
         return ButtonGeneric.builder("", onPress).dimensions(screen.width + hotKeyFirstButtonXFromRight + shortHotkeyButtonWidth + 5, getYPos(index, screen), configToggleButtonXWidth, commonButtonHeight).build();
     }
 
-    public static PullDownButton<DropDownEntry> getPullDownButton(GuiScreen screen, IConfigHandler configInstance) {
-        return new PullDownButton<>(screen.width + pullDownButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"),
-                (index, startX, startY, present, content, listener) -> new DropDownEntry(startX, startY + index * DropDownEntry.HeightUnit, present, content, listener));
+    public static LegacyModLinkButton<ModLinkEntry> getLegacyModLinkButton(GuiScreen screen, IConfigHandler configInstance) {
+        return new LegacyModLinkButton<>(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"),
+                (index, startX, startY, present, content, listener) -> new ModLinkEntry(startX, startY + index * ModLinkEntry.HeightUnit, present, content, listener));
     }
 
-    public static <T extends GuiScreen & StatusScreen> ScrollBar<?> getScrollBar(T screen, int pageCapacity, int maxStatus) {
-        return new ScrollBar<>(screen.width + scrollBarXFromRight, getYPos(0, screen), 8, 22 * screen.getMaxCapacity() - 2, pageCapacity, maxStatus, screen);
+    public static ModLinkButton getModLinkButton(GuiScreen screen, IConfigHandler configInstance) {
+        return new ModLinkButton(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"));
+    }
+
+    public static <T extends GuiScreen & PagedElement> ScrollBar<?> getScrollBar(T screen, int pageCapacity, int contentSize) {
+        return new ScrollBar<>(screen.width + scrollBarXFromRight, getYPos(0, screen), 8, 22 * screen.getPageCapacity() - 2, pageCapacity, contentSize, screen);
     }
 
     public static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
@@ -166,11 +170,11 @@ public class ScreenConstants {
         return maxWidth;
     }
 
-    public static <T extends GuiScreen & Searchable & StatusScreen> SearchField getSearchButton(T screen) {
+    public static <T extends GuiScreen & Searchable & PagedElement> SearchField getSearchButton(T screen) {
         return new SearchField(23, getSearchFieldY(screen), screen.width - 95, 13, screen);
     }
 
-    static <T extends GuiScreen & Searchable & StatusScreen> int getSearchFieldY(T screen) {
-        return 35 - 22 * screen.getMaxCapacity() + 22 * 8;
+    static <T extends GuiScreen & Searchable & PagedElement> int getSearchFieldY(T screen) {
+        return 35 - 22 * screen.getPageCapacity() + 22 * 8;
     }
 }

@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringListEditScreen extends ListScreen<WidgetStringEditEntry> {
+public class StringListEditScreen extends LegacyListScreen<WidgetStringEditEntry> {
     private final ConfigStringList config;
 
     private final List<String> tempList;
@@ -54,7 +54,7 @@ public class StringListEditScreen extends ListScreen<WidgetStringEditEntry> {
     }
 
     @Override
-    public int getMaxCapacity() {
+    public int getPageCapacity() {
         return 8;
     }
 }

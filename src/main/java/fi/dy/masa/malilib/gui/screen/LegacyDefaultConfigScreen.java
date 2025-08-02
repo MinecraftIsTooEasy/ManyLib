@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.gui.screen;
 
-import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.ConfigTab;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
@@ -9,16 +8,13 @@ import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.feat.ProgressSaving;
 import fi.dy.masa.malilib.feat.SortCategory;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.ModLinkButton;
+import fi.dy.masa.malilib.gui.button.LegacyModLinkButton;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
-import fi.dy.masa.malilib.gui.layer.Layer;
-import fi.dy.masa.malilib.gui.layer.ModLinkLayer;
 import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.gui.screen.util.WidthAdder;
-import fi.dy.masa.malilib.gui.widgets.WidgetText;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.GuiYesNoMITE;
@@ -26,30 +22,27 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Searchable {
+public class LegacyDefaultConfigScreen extends LegacyListScreen<ConfigItem<?>> implements Searchable {
     public final IConfigHandler configInstance;
-    private final GuiScreen parent;
     public ConfigTab currentTab;
     public int currentTabIndex;
     public boolean needSyncTab;
     private boolean firstSeen = true;
     private final List<ConfigTab> configTabs;
-    private ModLinkButton modLinkButton;
 
-    public DefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
+    public LegacyDefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
         super();
-        if (parentScreen instanceof DefaultConfigScreen defaultConfigScreen) {
-            parentScreen = defaultConfigScreen.parent;
-        }
-        this.parent = parentScreen;
+        this.setParent(parentScreen);
+        this.useTitleHierarchy = false;
         this.configInstance = configInstance;
         this.configTabs = configInstance.getConfigTabs();
+        this.setTitle(this.createTitle());
     }
 
     @Override
-    protected void initBaseLayer(Layer layer) {
-        super.initBaseLayer(layer);
-        this.initElements(layer);
+    public void initGui() {
+        super.initGui();
+        this.initElements();
         this.setCurrentTab(this.firstSeen ? ProgressSaving.getPage(this.configInstance.getName()) : this.currentTabIndex);
         this.needSyncTab = false;// first time special
         this.onContentChange();
@@ -61,54 +54,38 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         Keyboard.enableRepeatEvents(true);
     }
 
-    protected void initElements(Layer layer) {
-        layer.addWidget(WidgetText.of(ManyLibConfig.TitleFormat.getEnumValue() + this.configInstance.getName() + " Configs").position(40, 15));
-
+    protected void initElements() {
         WidthAdder widthAdder = new WidthAdder(20);
 
-        this.addTabButtons(layer, widthAdder);
+        this.addTabButtons(widthAdder);
 
         String configInstanceName = this.configInstance.getName();
-        layer.addWidget(ScreenConstants.getResetAllButton(widthAdder, () -> this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified), button -> {
+        this.addButton(ScreenConstants.getResetAllButton(widthAdder, () -> this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified), button -> {
             String question = StringUtils.translate("manyLib.gui.reset_tab_question"), yes = StringUtils.translate("gui.yes"), no = StringUtils.translate("gui.no");
             GuiYesNoMITE var3 = new GuiYesNoMITE
                     (this, question, configInstanceName + ": " + this.currentTab.getGuiDisplayName(), yes, no, ScreenConstants.confirmFlag);
             this.mc.displayGuiScreen(var3);
         }));
         ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
-        layer.addWidget(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
+        this.addButton(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
             ((IButtonPeriodic) button).next();
             this.sort(sortCategoryConfigEnum.getEnumValue());
         }));
-        layer.addWidget(ScreenConstants.getSearchButton(this));
+        this.addWidget(ScreenConstants.getSearchButton(this));
 
-        ModLinkButton modLinkButton = ScreenConstants.getModLinkButton(this, this.configInstance);
-        modLinkButton.setActionListener(button -> this.toggleModLink());
-        this.modLinkButton = modLinkButton;
-        layer.addWidget(modLinkButton);
+        LegacyModLinkButton<?> pullDownButton = ScreenConstants.getLegacyModLinkButton(this, this.configInstance);
+        this.addButton(pullDownButton);
+        pullDownButton.initDropDownEntries(this.configInstance, this.getParent());
+        pullDownButton.addToList(this::addButton);
     }
 
-    private void toggleModLink() {
-        Layer topLayer = this.getTopLayer();
-        if (topLayer instanceof ModLinkLayer) {
-            this.removeLayer(topLayer);
-        } else {
-            ModLinkLayer modLinkLayer = new ModLinkLayer(x -> x == this.configInstance,
-                    () -> this.modLinkButton,
-                    x -> x.getConfigScreen(this),
-                    this::toggleModLink
-            );
-            this.addLayer(modLinkLayer);
-        }
-    }
-
-    void addTabButtons(Layer layer, WidthAdder widthAdder) {
+    void addTabButtons(WidthAdder widthAdder) {
         for (int index = 0; index < this.configTabs.size(); index++) {
             ConfigTab configTab = this.configTabs.get(index);
             String name = configTab.getGuiDisplayName();
             int stringWidth = this.fontRenderer.getStringWidth(name);
             int finalIndex = index;
-            layer.addWidget(ButtonGeneric.builder(name, button -> this.setCurrentTab(finalIndex))
+            this.addButton(ButtonGeneric.builder(name, button -> this.setCurrentTab(finalIndex))
                     .onUpdate(button -> button.setEnabled(this.currentTabIndex != finalIndex))
                     .dimensions(widthAdder.getWidth(), 30, stringWidth + 10, 20)
                     .hoverStrings(configTab.getTooltip()).build());
@@ -139,31 +116,26 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
 
     //  Second block: only for compatibility with Modern Mite's IMBlocker, this block enables the input method.
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
+    protected boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
             if (this.needSyncTab) {
                 this.needSyncTab = false;
-                this.reload();
+                this.initGui();
             }
             return true;
         }
         if (this.entries.stream()
                 .filter(configItem -> configItem instanceof AboutInputMethod)
                 .map(configItem -> (AboutInputMethod) configItem)
-                .anyMatch(aboutInputMethod -> aboutInputMethod.tryActivateIM((int) mouseX, (int) mouseY, button)))
-            return true;
+                .anyMatch(aboutInputMethod -> aboutInputMethod.tryActivateIM(mouseX, mouseY, mouseButton))) return true;
         return false;
     }
 
     private long lastShift = 0L;
 
     @Override
-    public boolean charTyped(char chr, int keyCode) {
-        if (super.charTyped(chr, keyCode)) {
-            return true;
-        }
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            this.mc.displayGuiScreen(this.parent);
+    protected boolean onCharTyped(char charIn, int keyCode) {
+        if (super.onCharTyped(charIn, keyCode)) {
             return true;
         }
         if (keyCode == Keyboard.KEY_LSHIFT) {
@@ -206,4 +178,7 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         this.onContentChange();
     }
 
+    public String createTitle() {
+        return this.configInstance.getName() + " Configs";
+    }
 }

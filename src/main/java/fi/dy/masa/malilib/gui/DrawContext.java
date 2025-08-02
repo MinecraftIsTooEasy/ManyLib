@@ -4,8 +4,17 @@ import net.minecraft.FontRenderer;
 import net.minecraft.Gui;
 
 public class DrawContext extends Gui {
+    private boolean topLayer = true;
 
     public DrawContext() {
+    }
+
+    public boolean isTopLayer() {
+        return this.topLayer;
+    }
+
+    public void setTopLayer(boolean topLayer) {
+        this.topLayer = topLayer;
     }
 
     public void drawText(FontRenderer fontRenderer, String text, int x, int y, int color, boolean shadow) {

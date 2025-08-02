@@ -21,7 +21,7 @@
     "qqGroup": "661223990"
   },
   "license": "LGPLv3",
-  "icon": "assets/manyLib/textures/manyLib/gui/icon.png",
+  "icon": "assets/manylib/textures/gui/icon.png",
   "entrypoints": {
     "main": [
       "fi.dy.masa.malilib.ManyLib"

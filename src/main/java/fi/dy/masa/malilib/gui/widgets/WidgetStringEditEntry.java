@@ -71,8 +71,8 @@ public class WidgetStringEditEntry extends WidgetBase {
     }
 
     @Override
-    public void tickScreen() {
-        super.tickScreen();
+    public void tick() {
+        super.tick();
         this.textFieldWrapper.tickScreen();
     }
 

@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.gui.screen.interfaces;
 
 import org.lwjgl.input.Mouse;
 
-public interface ScrollableScreen {
+public interface Scrollable {
     void scroll(boolean isScrollDown);
 
     default void wheelListener() {

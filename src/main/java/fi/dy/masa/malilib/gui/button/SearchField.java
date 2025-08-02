@@ -56,8 +56,8 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
     }
 
     @Override
-    public void tickScreen() {
-        super.tickScreen();
+    public void tick() {
+        super.tick();
         this.textFieldWrapper.tickScreen();
     }
 

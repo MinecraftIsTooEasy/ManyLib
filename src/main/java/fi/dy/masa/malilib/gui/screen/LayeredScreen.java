@@ -1,0 +1,143 @@
+package fi.dy.masa.malilib.gui.screen;
+
+import com.google.common.collect.Lists;
+import fi.dy.masa.malilib.gui.DrawContext;
+import fi.dy.masa.malilib.gui.layer.Layer;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class LayeredScreen extends ModernScreen {
+    private final Layer baseLayer = new Layer();
+    private final List<Layer> layers = new ArrayList<>();
+    private final List<Layer> reverseView = Lists.reverse(this.layers);
+    private final List<Layer> layersToAdd = new ArrayList<>();
+    private final List<Layer> layersToRemove = new ArrayList<>();
+
+    public LayeredScreen() {
+        this.layers.add(this.baseLayer);
+    }
+
+    /**
+     * Use reload instead.
+     */
+    @Deprecated
+    @Override
+    public final void initGui() {
+        super.initGui();
+        this.initBaseLayer(this.baseLayer);
+        if (this.hasMultiLayer()) {
+            for (int i = 1; i < this.layers.size(); i++) {
+                this.layers.get(i).initGui();
+            }
+        }
+    }
+
+    /**
+     * Add elements here.
+     */
+    protected void initBaseLayer(Layer layer) {
+        layer.initGui();
+    }
+
+    protected void reload() {
+        this.initGui();
+    }
+
+    @Override
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+        super.render(drawContext, mouseX, mouseY, partialTicks);
+        if (!this.layersToAdd.isEmpty()) {
+            this.layers.addAll(this.layersToAdd);
+            this.layersToAdd.clear();
+        }
+        if (!this.layersToRemove.isEmpty()) {
+            this.layers.removeAll(this.layersToRemove);
+            this.layersToRemove.clear();
+        }
+
+        drawContext.setTopLayer(false);
+        for (int i = 0; i < this.layers.size() - 1; i++) {
+            this.layers.get(i).render(drawContext, mouseX, mouseY, partialTicks);
+        }
+        drawContext.setTopLayer(true);
+        this.reverseView.get(0).render(drawContext, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        for (Layer layer : this.reverseView) {
+            layer.mouseMoved(mouseX, mouseY);
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        for (Layer layer : this.reverseView) {
+            if (layer.mouseClicked(mouseX, mouseY, button)) return true;
+            if (layer.blocksInteraction()) break;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        for (Layer layer : this.reverseView) {
+            if (layer.mouseReleased(mouseX, mouseY, button)) return true;
+            if (layer.blocksInteraction()) break;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        for (Layer layer : this.reverseView) {
+            if (layer.mouseScrolled(mouseX, mouseY, amount)) return true;
+            if (layer.blocksInteraction()) break;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(char chr, int keyCode) {
+        for (Layer layer : this.reverseView) {
+            if (layer.charTyped(chr, keyCode)) return true;
+            if (layer.blocksInteraction()) break;
+        }
+        if (keyCode == Keyboard.KEY_ESCAPE && this.hasMultiLayer()) {
+            this.removeTopLayer();
+            return true;
+        }
+        return false;
+    }
+
+    protected Layer getBaseLayer() {
+        return this.baseLayer;
+    }
+
+    protected void addLayer(Layer layer) {
+        this.layersToAdd.add(layer);
+        layer.initGui();
+    }
+
+    protected void removeTopLayer() {
+        this.reverseView.remove(0);
+    }
+
+    protected void removeLayer(Layer layer) {
+        this.layersToRemove.add(layer);
+    }
+
+    protected boolean hasMultiLayer() {
+        return this.layers.size() > 1;
+    }
+
+    protected Layer getTopLayer() {
+        return this.reverseView.get(0);
+    }
+
+    protected boolean isTopLayer(Layer layer) {
+        return layer == this.reverseView.get(0);
+    }
+}
