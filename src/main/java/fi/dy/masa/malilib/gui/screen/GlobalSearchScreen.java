@@ -8,10 +8,13 @@ import fi.dy.masa.malilib.feat.SortCategory;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.SearchField;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
+import fi.dy.masa.malilib.gui.layer.Layer;
+import fi.dy.masa.malilib.gui.screen.interfaces.IConfigList;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.gui.screen.util.WidthAdder;
+import fi.dy.masa.malilib.gui.widgets.WidgetConfigListView;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 import org.lwjgl.input.Keyboard;
@@ -21,51 +24,65 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class GlobalSearchScreen extends LegacyListScreen<ConfigItem<?>> implements Searchable {
+public class GlobalSearchScreen extends LayeredScreen implements Searchable, IConfigList {
+    private SearchField searchField;
     private final List<SearchResult> searchResultsCache = new ArrayList<>();
     private final List<SearchResult> searchResults = new ArrayList<>();
+    private final GuiScreen parent;
+    private WidgetGlobalConfigListView widgetListView;
+    private boolean firstSeen = true;
 
     public GlobalSearchScreen(GuiScreen parentScreen) {
         super();
-        this.setParent(parentScreen);
+        this.parent = parentScreen;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        this.setTitle(StringUtils.translate("manyLib.gui.title.globalSearching"));
+    protected void initBaseLayer(Layer layer) {
+        String text = null;
+        if (!this.firstSeen) {
+            text = this.searchField.getText();
+        }
+        super.initBaseLayer(layer);
+        layer.addWidget(ScreenConstants.getTitle(StringUtils.translate("manyLib.gui.title.globalSearching")));
 
-        WidthAdder widthAdder = new WidthAdder(200);
+        WidthAdder widthAdder = new WidthAdder(40);
 
         ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
-        this.addButton(ScreenConstants.getSortButton(this, widthAdder, 10, sortCategoryConfigEnum, button -> {
+        layer.addWidget(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
             ((IButtonPeriodic) button).next();
             this.sort(sortCategoryConfigEnum.getEnumValue());
         }));
 
-        SearchField searchField = ScreenConstants.getSearchButton(this);
-        searchField.initialSearch();
-        this.addWidget(searchField);
-        this.onPageChange();
+        WidgetGlobalConfigListView widgetListView = new WidgetGlobalConfigListView(this);
+        layer.addWidget(widgetListView);
+        this.widgetListView = widgetListView;
+
+        SearchField searchField = ScreenConstants.getSearchButton(this, this.widgetListView);
+        if (text != null) {
+            searchField.initialSearch(text);
+        } else {
+            searchField.initialSearch();
+        }
+        layer.addWidget(searchField);
+        this.searchField = searchField;
+
+        this.widgetListView.onStatusChange();
         Keyboard.enableRepeatEvents(true);
+
+        this.firstSeen = false;
     }
 
     @Override
-    protected ConfigItem<?> createEntry(int realIndex, int relativeIndex) {
-        SearchResult searchResult = this.searchResults.get(realIndex);
-        ConfigItem<?> configItem = ConfigItem.getConfigItem(relativeIndex, searchResult.configBase(), this);
-        configItem.addTooltip(GuiBase.TXT_AQUA + "<" + searchResult.mod() + ">", true);
-        return configItem;
-    }
-
-    @Override
-    public int getPageCapacity() {
-        return 8;
-    }
-
-    @Override
-    public int getContentSize() {
-        return this.searchResults.size();
+    public boolean charTyped(char chr, int keyCode) {
+        if (super.charTyped(chr, keyCode)) {
+            return true;
+        }
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            this.mc.displayGuiScreen(this.parent);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -81,7 +98,7 @@ public class GlobalSearchScreen extends LegacyListScreen<ConfigItem<?>> implemen
                 .forEach(this.searchResultsCache::add);
         this.searchResults.clear();
         this.searchResults.addAll(this.searchResultsCache);
-        this.onContentChange();
+        this.widgetListView.onContentChange();
     }
 
     private boolean matchResult(SearchResult searchResult, String input) {
@@ -102,8 +119,8 @@ public class GlobalSearchScreen extends LegacyListScreen<ConfigItem<?>> implemen
         } else {
             this.searchResults.sort((x, y) -> sortCategory.category.compare(x.configBase(), y.configBase()));
         }
-        this.resetPage();
-        this.markDirty();
+        this.widgetListView.resetStatus();
+        this.widgetListView.markDirty();
     }
 
     @Override
@@ -113,6 +130,33 @@ public class GlobalSearchScreen extends LegacyListScreen<ConfigItem<?>> implemen
         ConfigManager.getInstance().saveAllConfigs();
     }
 
+    @Override
+    public int size() {
+        return this.searchResults.size();
+    }
+
+    @Override
+    public ConfigBase<?> get(int index) {
+        return this.searchResults.get(index).configBase();
+    }
+
     private record SearchResult(String mod, ConfigBase<?> configBase) {
+    }
+
+    private static class WidgetGlobalConfigListView extends WidgetConfigListView {
+        private final GlobalSearchScreen myScreen;
+
+        private WidgetGlobalConfigListView(GlobalSearchScreen screen) {
+            super(screen, screen);
+            this.myScreen = screen;
+        }
+
+        @Override
+        protected ConfigItem<?> createEntry(int realIndex, int relativeIndex) {
+            SearchResult searchResult = this.myScreen.searchResults.get(realIndex);
+            ConfigItem<?> configItem = ConfigItem.getConfigItem(relativeIndex, searchResult.configBase(), this.myScreen);
+            configItem.addTooltip(GuiBase.TXT_AQUA + "<" + searchResult.mod() + ">", true);
+            return configItem;
+        }
     }
 }

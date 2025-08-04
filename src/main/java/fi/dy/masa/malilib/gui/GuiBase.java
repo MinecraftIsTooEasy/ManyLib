@@ -425,6 +425,7 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
     }
 
     public <T extends WidgetBase> T addWidget(T widget) {
+        widget.init();
         this.widgets.add(widget);
         return widget;
     }

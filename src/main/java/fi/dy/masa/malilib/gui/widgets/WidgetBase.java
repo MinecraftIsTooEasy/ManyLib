@@ -87,6 +87,12 @@ public abstract class WidgetBase extends Gui {
     public void tick() {
     }
 
+    /**
+     * Called when the widget is added
+     */
+    public void init() {
+    }
+
     public boolean hasHoverText() {
         return this.hoverStrings.isEmpty() == false;
     }
@@ -135,13 +141,6 @@ public abstract class WidgetBase extends Gui {
 
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
         return false;
-    }
-
-    public void onMouseDragged(int mouseX, int mouseY) {
-        this.onMouseDraggedImpl(mouseX, mouseY);
-    }
-
-    protected void onMouseDraggedImpl(int mouseX, int mouseY) {
     }
 
     public void onMouseReleased(int mouseX, int mouseY, int mouseButton) {

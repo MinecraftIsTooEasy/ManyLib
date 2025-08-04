@@ -1,10 +1,15 @@
 package fi.dy.masa.malilib.gui.layer;
 
+import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.Drawable;
 import fi.dy.masa.malilib.gui.Element;
 import fi.dy.masa.malilib.gui.ParentElement;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.GuiUtils;
+import net.minecraft.GuiScreen;
+import net.minecraft.ScaledResolution;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -12,6 +17,10 @@ import java.util.List;
 
 public class Layer implements ParentElement, Drawable {
     private final List<WidgetBase> widgets = new ArrayList<>();
+    private @Nullable WidgetBase hovered;
+    /**
+     * This is not used now
+     */
     private @Nullable Element focused;
 
     /**
@@ -23,9 +32,27 @@ public class Layer implements ParentElement, Drawable {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderWidgets(context, mouseX, mouseY, delta);
+        this.renderTooltips(context, mouseX, mouseY, delta);
+    }
+
+    private void renderWidgets(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.hovered = null;
         for (WidgetBase widget : this.widgets) {
             widget.render(mouseX, mouseY, false, context);
+            if (widget.isMouseOver(mouseX, mouseY)) {
+                this.hovered = widget;
+            }
         }
+    }
+
+    private void renderTooltips(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.hovered != null) {
+            this.hovered.postRenderHovered(mouseX, mouseY, true, context);
+        }
+    }
+
+    public void tick() {
     }
 
     @Override
@@ -78,15 +105,45 @@ public class Layer implements ParentElement, Drawable {
         return this.focused;
     }
 
+    /**
+     * Clicking the blank to remove the layer
+     */
+    public boolean autoExit() {
+        return false;
+    }
+
+    /**
+     * Blocks interaction from bottom layers
+     */
     public boolean blocksInteraction() {
         return false;
     }
 
     public void addWidget(WidgetBase widget) {
+        widget.init();
         this.widgets.add(widget);
     }
 
     public void removeWidget(WidgetBase widget) {
         this.widgets.remove(widget);
+    }
+
+    protected void drawOverlay() {
+        ScaledResolution resolution = GuiUtils.getScaledResolution();
+        RenderUtils.drawRect(0, 0, resolution.getScaledWidth(), resolution.getScaledHeight(), ManyLibConfig.HighlightColor.getColorInteger());
+    }
+
+    protected void drawOutlinedBox(GuiScreen screen, int x_offset, int y_offset) {
+        RenderUtils.drawOutlinedBox(screen.width / 2 - x_offset,
+                screen.height / 2 - y_offset,
+                x_offset * 2,
+                y_offset * 2,
+                0xFF000000,
+                0xFFA0A0A0,
+                0
+        );
+    }
+
+    public void removed() {
     }
 }

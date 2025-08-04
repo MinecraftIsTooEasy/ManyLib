@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.gui.button;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonUpdateListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.util.SoundUtils;
 import net.minecraft.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -60,7 +61,7 @@ public abstract class ButtonBase extends WidgetBase {
     @Override
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {// left click
-            this.mc.sndManager.playSoundFX("random.click", 1.0f, 1.0f);
+            SoundUtils.click(this.mc);
 
             if (this.actionListener != null) {
                 this.actionListener.actionPerformedWithButton(this);

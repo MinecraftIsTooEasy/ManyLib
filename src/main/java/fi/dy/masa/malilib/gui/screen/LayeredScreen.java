@@ -7,6 +7,8 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class LayeredScreen extends ModernScreen {
     private final Layer baseLayer = new Layer();
@@ -66,6 +68,14 @@ public class LayeredScreen extends ModernScreen {
     }
 
     @Override
+    protected void tick() {
+        super.tick();
+        for (Layer layer : this.layers) {
+            layer.tick();
+        }
+    }
+
+    @Override
     public void mouseMoved(double mouseX, double mouseY) {
         for (Layer layer : this.reverseView) {
             layer.mouseMoved(mouseX, mouseY);
@@ -76,6 +86,10 @@ public class LayeredScreen extends ModernScreen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (Layer layer : this.reverseView) {
             if (layer.mouseClicked(mouseX, mouseY, button)) return true;
+            if (layer.autoExit()) {
+                this.removeLayer(layer);
+                return true;
+            }
             if (layer.blocksInteraction()) break;
         }
         return false;
@@ -116,17 +130,18 @@ public class LayeredScreen extends ModernScreen {
         return this.baseLayer;
     }
 
-    protected void addLayer(Layer layer) {
+    public void addLayer(Layer layer) {
         this.layersToAdd.add(layer);
         layer.initGui();
     }
 
-    protected void removeTopLayer() {
-        this.reverseView.remove(0);
+    public void removeTopLayer() {
+        this.removeLayer(this.reverseView.get(0));
     }
 
     protected void removeLayer(Layer layer) {
         this.layersToRemove.add(layer);
+        layer.removed();
     }
 
     protected boolean hasMultiLayer() {
@@ -139,5 +154,13 @@ public class LayeredScreen extends ModernScreen {
 
     protected boolean isTopLayer(Layer layer) {
         return layer == this.reverseView.get(0);
+    }
+
+    public void toggleLayer(Predicate<Layer> predicate, Supplier<Layer> factory) {
+        if (predicate.test(this.getTopLayer())) {
+            this.removeTopLayer();
+        } else {
+            this.addLayer(factory.get());
+        }
     }
 }

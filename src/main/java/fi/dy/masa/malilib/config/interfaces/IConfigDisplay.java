@@ -3,7 +3,7 @@ package fi.dy.masa.malilib.config.interfaces;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.Color4f;
 
-public interface IConfigDisplay {
+public interface IConfigDisplay extends IConfigBase {
     /**
      * Returns the text displayed inside the button.
      */

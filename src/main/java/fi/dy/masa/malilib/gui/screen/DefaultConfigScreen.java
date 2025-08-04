@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.ManyLibConfig;
 import fi.dy.masa.malilib.config.ConfigTab;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
+import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.feat.ProgressSaving;
@@ -13,12 +14,11 @@ import fi.dy.masa.malilib.gui.button.ModLinkButton;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonPeriodic;
 import fi.dy.masa.malilib.gui.layer.Layer;
 import fi.dy.masa.malilib.gui.layer.ModLinkLayer;
-import fi.dy.masa.malilib.gui.screen.interfaces.AboutInputMethod;
+import fi.dy.masa.malilib.gui.screen.interfaces.IConfigList;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.screen.util.ConfigItem;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.gui.screen.util.WidthAdder;
-import fi.dy.masa.malilib.gui.widgets.WidgetText;
+import fi.dy.masa.malilib.gui.widgets.WidgetConfigListView;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.GuiYesNoMITE;
@@ -26,43 +26,45 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Searchable {
+public class DefaultConfigScreen extends LayeredScreen implements Searchable, IConfigList {
     public final IConfigHandler configInstance;
     private final GuiScreen parent;
     public ConfigTab currentTab;
-    public int currentTabIndex;
-    public boolean needSyncTab;
+    public boolean tabDirty;
     private boolean firstSeen = true;
     private final List<ConfigTab> configTabs;
     private ModLinkButton modLinkButton;
+    private WidgetConfigListView widgetListView;
 
     public DefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
         super();
         if (parentScreen instanceof DefaultConfigScreen defaultConfigScreen) {
             parentScreen = defaultConfigScreen.parent;
-        }
+        }// for redirecting to other configs
         this.parent = parentScreen;
         this.configInstance = configInstance;
         this.configTabs = configInstance.getConfigTabs();
+        this.currentTab = this.configTabs.get(0);
     }
 
     @Override
     protected void initBaseLayer(Layer layer) {
         super.initBaseLayer(layer);
         this.initElements(layer);
-        this.setCurrentTab(this.firstSeen ? ProgressSaving.getPage(this.configInstance.getName()) : this.currentTabIndex);
-        this.needSyncTab = false;// first time special
-        this.onContentChange();
         if (this.firstSeen) {
             this.firstSeen = false;
-            this.setPage(ProgressSaving.getStatus(this.configInstance.getName()));
+
+            this.setCurrentTab(this.configTabs.get(ProgressSaving.getPage(this.configInstance.getName())));
+            this.tabDirty = false;
+
+            this.widgetListView.onContentChange();
+            this.widgetListView.setStatus(ProgressSaving.getStatus(this.configInstance.getName()));
         }
-        this.onPageChange();
         Keyboard.enableRepeatEvents(true);
     }
 
     protected void initElements(Layer layer) {
-        layer.addWidget(WidgetText.of(ManyLibConfig.TitleFormat.getEnumValue() + this.configInstance.getName() + " Configs").position(40, 15));
+        layer.addWidget(ScreenConstants.getTitle(ManyLibConfig.TitleFormat.getEnumValue() + this.configInstance.getName() + " Configs"));
 
         WidthAdder widthAdder = new WidthAdder(20);
 
@@ -80,79 +82,67 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
             ((IButtonPeriodic) button).next();
             this.sort(sortCategoryConfigEnum.getEnumValue());
         }));
-        layer.addWidget(ScreenConstants.getSearchButton(this));
 
         ModLinkButton modLinkButton = ScreenConstants.getModLinkButton(this, this.configInstance);
         modLinkButton.setActionListener(button -> this.toggleModLink());
         this.modLinkButton = modLinkButton;
         layer.addWidget(modLinkButton);
+
+        WidgetConfigListView widgetListView = new WidgetConfigListView(this, this);
+        this.widgetListView = widgetListView;
+        layer.addWidget(widgetListView);
+
+        layer.addWidget(ScreenConstants.getSearchButton(this, this.widgetListView));
     }
 
     private void toggleModLink() {
-        Layer topLayer = this.getTopLayer();
-        if (topLayer instanceof ModLinkLayer) {
-            this.removeLayer(topLayer);
-        } else {
-            ModLinkLayer modLinkLayer = new ModLinkLayer(x -> x == this.configInstance,
-                    () -> this.modLinkButton,
-                    x -> x.getConfigScreen(this),
-                    this::toggleModLink
-            );
-            this.addLayer(modLinkLayer);
-        }
+        this.toggleLayer(
+                layer -> layer instanceof ModLinkLayer,
+                () -> new ModLinkLayer(x -> x == this.configInstance,
+                        () -> this.modLinkButton,
+                        x -> x.getConfigScreen(this)
+                )
+        );
     }
 
     void addTabButtons(Layer layer, WidthAdder widthAdder) {
-        for (int index = 0; index < this.configTabs.size(); index++) {
-            ConfigTab configTab = this.configTabs.get(index);
+        for (ConfigTab configTab : this.configTabs) {
             String name = configTab.getGuiDisplayName();
             int stringWidth = this.fontRenderer.getStringWidth(name);
-            int finalIndex = index;
-            layer.addWidget(ButtonGeneric.builder(name, button -> this.setCurrentTab(finalIndex))
-                    .onUpdate(button -> button.setEnabled(this.currentTabIndex != finalIndex))
+            layer.addWidget(ButtonGeneric.builder(name, button -> this.setCurrentTab(configTab))
+                    .onUpdate(button -> button.setEnabled(this.currentTab != configTab))
                     .dimensions(widthAdder.getWidth(), 30, stringWidth + 10, 20)
                     .hoverStrings(configTab.getTooltip()).build());
             widthAdder.addWidth(stringWidth + 14);
         }
     }
 
-    void setCurrentTab(int index) {
-        this.needSyncTab = true;
-        this.currentTab = this.configTabs.get(index);
-        this.currentTabIndex = index;
+    void setCurrentTab(ConfigTab tab) {
+        this.tabDirty = true;
+        this.currentTab = tab;
     }
 
-    @Override
-    protected ConfigItem<?> createEntry(int realIndex, int relativeIndex) {
-        return ConfigItem.getConfigItem(relativeIndex, this.currentTab.getSearchableConfig(realIndex), this);
+    private int findTabIndex() {
+        return this.configTabs.indexOf(this.currentTab);
     }
 
-    @Override
-    public int getContentSize() {
-        return this.currentTab.getSearchableConfigSize();
-    }
-
-    @Override
-    public int getPageCapacity() {
-        return 7;
-    }
-
-    //  Second block: only for compatibility with Modern Mite's IMBlocker, this block enables the input method.
+    /**
+     * i.e. the widgets marked the tab dirty.
+     */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (super.mouseClicked(mouseX, mouseY, button)) {
-            if (this.needSyncTab) {
-                this.needSyncTab = false;
-                this.reload();
-            }
+            this.handleTabDirty();
             return true;
         }
-        if (this.entries.stream()
-                .filter(configItem -> configItem instanceof AboutInputMethod)
-                .map(configItem -> (AboutInputMethod) configItem)
-                .anyMatch(aboutInputMethod -> aboutInputMethod.tryActivateIM((int) mouseX, (int) mouseY, button)))
-            return true;
         return false;
+    }
+
+    private void handleTabDirty() {
+        if (this.tabDirty) {
+            this.tabDirty = false;
+            this.reload();
+        }
     }
 
     private long lastShift = 0L;
@@ -190,20 +180,29 @@ public class DefaultConfigScreen extends ListScreen<ConfigItem<?>> implements Se
         Keyboard.enableRepeatEvents(false);
         this.configInstance.save();
         InputEventHandler.getKeybindManager().updateUsedKeys();
-        ProgressSaving.saveProgress(this.configInstance.getName(), this.currentTabIndex, this.getPage());
+        ProgressSaving.saveProgress(this.configInstance.getName(), this.findTabIndex(), this.widgetListView.getStatus());
         this.firstSeen = true;
     }
 
     void sort(SortCategory sortCategory) {
         this.currentTab.sort(sortCategory);
-        this.resetPage();
-        this.markDirty();
+        this.widgetListView.resetStatus();
+        this.widgetListView.markDirty();
     }
 
     @Override
     public void updateSearchResult(String input) {
         this.currentTab.updateSearchableConfigs(input);
-        this.onContentChange();
+        this.widgetListView.onContentChange();
     }
 
+    @Override
+    public int size() {
+        return this.currentTab.getSearchableConfigSize();
+    }
+
+    @Override
+    public ConfigBase<?> get(int index) {
+        return this.currentTab.getSearchableConfig(index);
+    }
 }

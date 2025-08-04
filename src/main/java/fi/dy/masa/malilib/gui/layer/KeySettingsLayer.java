@@ -1,10 +1,10 @@
-package fi.dy.masa.malilib.gui.screen;
+package fi.dy.masa.malilib.gui.layer;
 
 import fi.dy.masa.malilib.config.interfaces.IConfigPeriodic;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
-import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.button.PeriodicButton;
 import fi.dy.masa.malilib.gui.button.ResetButton;
 import fi.dy.masa.malilib.gui.screen.util.ScreenConstants;
@@ -15,9 +15,11 @@ import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 
-public class KeySettingsScreen extends GuiBase {
+public class KeySettingsLayer extends Layer {
+    private final static int X_OFFSET = 100;
+    private final static int Y_OFFSET = 80;
+    private final GuiScreen screen;
     IKeybind keybind;
-    String name;
 
     private final ConfigEnum<KeybindSettings.Context> context;
     private final ConfigEnum<KeyAction> activateOn;
@@ -27,10 +29,8 @@ public class KeySettingsScreen extends GuiBase {
     private final ConfigBoolean cancel;
     private final ConfigBoolean allowEmpty;
 
-    public KeySettingsScreen(GuiScreen parent, String name, IKeybind keybind) {
-        super();
-        this.setParent(parent);
-        this.name = name;
+    public KeySettingsLayer(GuiScreen screen, IKeybind keybind) {
+        this.screen = screen;
         this.keybind = keybind;
 
         KeybindSettings settings = keybind.getDefaultSettings();
@@ -53,10 +53,15 @@ public class KeySettingsScreen extends GuiBase {
     }
 
     @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.drawOverlay();
+        this.drawOutlinedBox(this.screen, X_OFFSET, Y_OFFSET);
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
     public void initGui() {
         super.initGui();
-        this.setTitle(StringUtils.translate("manyLib.gui.title.keySettings"));
-        this.addWidget(WidgetText.of(GuiBase.TXT_AQUA + StringUtils.translate("manyLib.gui.configuring") + ": " + this.name).position(this.width / 2, 40).centered());
         this.addWidgetIndex(0, this.context);
         this.addWidgetIndex(1, this.activateOn);
         this.addWidgetIndex(2, this.allowExtraKeys);
@@ -67,8 +72,8 @@ public class KeySettingsScreen extends GuiBase {
     }
 
     @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
+    public void removed() {
+        super.removed();
         this.keybind.setSettings(this.create());
     }
 
@@ -77,12 +82,40 @@ public class KeySettingsScreen extends GuiBase {
     }
 
     <T extends ConfigBase<T> & IConfigPeriodic> void addWidgetIndex(int index, T config) {
-        this.addWidget(new WidgetText(this.width / 2 - 150, this.height / 6 + index * 22 + 22 + ScreenConstants.commentedTextShift, StringUtils.translate(config.getName()), config.getConfigGuiDisplayComment(), config.getDisplayColor()));
-        PeriodicButton<T> periodicButton = new PeriodicButton<>(this.width / 2, this.height / 6 + index * 22 + 22, 120, 20, config);
-        this.addButton(periodicButton);
-        this.addButton(new ResetButton(this.width / 2 + 125, this.height / 6 + index * 22 + 22, config::isModified, button -> {
-            config.resetToDefault();
-            periodicButton.updateString();
-        }));
+        int topY = this.screen.height / 2 - Y_OFFSET;
+        int leftX = this.screen.width / 2 - X_OFFSET;
+
+        int y = topY + index * 22 + 4;
+
+        this.addWidget(new WidgetText(leftX + 10,
+                y + ScreenConstants.commentedTextShift,
+                StringUtils.translate(config.getName()),
+                config.getConfigGuiDisplayComment(),
+                config.getDisplayColor()));
+
+        PeriodicButton periodicButton = new PeriodicButton(leftX + X_OFFSET,
+                y,
+                60,
+                20,
+                config);
+        this.addWidget(periodicButton);
+
+        this.addWidget(new ResetButton(leftX + X_OFFSET + 70,
+                y,
+                config::isModified,
+                button -> {
+                    config.resetToDefault();
+                    periodicButton.updateString();
+                }));
+    }
+
+    @Override
+    public boolean autoExit() {
+        return true;
+    }
+
+    @Override
+    public boolean blocksInteraction() {
+        return true;
     }
 }

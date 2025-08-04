@@ -21,15 +21,18 @@ public class WidgetStringEditEntry extends WidgetBase {
         super(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         this.tempList = tempList;
         this.markDirty = markDirty;
-        int yPos = ScreenConstants.getYPos(relativeIndex, screen);
-        this.markNumber = WidgetText.of(String.valueOf(realIndex)).position(50, yPos + ScreenConstants.commentedTextShift);
-        this.textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(70, yPos, 200, 18), s -> tempList.set(realIndex, s.getText()));
+
+        int x = screen.width / 2 - 130;
+        int y = screen.height / 2 - 70 + relativeIndex * 22;
+
+        this.markNumber = WidgetText.of(String.valueOf(realIndex)).position(x, y + ScreenConstants.commentedTextShift);
+        this.textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(x + 20, y, 150, 18), s -> tempList.set(realIndex, s.getText()));
         this.textFieldWrapper.setText(originalString);
         this.buttons = new ArrayList<>();
-        ButtonGeneric.builder(ManyLibIcons.PLUS, button -> insertBelow(realIndex)).dimensions(290, yPos, 20, 20).addToList(this.buttons);
-        ButtonGeneric.builder(ManyLibIcons.MINUS, button -> delete(realIndex)).dimensions(320, yPos, 20, 20).addToList(this.buttons);
-        ButtonGeneric.builder(ManyLibIcons.ARROW_UP, button -> moveUp(realIndex)).dimensions(350, yPos, 20, 20).addToList(this.buttons);
-        ButtonGeneric.builder(ManyLibIcons.ARROW_DOWN, button -> moveDown(realIndex)).dimensions(380, yPos, 20, 20).addToList(this.buttons);
+        ButtonGeneric.builder(ManyLibIcons.PLUS, button -> insertBelow(realIndex)).dimensions(x + 180, y, 15, 15).addToList(this.buttons);
+        ButtonGeneric.builder(ManyLibIcons.MINUS, button -> delete(realIndex)).dimensions(x + 200, y, 15, 15).addToList(this.buttons);
+        ButtonGeneric.builder(ManyLibIcons.ARROW_UP, button -> moveUp(realIndex)).dimensions(x + 220, y, 15, 15).addToList(this.buttons);
+        ButtonGeneric.builder(ManyLibIcons.ARROW_DOWN, button -> moveDown(realIndex)).dimensions(x + 240, y, 15, 15).addToList(this.buttons);
     }
 
     private void markDirty() {

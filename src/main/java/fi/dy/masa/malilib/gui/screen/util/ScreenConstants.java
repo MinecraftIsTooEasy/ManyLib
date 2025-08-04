@@ -10,7 +10,7 @@ import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.gui.screen.interfaces.Searchable;
-import fi.dy.masa.malilib.gui.screen.interfaces.PagedElement;
+import fi.dy.masa.malilib.gui.screen.interfaces.StatusElement;
 import fi.dy.masa.malilib.gui.widgets.*;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -40,8 +40,8 @@ public class ScreenConstants {
 
     public static int getYPos(int index, GuiScreen screen) {
         int capacity;
-        if (screen instanceof PagedElement pagedElement) {
-            capacity = pagedElement.getPageCapacity();
+        if (screen instanceof StatusElement statusElement) {
+            capacity = statusElement.getPageCapacity();
         } else {
             capacity = 7;
         }
@@ -100,8 +100,8 @@ public class ScreenConstants {
         return new ColorBoard(configColor, screen.width + commonButtonXFromRight + commonButtonWidth - 15, getYPos(index, screen) + 2, 16, 16);
     }
 
-    static <T extends ConfigBase<T> & IConfigPeriodic & IConfigDisplay> PeriodicButton<T> getPeriodicButton(int index, T config, GuiScreen screen) {
-        return new PeriodicButton<>(screen.width + commonButtonXFromRight, getYPos(index, screen), commonButtonWidth, commonButtonHeight, config);
+    static PeriodicButton getPeriodicButton(int index, IConfigPeriodic config, GuiScreen screen) {
+        return new PeriodicButton(screen.width + commonButtonXFromRight, getYPos(index, screen), commonButtonWidth, commonButtonHeight, config);
     }
 
     static ButtonBase getCommonButton(int index, String content, GuiScreen screen, IButtonActionListener onPress) {
@@ -131,17 +131,18 @@ public class ScreenConstants {
         return ButtonGeneric.builder("", onPress).dimensions(screen.width + hotKeyFirstButtonXFromRight + shortHotkeyButtonWidth + 5, getYPos(index, screen), configToggleButtonXWidth, commonButtonHeight).build();
     }
 
-    public static LegacyModLinkButton<ModLinkEntry> getLegacyModLinkButton(GuiScreen screen, IConfigHandler configInstance) {
-        return new LegacyModLinkButton<>(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"),
-                (index, startX, startY, present, content, listener) -> new ModLinkEntry(startX, startY + index * ModLinkEntry.HeightUnit, present, content, listener));
-    }
-
     public static ModLinkButton getModLinkButton(GuiScreen screen, IConfigHandler configInstance) {
         return new ModLinkButton(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getName(), StringUtils.translate("manyLib.gui.button.other_mods"));
     }
 
-    public static <T extends GuiScreen & PagedElement> ScrollBar<?> getScrollBar(T screen, int pageCapacity, int contentSize) {
-        return new ScrollBar<>(screen.width + scrollBarXFromRight, getYPos(0, screen), 8, 22 * screen.getPageCapacity() - 2, pageCapacity, contentSize, screen);
+    public static ScrollBar getScrollBar(GuiScreen screen, StatusElement statusElement) {
+        return getScrollBar(screen.width + scrollBarXFromRight, getYPos(0, screen), statusElement);
+    }
+
+    public static ScrollBar getScrollBar(int x, int y, StatusElement statusElement) {
+        int pageCapacity = statusElement.getPageCapacity();
+        int contentSize = statusElement.getContentSize();
+        return new ScrollBar(x, y, 8, 22 * pageCapacity - 2, pageCapacity, contentSize, statusElement);
     }
 
     public static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
@@ -151,11 +152,11 @@ public class ScreenConstants {
         return resetButton;
     }
 
-    public static PeriodicButton<?> getSortButton(GuiScreen screen, WidthAdder widthAdder, int y, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
+    public static PeriodicButton getSortButton(GuiScreen screen, WidthAdder widthAdder, int y, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
         int stringWidth = getMaxStringWidth(screen.fontRenderer, sortCategory);
         int width = widthAdder.getWidth();
         widthAdder.addWidth(stringWidth + 15);
-        return new PeriodicButton<>(width, y, stringWidth + 10, commonButtonHeight, sortCategory, onPress);
+        return new PeriodicButton(width, y, stringWidth + 10, commonButtonHeight, sortCategory, onPress);
     }
 
     private static int getMaxStringWidth(FontRenderer fontRenderer, ConfigEnum<SortCategory> sortCategory) {
@@ -170,11 +171,18 @@ public class ScreenConstants {
         return maxWidth;
     }
 
-    public static <T extends GuiScreen & Searchable & PagedElement> SearchField getSearchButton(T screen) {
-        return new SearchField(23, getSearchFieldY(screen), screen.width - 95, 13, screen);
+    /**
+     * This is shit
+     */
+    public static <T extends GuiScreen & Searchable> SearchField getSearchButton(T screen, StatusElement statusElement) {
+        return new SearchField(23, getSearchFieldY(statusElement), screen.width - 95, 13, screen);
     }
 
-    static <T extends GuiScreen & Searchable & PagedElement> int getSearchFieldY(T screen) {
-        return 35 - 22 * screen.getPageCapacity() + 22 * 8;
+    static int getSearchFieldY(StatusElement element) {
+        return 35 - 22 * element.getPageCapacity() + 22 * 8;
+    }
+
+    public static WidgetText getTitle(String content) {
+        return WidgetText.of(content).position(40, 15);
     }
 }

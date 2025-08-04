@@ -33,7 +33,8 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
     }
 
     @Override
-    public void onMouseDraggedImpl(int mouseX, int mouseY) {
+    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
         if (this.enabled) {
             if (this.visible) {
                 if (this.dragging) {
@@ -42,12 +43,21 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IConfigDi
                     this.updateString();
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.bindTexture(BUTTON_TEXTURES);
                 RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
                 RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
-//                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
-//                this.drawTexturedModalRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);// what does it do
             }
         }
+        if (this.visible) {
+            this.renderDisplayString(drawContext);
+        }
+    }
+
+    /**
+     * Only directs to the super.
+     */
+    protected final void renderButtonGeneric(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override

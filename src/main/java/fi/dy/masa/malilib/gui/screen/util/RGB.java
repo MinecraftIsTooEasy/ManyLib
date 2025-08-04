@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.gui.screen.util;
 
-import fi.dy.masa.malilib.gui.screen.ColorSelectScreen;
+import fi.dy.masa.malilib.util.ColorUtils;
 
 import java.awt.*;
 
@@ -47,7 +47,7 @@ public class RGB {
 
     public int toColor(int a) {
         int[] array = this.standardize();
-        return ColorSelectScreen.encodeARGB(a, array[0], array[1], array[2]);
+        return ColorUtils.encodeARGB(a, array[0], array[1], array[2]);
     }
 
     // 255, 255, 255

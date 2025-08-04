@@ -1,7 +1,8 @@
-package fi.dy.masa.malilib.gui.screen;
+package fi.dy.masa.malilib.gui.layer;
 
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
+import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.SliderButton;
 import fi.dy.masa.malilib.gui.screen.util.ColorBoardSV;
@@ -9,6 +10,7 @@ import fi.dy.masa.malilib.gui.screen.util.HSV;
 import fi.dy.masa.malilib.gui.screen.util.RGB;
 import fi.dy.masa.malilib.gui.widgets.WidgetText;
 import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.ColorUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.SystemUtils;
 import net.minecraft.GuiScreen;
@@ -20,9 +22,12 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ColorSelectScreen extends GuiBase {
+public class ColorEditLayer extends Layer {
+    private final static int X_OFFSET = 130;
+    private final static int Y_OFFSET = 60;
 
     private final ConfigColor configColor;
+    private final GuiScreen screen;
 
     private ColorBoardSV colorBoard;
 
@@ -36,14 +41,11 @@ public class ColorSelectScreen extends GuiBase {
 
     private final List<SliderButton<ConfigInteger>> sliderButtons = new ArrayList<>();
 
+    public ColorEditLayer(ConfigColor config, GuiScreen screen) {
+        this.configColor = config;
+        this.screen = screen;
 
-    public ColorSelectScreen(GuiScreen parentScreen, ConfigColor configColor) {
-        super();
-        this.setParent(parentScreen);
-        this.setTitle(StringUtils.translate("manyLib.gui.title.selectColor"));
-        this.configColor = configColor;
-
-        int[] decodedARGB = decodeARGB(configColor.getDefaultColor().intValue);
+        int[] decodedARGB = ColorUtils.decodeARGB(configColor.getDefaultColor().intValue);
 
         int defaultR = decodedARGB[1];
         int defaultG = decodedARGB[2];
@@ -66,46 +68,54 @@ public class ColorSelectScreen extends GuiBase {
         this.h.setIntegerValue(hsv.getH());
     }
 
-    public static int[] decodeARGB(int color) {
-        return new int[]{(color & 0xFF000000) >>> 24, (color & 0x00FF0000) >>> 16, (color & 0x0000FF00) >>> 8, color & 0x000000FF};
-    }
-
-    public static int encodeARGB(int a, int r, int g, int b) {
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
-
     @Override
     public void initGui() {
         super.initGui();
-        int leftX = this.width / 2 - 140;
-        int topY = this.height / 2 - 43;
+        int leftX = this.screen.width / 2 - X_OFFSET;
+        int topY = this.screen.height / 2 - Y_OFFSET;
 
-        this.addWidget(WidgetText.of(GuiBase.TXT_AQUA + StringUtils.translate("manyLib.gui.configuring") + ": ")
-                .position(leftX + 55, 40).centered());
-        this.addWidget(WidgetText.of(GuiBase.TXT_AQUA + this.configColor.getConfigGuiDisplayName())
-                .position(leftX + 55, 55).centered());
+        int sliderX = leftX + 35;
+        int topSliderY = topY + 30;
 
-        this.addLine(leftX, topY, 0, "color.alpha", this.a, this.simple(x -> 0), this::setByA);
-        this.addLine(leftX, topY, 1, "color.red", this.r, this.simple(x -> RGB.ofIII((int) (x * 255), this.g.getIntegerValue(), this.b.getIntegerValue()).toColor()), this::setByRGB);
-        this.addLine(leftX, topY, 2, "color.green", this.g, this.simple(x -> RGB.ofIII(this.a.getIntegerValue(), (int) (x * 255), this.b.getIntegerValue()).toColor()), this::setByRGB);
-        this.addLine(leftX, topY, 3, "color.blue", this.b, this.simple(x -> RGB.ofIII(this.a.getIntegerValue(), this.g.getIntegerValue(), (int) (x * 255)).toColor()), this::setByRGB);
+        String description = GuiBase.TXT_AQUA + StringUtils.translate("manyLib.gui.configuring") + ": " + this.configColor.getConfigGuiDisplayName();
+        this.addWidget(WidgetText.of(description).position(leftX + 5, topY + 10));
 
-        this.addLine(leftX, topY, 4, "color.hue", this.h, this::renderHueBar, this::setByHSV);
+        this.addLine(sliderX, topSliderY, 0, "color.alpha", this.a, this.simple(x -> 0), this::setByA);
+        this.addLine(sliderX, topSliderY, 1, "color.red", this.r, this.simple(x -> RGB.ofIII((int) (x * 255), this.g.getIntegerValue(), this.b.getIntegerValue()).toColor()), this::setByRGB);
+        this.addLine(sliderX, topSliderY, 2, "color.green", this.g, this.simple(x -> RGB.ofIII(this.a.getIntegerValue(), (int) (x * 255), this.b.getIntegerValue()).toColor()), this::setByRGB);
+        this.addLine(sliderX, topSliderY, 3, "color.blue", this.b, this.simple(x -> RGB.ofIII(this.a.getIntegerValue(), this.g.getIntegerValue(), (int) (x * 255)).toColor()), this::setByRGB);
 
-        this.colorBoard = new ColorBoardSV(this.h, this.a, this::setByHSV, () -> SystemUtils.copyToClipboard(this.configColor.getColorString()), this.width / 2 + 20, this.height / 2 - 75, 150, 150);
+        this.addLine(sliderX, topSliderY, 4, "color.hue", this.h, this::renderHueBar, this::setByHSV);
+
+        this.colorBoard = new ColorBoardSV(this.h,
+                this.a,
+                this::setByHSV,
+                () -> SystemUtils.copyToClipboard(this.configColor.getColorString()),
+                this.screen.width / 2 + 25,
+                this.screen.height / 2 - 50,
+                100,
+                100
+        );
         HSV hsv = HSV.ofARGB(this.configColor.getColorInteger());
         this.colorBoard.setSV(hsv.getS(), hsv.getV());
         this.addWidget(this.colorBoard);
         this.updateHoverString();
     }
 
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.drawOverlay();
+        this.drawOutlinedBox(this.screen, X_OFFSET, Y_OFFSET);
+        super.render(context, mouseX, mouseY, delta);
+    }
+
     private void setByA() {
-        this.configColor.setIntegerValue(encodeARGB(this.a.getIntegerValue(), this.r.getIntegerValue(), this.g.getIntegerValue(), this.b.getIntegerValue()));
+        this.configColor.setIntegerValue(ColorUtils.encodeARGB(this.a.getIntegerValue(), this.r.getIntegerValue(), this.g.getIntegerValue(), this.b.getIntegerValue()));
         this.updateHoverString();
     }
 
     private void setByRGB() {
-        this.configColor.setIntegerValue(encodeARGB(this.a.getIntegerValue(), this.r.getIntegerValue(), this.g.getIntegerValue(), this.b.getIntegerValue()));
+        this.configColor.setIntegerValue(ColorUtils.encodeARGB(this.a.getIntegerValue(), this.r.getIntegerValue(), this.g.getIntegerValue(), this.b.getIntegerValue()));
         this.updateHSV();
         this.updateSlider();
         this.updateHoverString();
@@ -150,39 +160,12 @@ public class ColorSelectScreen extends GuiBase {
 
     // onClicked: can be slider clicked, dragged or reset button clicked
     private void addLine(int buttonLeftX, int topY, int index, String key, ConfigInteger configInteger, Consumer<SliderButton<?>> renderColorBar, Runnable onModify) {
-        int realY = topY + index * 22;
-        this.addWidget(WidgetText.of(StringUtils.translate(key)).position(buttonLeftX - 35, realY + 6));
+        int realY = topY + index * 16;
+        this.addWidget(WidgetText.of(StringUtils.translate(key)).position(buttonLeftX - 30, realY + 4));
 
-        SliderButton<ConfigInteger> slider = new SliderButton<>(buttonLeftX, realY, 120, 20, configInteger) {
-            @Override
-            public boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
-                if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
-                    onModify.run();
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public void onMouseDraggedImpl(int mouseX, int mouseY) {
-                if (this.enabled) {
-                    if (this.visible) {
-                        if (this.dragging) {
-                            this.sliderRatio = this.getRatioFromSlider(mouseX);
-                            this.config.setValueByRatio(this.sliderRatio);
-                            this.updateString();
-                            onModify.run();
-                        }
-                        renderColorBar.accept(this);
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                        RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
-                        RenderUtils.drawTexturedRect(this.x + (int) (this.sliderRatio * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
-                    }
-                }
-            }
-        };
+        SliderButton<ConfigInteger> slider = new ColorSlider(buttonLeftX, realY, configInteger, onModify, renderColorBar);
         this.sliderButtons.add(slider);
-        this.addButton(slider);
+        this.addWidget(slider);
     }
 
     private Consumer<SliderButton<?>> simple(Function<Float, Integer> colorSupplier) {
@@ -231,5 +214,82 @@ public class ColorSelectScreen extends GuiBase {
         int startColor = HSV.ofIFF(startHue, 1.0F, 1.0F).toColor();
         int endColor = HSV.ofIFF(endHue, 1.0F, 1.0F).toColor();
         RenderUtils.bufferGradientHorizontal(x, y, x + width, y + height, z, startColor, endColor, tessellator);
+    }
+
+    @Override
+    public boolean autoExit() {
+        return true;
+    }
+
+    @Override
+    public boolean blocksInteraction() {
+        return true;
+    }
+
+    private static class ColorSlider extends SliderButton<ConfigInteger> {
+        private final Runnable onModify;
+        private final Consumer<SliderButton<?>> renderColorBar;
+
+        public ColorSlider(int buttonLeftX, int realY, ConfigInteger configInteger, Runnable onModify, Consumer<SliderButton<?>> renderColorBar) {
+            super(buttonLeftX, realY, 108, 14, configInteger);
+            this.onModify = onModify;
+            this.renderColorBar = renderColorBar;
+        }
+
+        @Override
+        public boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
+            if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
+                onModify.run();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+            this.renderButtonGeneric(mouseX, mouseY, selected, drawContext);
+            if (this.enabled) {
+                if (this.visible) {
+                    if (this.dragging) {
+                        this.sliderRatio = this.getRatioFromSlider(mouseX);
+                        this.config.setValueByRatio(this.sliderRatio);
+                        this.updateString();
+                        this.onModify.run();
+                    }
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    this.renderColorBar.accept(this);
+                    this.bindTexture(BUTTON_TEXTURES);
+                    int upper = this.height / 2;
+                    int lower = this.height - upper;
+                    int xPos = this.x + (int) (this.sliderRatio * (float) (this.width - 8));
+                    int yPos = this.y;
+                    RenderUtils.drawTexturedRect(xPos,
+                            yPos,
+                            0,
+                            66,
+                            4,
+                            upper);//left up
+                    RenderUtils.drawTexturedRect(xPos + 4,
+                            yPos,
+                            196,
+                            66,
+                            4,
+                            upper);//right up
+                    RenderUtils.drawTexturedRect(xPos,
+                            yPos + upper,
+                            0,
+                            66 + 20 - lower,
+                            4,
+                            lower);//left down
+                    RenderUtils.drawTexturedRect(xPos + 4,
+                            yPos + upper,
+                            196,
+                            66 + 20 - lower,
+                            4,
+                            lower);//right down
+                    this.renderDisplayString(drawContext);
+                }
+            }
+        }
     }
 }

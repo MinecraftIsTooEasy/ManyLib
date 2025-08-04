@@ -78,8 +78,6 @@ public class ButtonGeneric extends ButtonBase {
                 RenderUtils.drawTexturedRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + buttonStyle * 20, this.width / 2, this.height);
             }
 
-            this.onMouseDragged(mouseX, mouseY);
-
             if (this.icon != null) {
 //                int offset = this.renderDefaultBackground ? 4 : 0;
 //                int x = this.alignment == LeftRight.LEFT ? this.x + offset : this.x + this.width - this.icon.getWidth() - offset;
@@ -93,27 +91,31 @@ public class ButtonGeneric extends ButtonBase {
 //                RenderUtils.drawTexturedRect(x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight());
             }
 
-            if (this.displayString.isBlank() == false) {
-                int y = this.y + (this.height - 8) / 2;
-                int color = 0xE0E0E0;
+            this.renderDisplayString(drawContext);
+        }
+    }
 
-                if (this.enabled == false) {
-                    color = 0xA0A0A0;
-                } else if (this.hovered) {
-                    color = 0xFFFFA0;
-                }
+    protected void renderDisplayString(DrawContext drawContext) {
+        if (this.displayString.isBlank() == false) {
+            int y = this.y + (this.height - 8) / 2;
+            int color = 0xE0E0E0;
 
-                if (this.textCentered) {
-                    this.drawCenteredStringWithShadow(this.x + this.width / 2, y, color, this.displayString, drawContext);
-                } else {
-                    int x = this.x + 6;
+            if (this.enabled == false) {
+                color = 0xA0A0A0;
+            } else if (this.hovered) {
+                color = 0xFFFFA0;
+            }
+
+            if (this.textCentered) {
+                this.drawCenteredStringWithShadow(this.x + this.width / 2, y, color, this.displayString, drawContext);
+            } else {
+                int x = this.x + 6;
 
 //                    if (this.icon != null && this.alignment == LeftRight.LEFT) {
 //                        x += this.icon.getWidth() + 2;
 //                    }
 
-                    this.drawStringWithShadow(x, y, color, this.displayString, drawContext);
-                }
+                this.drawStringWithShadow(x, y, color, this.displayString, drawContext);
             }
         }
     }

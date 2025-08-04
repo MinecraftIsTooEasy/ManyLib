@@ -5,7 +5,8 @@ import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.screen.KeySettingsScreen;
+import fi.dy.masa.malilib.gui.layer.KeySettingsLayer;
+import fi.dy.masa.malilib.gui.screen.LayeredScreen;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeybindCategory;
@@ -31,7 +32,14 @@ class ConfigItemHotkey extends ConfigItem<ConfigHotkey> {
     }
 
     private void addKeybindSettingsButton(int index) {
-        this.keybindSettingsButton = ScreenConstants.getJumpButton(index, this.screen, button -> this.screen.mc.displayGuiScreen(new KeySettingsScreen(this.screen, this.config.getConfigGuiDisplayName(), this.keybind)));
+        this.keybindSettingsButton = ScreenConstants.getJumpButton(index,
+                this.screen,
+                button -> ((LayeredScreen) this.screen).toggleLayer(
+                        layer -> layer instanceof KeySettingsLayer,
+                        () -> new KeySettingsLayer(this.screen,
+                                this.keybind)
+                )
+        );
         this.buttons.add(this.keybindSettingsButton);
     }
 

@@ -1,20 +1,23 @@
 package fi.dy.masa.malilib.gui.button;
 
 import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.screen.interfaces.PagedElement;
+import fi.dy.masa.malilib.gui.screen.interfaces.StatusElement;
+import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-public class ScrollBar<T extends PagedElement> extends ButtonGeneric {
+public class ScrollBar extends ButtonGeneric {
     protected boolean dragging;
     protected float sliderRatio;
-    protected int maxPage;
+    /**
+     * The quotient of the number of elements that can be displayed on a page to the total number of elements.
+     */
     protected float percentage;
     protected int sliderHeight;
-    protected final T target;
+    protected final StatusElement target;
 
-    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int contentSize, T target) {
+    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int contentSize, StatusElement target) {
         super(xPos, yPos, width, height, "", button -> {
         });
         this.updateArguments(pageCapacity, contentSize);
@@ -31,13 +34,11 @@ public class ScrollBar<T extends PagedElement> extends ButtonGeneric {
         float temp;
         if (contentSize <= pageCapacity) {
             temp = 1.0F;
-            this.maxPage = 0;
         } else {
             temp = (float) pageCapacity / contentSize;
-            this.maxPage = contentSize - pageCapacity;
         }
         this.percentage = temp;
-        this.sliderHeight = (int) (height * temp);
+        this.sliderHeight = (int) ((this.height - 2) * temp);
     }
 
     @Override
@@ -51,34 +52,29 @@ public class ScrollBar<T extends PagedElement> extends ButtonGeneric {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             int backGroundColor = StringUtils.getColor("#C0404040", 0);
             this.drawGradientRect(this.x, this.y, this.x + this.width, this.y + this.height, backGroundColor, backGroundColor);
-        }
-        super.render(mouseX, mouseY, selected, drawContext);
-    }
-
-    @Override
-    public void onMouseDraggedImpl(int mouseX, int mouseY) {
-        if (this.enabled) {
-            if (this.visible) {
+            if (this.enabled) {
                 if (this.dragging) {
                     this.sliderRatio = this.getRatioFromSlider(mouseY);
-                    this.updateScreenByRatio();
+                    this.updateTargetByRatio();
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 int scrollColor = StringUtils.getColor("#FFFFFFFF", 0);
-                int y = this.y + (int) (this.sliderRatio * (float) (this.height - 8));
-                if (y > this.y + this.height - this.sliderHeight) {
-                    y = this.y + this.height - this.sliderHeight;
+                int sliderY = this.y + 1 + (int) (this.sliderRatio * (float) (this.height - 2));
+                int border = this.y + this.height - this.sliderHeight - 1;
+                if (sliderY > border) {
+                    sliderY = border;
                 }
-                this.drawGradientRect(this.x + 1, y + 1, this.x + this.width - 1, y + this.sliderHeight + 3, scrollColor, scrollColor);
+                RenderUtils.drawGradientRect(this.x + 1, sliderY, this.x + this.width - 1, sliderY + this.sliderHeight, 0, scrollColor, scrollColor);
             }
         }
+        super.render(mouseX, mouseY, selected, drawContext);
     }
 
     @Override
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
         if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) {
             this.sliderRatio = this.getRatioFromSlider(mouseY);
-            this.updateScreenByRatio();
+            this.updateTargetByRatio();
             this.dragging = true;
             return true;
         } else {
@@ -91,13 +87,15 @@ public class ScrollBar<T extends PagedElement> extends ButtonGeneric {
         this.dragging = false;
     }
 
-    public void updateRatioByScreen(int page) {
-        if (this.maxPage > 0) {
-            this.sliderRatio = (1 - this.percentage) * ((float) page / this.maxPage);
+    public void updateRatioByScreen(int status) {
+        if (this.dragging) return;// i.e. the update comes from here
+        int maxStatus = this.target.getMaxStatus();
+        if (maxStatus > 0) {
+            this.sliderRatio = (1 - this.percentage) * ((float) status / maxStatus);
         }
     }
 
-    private void updateScreenByRatio() {
+    private void updateTargetByRatio() {
         float temp = 1.0F;
         if (this.sliderRatio < 1.0F - this.percentage) {
             temp = this.sliderRatio / (1.0F - this.percentage);

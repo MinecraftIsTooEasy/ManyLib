@@ -35,15 +35,23 @@ public class SearchField extends ButtonGeneric implements IToggleableElement {
     }
 
     public void initialSearch() {
-        this.toggle();// make visible
         String content = "";
         try {
             content = SystemUtils.getClipboardContent();
         } catch (IOException | UnsupportedFlavorException ignored) {
         }
+        this.initialSearch(content);
+    }
+
+    public void initialSearch(String content) {
+        this.toggle();// make visible
         this.textFieldWrapper.getTextField().setText(content);
         this.selectAll();
         this.searchable.updateSearchResult(content);
+    }
+
+    public String getText() {
+        return this.textFieldWrapper.getText();
     }
 
     private void selectAll() {

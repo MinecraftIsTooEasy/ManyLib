@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ConfigItemPeriodic<T extends ConfigBase<T> & IConfigPeriodic & IConfigDisplay> extends ConfigItem<T> {
-    final PeriodicButton<T> periodicButton;
+    final PeriodicButton periodicButton;
     List<String> strings = new ArrayList<>();// ordinal 0 is title
     boolean drawComment = false;
 

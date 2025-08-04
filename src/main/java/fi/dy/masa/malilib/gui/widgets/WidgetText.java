@@ -76,9 +76,12 @@ public class WidgetText extends WidgetBase {
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.postRenderHovered(mouseX, mouseY, selected, drawContext);
-        if (this.visible && this.tooltipList != null && this.commentIntervalX.containsInclusive(mouseX - this.x) && this.commentIntervalY.containsInclusive(mouseY - this.y)) {
-            RenderUtils.drawHoverText(mouseX, mouseY, this.tooltipList, drawContext);
-        }
+        if (!this.visible) return;
+        if (this.tooltipList == null) return;
+        if (!drawContext.isTopLayer()) return;
+        if (!this.commentIntervalX.containsInclusive(mouseX - this.x)) return;
+        if (!this.commentIntervalY.containsInclusive(mouseY - this.y)) return;
+        RenderUtils.drawHoverText(mouseX, mouseY, this.tooltipList, drawContext);
     }
 
     public void addTooltip(String tooltip) {

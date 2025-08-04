@@ -60,6 +60,8 @@ public class ColorBoardSV extends WidgetBase {
         RenderUtils.drawCircle(this.circleX, this.circleY, 4, 0xFF000000);
 
         RenderUtils.endScissor();
+
+        RenderUtils.drawOutline(this.x, this.y, this.width, this.height, 0xFFA0A0A0);
     }
 
     @Override

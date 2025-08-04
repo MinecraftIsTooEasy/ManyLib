@@ -2,10 +2,10 @@ package fi.dy.masa.malilib.gui.screen.util;
 
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.gui.DrawContext;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.screen.ColorSelectScreen;
+import fi.dy.masa.malilib.gui.layer.ColorEditLayer;
+import fi.dy.masa.malilib.gui.screen.LayeredScreen;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.GuiUtils;
+import fi.dy.masa.malilib.util.SoundUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
 
@@ -38,7 +38,10 @@ class ConfigItemColor extends ConfigItemInputBox<ConfigColor> {
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton) {
         if (super.onMouseClickedImpl(mouseX, mouseY, mouseButton)) return true;
         if (this.colorBoard.isMouseOver(mouseX, mouseY)) {
-            GuiBase.openGui(new ColorSelectScreen(GuiUtils.getCurrentScreen(), this.config));
+            SoundUtils.click(this.mc);
+            ((LayeredScreen) this.screen).toggleLayer(layer -> layer instanceof ColorEditLayer,
+                    () -> new ColorEditLayer(this.config, this.screen)
+            );
             return true;
         }
         return false;

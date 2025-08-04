@@ -7,6 +7,11 @@ import net.minecraft.ScaledResolution;
 import javax.annotation.Nullable;
 
 public class GuiUtils {
+    public static ScaledResolution getScaledResolution(){
+        Minecraft minecraft = Minecraft.getMinecraft();
+        return new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);
+    }
+
     public static int getScaledWindowWidth() {
         Minecraft minecraft = Minecraft.getMinecraft();
         ScaledResolution scaledResolution = new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);

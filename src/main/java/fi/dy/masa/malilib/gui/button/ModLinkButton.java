@@ -15,12 +15,12 @@ public class ModLinkButton extends ButtonGeneric {
 
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
+        super.render(mouseX, mouseY, selected, drawContext);
         if (this.visible) {
             RenderUtils.drawOutline(this.x, this.y, this.width, this.height, GuiBase.COLOR_WHITE);
             this.bindTexture(ManyLibIcons.ARROW_DOWN.getTexture());
             ManyLibIcons.ARROW_DOWN.renderAt(this.x + this.width - 20, this.y + 1, 0, false, false);
         }
-        super.render(mouseX, mouseY, selected, drawContext);
     }
 }
 

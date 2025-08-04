@@ -3,7 +3,9 @@ package fi.dy.masa.malilib.gui.screen.util;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.gui.DrawContext;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.screen.StringListEditScreen;
+import fi.dy.masa.malilib.gui.layer.StringListEditLayer;
+import fi.dy.masa.malilib.gui.screen.DefaultConfigScreen;
+import fi.dy.masa.malilib.gui.screen.LayeredScreen;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.GuiScreen;
@@ -16,8 +18,19 @@ class ConfigItemStringList extends ConfigItem<ConfigStringList> {
 
     public ConfigItemStringList(int index, ConfigStringList config, GuiScreen screen) {
         super(index, config, screen);
-        this.editButton = ScreenConstants.getCommonButton(index, this.getStringPreview(), screen, button -> screen.mc.displayGuiScreen(new StringListEditScreen(config, screen)));
+        this.editButton = ScreenConstants.getCommonButton(index,
+                this.getStringPreview(),
+                screen,
+//                button -> screen.mc.displayGuiScreen(new StringListEditScreen(config, screen))
+                button -> toggleLayer(config, (DefaultConfigScreen) screen)
+        );
         this.buttons.add(editButton);
+    }
+
+    private static void toggleLayer(ConfigStringList config, LayeredScreen screen) {
+        screen.toggleLayer(layer -> layer instanceof StringListEditLayer,
+                () -> new StringListEditLayer(config, screen)
+        );
     }
 
     @Override
