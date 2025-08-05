@@ -1,9 +1,11 @@
 package fi.dy.masa.malilib.gui.screen.interfaces;
 
-import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.gui.layer.Layer;
+import fi.dy.masa.malilib.gui.screen.LayeredScreen;
+import fi.dy.masa.malilib.gui.widgets.WidgetScrollHandler;
 import net.minecraft.GuiScreen;
 
-public abstract class ScreenPaged extends GuiBase implements ScreenWithPages {
+public abstract class ScreenPaged extends LayeredScreen implements ScreenWithPages {
     protected final int rows;
     protected int columns;
     protected int pageCapacity;
@@ -23,6 +25,12 @@ public abstract class ScreenPaged extends GuiBase implements ScreenWithPages {
         this.updatePageCount(configSize);
     }
 
+    @Override
+    protected void initBaseLayer(Layer layer) {
+        super.initBaseLayer(layer);
+        layer.addWidget(new WidgetScrollHandler(this));
+    }
+
     protected void updatePageCount(int configSize) {
         this.maxPageIndex = (configSize - 1) / this.pageCapacity;
     }
@@ -39,12 +47,6 @@ public abstract class ScreenPaged extends GuiBase implements ScreenWithPages {
     protected int getButtonPosY(int index) {
         index %= pageCapacity;
         return this.height / 6 + 24 * (index / columns) - 6;
-    }
-
-    @Override
-    protected void tick() {
-        super.tick();
-        this.wheelListener();
     }
 
     public boolean isVisible(int index) {

@@ -69,7 +69,7 @@ public abstract class WidgetListView<T extends WidgetBase> extends WidgetContain
 
     public void onStatusChange() {
         this.markDirty();
-        if (!this.singlePage) this.scrollBar.updateRatioByScreen(this.status);
+        if (!this.singlePage) this.scrollBar.onStatusChanged(this.status);
     }
 
     public void onContentChange() {
@@ -84,7 +84,9 @@ public abstract class WidgetListView<T extends WidgetBase> extends WidgetContain
 
     protected void markSinglePage() {
         this.singlePage = this.getContentSize() <= this.getPageCapacity();
-        this.scrollBar.updateArguments(!this.singlePage);
+        boolean visible = !this.singlePage;
+        this.scrollBar.setVisible(visible);
+        this.scrollBar.updateArguments();
         this.scrollHandler.setEnabled(!this.singlePage);
     }
 

@@ -6,11 +6,13 @@ import fi.dy.masa.malilib.gui.Element;
 import fi.dy.masa.malilib.gui.ParentElement;
 import net.minecraft.GuiScreen;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
-    private final DrawContext DUMMY = new DrawContext();
+    private final DrawContext dummyContext = new DrawContext();
     private @Nullable Element focused;
+    private @Nullable GuiScreen parent;
 
     @Deprecated
     @Override
@@ -20,7 +22,7 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
         if (dWheel != 0) {
             this.mouseScrolled(mouseX, mouseY, dWheel);
         }
-        this.render(DUMMY, mouseX, mouseY, partialTicks);
+        this.render(this.dummyContext, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -52,6 +54,18 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
         this.charTyped(charIn, keyCode);
     }
 
+    /**
+     * Call this at the end, if you want to use the esc
+     */
+    @Override
+    public boolean charTyped(char chr, int keyCode) {
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            this.close();
+            return true;
+        }
+        return false;
+    }
+
     @Deprecated
     @Override
     public final void updateScreen() {
@@ -78,5 +92,22 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
     @Override
     public @Nullable Element getFocused() {
         return this.focused;
+    }
+
+    public @Nullable GuiScreen getParent() {
+        return this.parent;
+    }
+
+    public void setParent(@Nullable GuiScreen parent) {
+        this.parent = parent;
+    }
+
+    protected void close() {
+        if (this.parent != null) {
+            this.mc.displayGuiScreen(this.parent);
+        } else {
+            this.mc.displayGuiScreen(null);
+            this.mc.setIngameFocus();
+        }
     }
 }

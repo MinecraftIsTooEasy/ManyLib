@@ -141,8 +141,7 @@ public class ScreenConstants {
 
     public static ScrollBar getScrollBar(int x, int y, StatusElement statusElement) {
         int pageCapacity = statusElement.getPageCapacity();
-        int contentSize = statusElement.getContentSize();
-        return new ScrollBar(x, y, 8, 22 * pageCapacity - 2, pageCapacity, contentSize, statusElement);
+        return new ScrollBar(x, y, 8, 22 * pageCapacity - 2, statusElement);
     }
 
     public static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {

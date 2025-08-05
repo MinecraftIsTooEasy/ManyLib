@@ -17,20 +17,17 @@ public class ScrollBar extends ButtonGeneric {
     protected int sliderHeight;
     protected final StatusElement target;
 
-    public ScrollBar(int xPos, int yPos, int width, int height, int pageCapacity, int contentSize, StatusElement target) {
+    public ScrollBar(int xPos, int yPos, int width, int height, StatusElement target) {
         super(xPos, yPos, width, height, "", button -> {
         });
-        this.updateArguments(pageCapacity, contentSize);
         this.target = target;
+        this.updateArguments();
         this.setRenderDefaultBackground(false);
     }
 
-    public void updateArguments(boolean visible) {
-        this.setVisible(visible);
-        this.updateArguments(this.target.getPageCapacity(), this.target.getContentSize());
-    }
-
-    private void updateArguments(int pageCapacity, int contentSize) {
+    public void updateArguments() {
+        int contentSize = this.target.getContentSize();
+        int pageCapacity = this.target.getPageCapacity();
         float temp;
         if (contentSize <= pageCapacity) {
             temp = 1.0F;
@@ -87,7 +84,7 @@ public class ScrollBar extends ButtonGeneric {
         this.dragging = false;
     }
 
-    public void updateRatioByScreen(int status) {
+    public void onStatusChanged(int status) {
         if (this.dragging) return;// i.e. the update comes from here
         int maxStatus = this.target.getMaxStatus();
         if (maxStatus > 0) {

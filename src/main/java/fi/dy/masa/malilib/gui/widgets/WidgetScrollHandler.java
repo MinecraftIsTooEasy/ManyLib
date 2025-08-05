@@ -1,15 +1,15 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import fi.dy.masa.malilib.gui.screen.interfaces.StatusElement;
+import fi.dy.masa.malilib.gui.screen.interfaces.Scrollable;
 
 /**
  * Invisible, only handles mouse scrolling
  */
 public class WidgetScrollHandler extends WidgetBase {
-    private final StatusElement target;
+    private final Scrollable target;
     private boolean enabled = true;
 
-    public WidgetScrollHandler(StatusElement target) {
+    public WidgetScrollHandler(Scrollable target) {
         super(0, 0, 0, 0);
         this.target = target;
     }

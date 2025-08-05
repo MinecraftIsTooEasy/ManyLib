@@ -71,8 +71,8 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
     protected boolean useTitleHierarchy = true;
     //    private int keyInputCount;
 //    private double mouseWheelDeltaSum;
-    @Nullable
-    private GuiScreen parent;
+//    @Nullable
+//    private GuiScreen parent;
 
 
 //    protected GuiBase()
@@ -80,22 +80,23 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
 //        super(ScreenTexts.EMPTY);
 //    }
 
-    public GuiBase setParent(@Nullable GuiScreen parent) {
-        // Don't allow nesting the GUI with itself...
-        if (parent == null || parent.getClass() != this.getClass()) {
-            this.parent = parent;
-        }
+//    public GuiBase setParent(@Nullable GuiScreen parent) {
+//        // Don't allow nesting the GUI with itself...
+//        if (parent == null || parent.getClass() != this.getClass()) {
+//            this.parent = parent;
+//        }
+//
+//        return this;
+//    }
 
-        return this;
-    }
-
-    @Nullable
-    public GuiScreen getParent() {
-        return this.parent;
-    }
+//    @Nullable
+//    public GuiScreen getParent() {
+//        return this.parent;
+//    }
 
     public String getTitleString() {
-        return (this.useTitleHierarchy && this.parent instanceof GuiBase) ? (((GuiBase) this.parent).getTitleString() + " => " + this.title) : this.title;
+//        return (this.useTitleHierarchy && this.parent instanceof GuiBase) ? (((GuiBase) this.parent).getTitleString() + " => " + this.title) : this.title;
+        return (this.useTitleHierarchy && this.getParent() instanceof GuiBase) ? (((GuiBase) this.getParent()).getTitleString() + " => " + this.title) : this.title;
     }
 
     public WidgetBase getHoveredWidget() {
@@ -118,13 +119,13 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
         return false;
     }
 
-    public void resize(Minecraft mc, int width, int height) {
-        if (this.parent != null && this.parent instanceof GuiBase guiBase) {
-            guiBase.resize(mc, width, height);
-        }
+//    public void resize(Minecraft mc, int width, int height) {
+//        if (this.parent != null && this.parent instanceof GuiBase guiBase) {
+//            guiBase.resize(mc, width, height);
+//        }
 
 //        super.resize(mc, width, height);
-    }
+//    }
 
 //    @Override
 //    public void init() {
@@ -143,7 +144,8 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
 
     protected void closeGui(boolean showParent) {
         if (showParent) {
-            this.mc.displayGuiScreen(this.parent);
+//            this.mc.displayGuiScreen(this.parent);
+            this.mc.displayGuiScreen(this.getParent());
         }
 //        else {
 //            this.close();

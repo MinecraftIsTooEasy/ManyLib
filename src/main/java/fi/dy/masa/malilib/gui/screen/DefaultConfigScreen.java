@@ -28,7 +28,6 @@ import java.util.List;
 
 public class DefaultConfigScreen extends LayeredScreen implements Searchable, IConfigList {
     public final IConfigHandler configInstance;
-    private final GuiScreen parent;
     public ConfigTab currentTab;
     public boolean tabDirty;
     private boolean firstSeen = true;
@@ -36,12 +35,12 @@ public class DefaultConfigScreen extends LayeredScreen implements Searchable, IC
     private ModLinkButton modLinkButton;
     private WidgetConfigListView widgetListView;
 
-    public DefaultConfigScreen(GuiScreen parentScreen, IConfigHandler configInstance) {
+    public DefaultConfigScreen(GuiScreen parent, IConfigHandler configInstance) {
         super();
-        if (parentScreen instanceof DefaultConfigScreen defaultConfigScreen) {
-            parentScreen = defaultConfigScreen.parent;
+        if (parent instanceof DefaultConfigScreen defaultConfigScreen) {
+            parent = defaultConfigScreen.getParent();
         }// for redirecting to other configs
-        this.parent = parentScreen;
+        this.setParent(parent);
         this.configInstance = configInstance;
         this.configTabs = configInstance.getConfigTabs();
         this.currentTab = this.configTabs.get(0);
@@ -150,10 +149,6 @@ public class DefaultConfigScreen extends LayeredScreen implements Searchable, IC
     @Override
     public boolean charTyped(char chr, int keyCode) {
         if (super.charTyped(chr, keyCode)) {
-            return true;
-        }
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            this.mc.displayGuiScreen(this.parent);
             return true;
         }
         if (keyCode == Keyboard.KEY_LSHIFT) {

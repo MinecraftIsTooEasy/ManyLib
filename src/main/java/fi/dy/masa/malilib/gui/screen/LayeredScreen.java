@@ -123,7 +123,7 @@ public class LayeredScreen extends ModernScreen {
             this.removeTopLayer();
             return true;
         }
-        return false;
+        return super.charTyped(chr, keyCode);
     }
 
     protected Layer getBaseLayer() {

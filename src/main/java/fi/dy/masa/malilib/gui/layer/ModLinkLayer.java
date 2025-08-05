@@ -115,8 +115,6 @@ public class ModLinkLayer extends Layer {
                     y,
                     10,
                     this.getPageCapacity() * modLinkButton.getHeight(),
-                    this.getPageCapacity(),
-                    this.getContentSize(),
                     this
             );
         }

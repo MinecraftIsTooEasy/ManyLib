@@ -28,19 +28,17 @@ public class GlobalSearchScreen extends LayeredScreen implements Searchable, ICo
     private SearchField searchField;
     private final List<SearchResult> searchResultsCache = new ArrayList<>();
     private final List<SearchResult> searchResults = new ArrayList<>();
-    private final GuiScreen parent;
     private WidgetGlobalConfigListView widgetListView;
-    private boolean firstSeen = true;
 
-    public GlobalSearchScreen(GuiScreen parentScreen) {
+    public GlobalSearchScreen(GuiScreen parent) {
         super();
-        this.parent = parentScreen;
+        this.setParent(parent);
     }
 
     @Override
     protected void initBaseLayer(Layer layer) {
         String text = null;
-        if (!this.firstSeen) {
+        if (this.searchField != null) {
             text = this.searchField.getText();
         }
         super.initBaseLayer(layer);
@@ -67,22 +65,8 @@ public class GlobalSearchScreen extends LayeredScreen implements Searchable, ICo
         layer.addWidget(searchField);
         this.searchField = searchField;
 
-        this.widgetListView.onStatusChange();
+        this.widgetListView.onStatusChange();// initial search will change contents
         Keyboard.enableRepeatEvents(true);
-
-        this.firstSeen = false;
-    }
-
-    @Override
-    public boolean charTyped(char chr, int keyCode) {
-        if (super.charTyped(chr, keyCode)) {
-            return true;
-        }
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            this.mc.displayGuiScreen(this.parent);
-            return true;
-        }
-        return false;
     }
 
     @Override
