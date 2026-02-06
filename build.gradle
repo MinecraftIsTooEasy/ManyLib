@@ -31,8 +31,9 @@ loom {
 
 }
 
-runClient {
-    args("--username", "De6ris", "--session", "a.a.a.a", "--width", 854, "--height", 480)
+tasks.named('runClient', JavaExec).configure { exec ->
+    def user = project.hasProperty('username') ? project.username : 'Dev'
+    exec.setArgs(['--username', user, '--session', '0', '--width', '854', '--height', '480'])
 }
 
 dependencies {
