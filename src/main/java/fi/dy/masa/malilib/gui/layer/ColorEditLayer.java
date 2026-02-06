@@ -27,7 +27,7 @@ public class ColorEditLayer extends Layer {
     private final static int Y_OFFSET = 60;
 
     private final ConfigColor configColor;
-    private final GuiScreen screen;
+    private final Runnable finishAction;
 
     private ColorBoardSV colorBoard;
 
@@ -41,31 +41,26 @@ public class ColorEditLayer extends Layer {
 
     private final List<SliderButton<ConfigInteger>> sliderButtons = new ArrayList<>();
 
-    public ColorEditLayer(ConfigColor config, GuiScreen screen) {
+    public ColorEditLayer(ConfigColor config, GuiScreen screen, Runnable finishAction) {
+        super(screen);
         this.configColor = config;
-        this.screen = screen;
+        this.finishAction = finishAction;
 
-        int[] decodedARGB = ColorUtils.decodeARGB(configColor.getDefaultColor().intValue);
+        int[] decodedARGB = ColorUtils.decodeARGB(config.getColorInteger());
 
-        int defaultR = decodedARGB[1];
-        int defaultG = decodedARGB[2];
-        int defaultB = decodedARGB[3];
+        int r = decodedARGB[1];
+        int g = decodedARGB[2];
+        int b = decodedARGB[3];
 
-        int[] defaultHSV = RGB.ofIII(defaultR, defaultG, defaultB).toHSV().standardize();
-
-        int defaultH = defaultHSV[0];
+        int[] hsv = RGB.ofIII(r, g, b).toHSV().standardize();
 
         this.a = new ConfigInteger("A", decodedARGB[0], 0, 255);
 
-        this.h = new ConfigInteger("NewH", defaultH, 0, 359);
+        this.r = new ConfigInteger("R", r, 0, 255);
+        this.g = new ConfigInteger("G", g, 0, 255);
+        this.b = new ConfigInteger("B", b, 0, 255);
 
-        this.r = new ConfigInteger("R", defaultR, 0, 255);
-        this.g = new ConfigInteger("G", defaultG, 0, 255);
-        this.b = new ConfigInteger("B", defaultB, 0, 255);
-
-        this.updateRGB();
-        HSV hsv = HSV.ofARGB(this.configColor.getColorInteger());
-        this.h.setIntegerValue(hsv.getH());
+        this.h = new ConfigInteger("H", hsv[0], 0, 359);
     }
 
     @Override
@@ -105,7 +100,7 @@ public class ColorEditLayer extends Layer {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.drawOverlay();
-        this.drawOutlinedBox(this.screen, X_OFFSET, Y_OFFSET);
+        this.drawOutlinedBox(X_OFFSET, Y_OFFSET);
         super.render(context, mouseX, mouseY, delta);
     }
 
@@ -224,6 +219,12 @@ public class ColorEditLayer extends Layer {
     @Override
     public boolean blocksInteraction() {
         return true;
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        this.finishAction.run();
     }
 
     private static class ColorSlider extends SliderButton<ConfigInteger> {

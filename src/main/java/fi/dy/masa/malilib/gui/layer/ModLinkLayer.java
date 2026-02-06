@@ -23,10 +23,12 @@ public class ModLinkLayer extends Layer {
     private final Supplier<ModLinkButton> buttonAccess;
     private final Function<IConfigHandler, GuiScreen> screenFactory;
 
-    public ModLinkLayer(Predicate<IConfigHandler> presentPredicate,
+    public ModLinkLayer(GuiScreen screen,
+                        Predicate<IConfigHandler> presentPredicate,
                         Supplier<ModLinkButton> buttonAccess,
                         Function<IConfigHandler, GuiScreen> screenFactory
     ) {
+        super(screen);
         this.presentPredicate = presentPredicate;
         this.buttonAccess = buttonAccess;
         this.screenFactory = screenFactory;

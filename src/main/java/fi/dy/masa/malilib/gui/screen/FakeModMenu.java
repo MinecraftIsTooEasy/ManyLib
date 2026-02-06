@@ -82,4 +82,9 @@ public class FakeModMenu extends ScreenPaged implements IMenu {
         this.pageUp.setEnabled(this.canPageUp());
         this.pageDown.setEnabled(this.canPageDown());
     }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
 }

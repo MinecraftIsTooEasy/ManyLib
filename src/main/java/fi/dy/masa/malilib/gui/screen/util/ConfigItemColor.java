@@ -40,10 +40,14 @@ class ConfigItemColor extends ConfigItemInputBox<ConfigColor> {
         if (this.colorBoard.isMouseOver(mouseX, mouseY)) {
             SoundUtils.click(this.mc);
             ((LayeredScreen) this.screen).toggleLayer(layer -> layer instanceof ColorEditLayer,
-                    () -> new ColorEditLayer(this.config, this.screen)
+                    () -> new ColorEditLayer(this.config, this.screen, this::onColorFinished)
             );
             return true;
         }
         return false;
+    }
+
+    private void onColorFinished() {
+        this.textFieldWrapper.setText(this.config.getColorString());
     }
 }

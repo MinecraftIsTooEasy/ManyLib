@@ -84,3 +84,5 @@ color.blue=§9Blue
 color.hue=Hue
 color.saturation=Saturation
 color.brightness=Brightness
+
+list.empty=Empty List

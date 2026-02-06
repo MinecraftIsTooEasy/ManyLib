@@ -18,7 +18,6 @@ import net.minecraft.GuiScreen;
 public class KeySettingsLayer extends Layer {
     private final static int X_OFFSET = 100;
     private final static int Y_OFFSET = 80;
-    private final GuiScreen screen;
     IKeybind keybind;
 
     private final ConfigEnum<KeybindSettings.Context> context;
@@ -30,7 +29,7 @@ public class KeySettingsLayer extends Layer {
     private final ConfigBoolean allowEmpty;
 
     public KeySettingsLayer(GuiScreen screen, IKeybind keybind) {
-        this.screen = screen;
+        super(screen);
         this.keybind = keybind;
 
         KeybindSettings settings = keybind.getDefaultSettings();
@@ -55,7 +54,7 @@ public class KeySettingsLayer extends Layer {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.drawOverlay();
-        this.drawOutlinedBox(this.screen, X_OFFSET, Y_OFFSET);
+        this.drawOutlinedBox(X_OFFSET, Y_OFFSET);
         super.render(context, mouseX, mouseY, delta);
     }
 

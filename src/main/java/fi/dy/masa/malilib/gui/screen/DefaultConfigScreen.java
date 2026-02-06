@@ -97,7 +97,9 @@ public class DefaultConfigScreen extends LayeredScreen implements Searchable, IC
     private void toggleModLink() {
         this.toggleLayer(
                 layer -> layer instanceof ModLinkLayer,
-                () -> new ModLinkLayer(x -> x == this.configInstance,
+                () -> new ModLinkLayer(
+                        this,
+                        x -> x == this.configInstance,
                         () -> this.modLinkButton,
                         x -> x.getConfigScreen(this)
                 )
@@ -177,6 +179,11 @@ public class DefaultConfigScreen extends LayeredScreen implements Searchable, IC
         InputEventHandler.getKeybindManager().updateUsedKeys();
         ProgressSaving.saveProgress(this.configInstance.getName(), this.findTabIndex(), this.widgetListView.getStatus());
         this.firstSeen = true;
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
     }
 
     void sort(SortCategory sortCategory) {

@@ -84,3 +84,5 @@ color.blue=§9蓝
 color.hue=色相
 color.saturation=饱和度
 color.brightness=亮度
+
+list.empty=空列表

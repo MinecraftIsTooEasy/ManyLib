@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.config.interfaces.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
 import fi.dy.masa.malilib.config.interfaces.IConfigStringList;
 import fi.dy.masa.malilib.util.JsonUtils;
+import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class ConfigStringList extends ConfigBase<ConfigStringList> implements IC
 
     @Override
     public String getDisplayText() {
+        if (this.value.isEmpty()) return "<" + StringUtils.translate("list.empty") + ">";
         return this.value.toString();
     }
 }

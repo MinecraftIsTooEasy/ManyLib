@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class LayeredScreen extends ModernScreen {
-    private final Layer baseLayer = new Layer();
+    private final Layer baseLayer = new Layer(this);
     private final List<Layer> layers = new ArrayList<>();
     private final List<Layer> reverseView = Lists.reverse(this.layers);
     private final List<Layer> layersToAdd = new ArrayList<>();
@@ -130,6 +130,9 @@ public class LayeredScreen extends ModernScreen {
         return this.baseLayer;
     }
 
+    /**
+     * Do not call this on constructors
+     */
     public void addLayer(Layer layer) {
         this.layersToAdd.add(layer);
         layer.initGui();

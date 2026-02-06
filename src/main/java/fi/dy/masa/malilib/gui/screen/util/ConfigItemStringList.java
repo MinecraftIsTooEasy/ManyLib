@@ -21,15 +21,14 @@ class ConfigItemStringList extends ConfigItem<ConfigStringList> {
         this.editButton = ScreenConstants.getCommonButton(index,
                 this.getStringPreview(),
                 screen,
-//                button -> screen.mc.displayGuiScreen(new StringListEditScreen(config, screen))
                 button -> toggleLayer(config, (DefaultConfigScreen) screen)
         );
         this.buttons.add(editButton);
     }
 
-    private static void toggleLayer(ConfigStringList config, LayeredScreen screen) {
+    private void toggleLayer(ConfigStringList config, LayeredScreen screen) {
         screen.toggleLayer(layer -> layer instanceof StringListEditLayer,
-                () -> new StringListEditLayer(config, screen)
+                () -> new StringListEditLayer(config, screen, this::onEditFinished)
         );
     }
 
@@ -47,6 +46,13 @@ class ConfigItemStringList extends ConfigItem<ConfigStringList> {
     private String getStringPreview() {
         String raw = this.config.getDisplayText();
         return raw.length() > 24 ? raw.substring(0, 20) + ",...]" : raw;
+    }
+
+    private void onEditFinished(List<String> list) {
+        List<String> oldList = this.config.getStringListValue();
+        oldList.clear();
+        oldList.addAll(list);
+        this.editButton.setDisplayString(this.getStringPreview());
     }
 
     @Override
