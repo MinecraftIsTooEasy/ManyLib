@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
+# .gitattributes
+gradlew text eol=lf
+gradlew.bat text eol=crlf
 * text=auto
