@@ -28,6 +28,8 @@ dependencies {
     fml "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
     implementation "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
 
+    implementation "com.github.MinecraftIsTooEasy:Gson:2.10.1"
+
     implementation "com.github.MinecraftIsTooEasy:ModernMITE:3.7.1"
     implementation "com.github.MinecraftIsTooEasy:OMMC:1.4.2"
     implementation "com.github.MinecraftIsTooEasy:Neodymium:1.1.1"
