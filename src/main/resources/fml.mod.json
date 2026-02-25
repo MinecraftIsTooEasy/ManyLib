@@ -30,9 +30,9 @@
       "fi.dy.masa.malilib.compat.ModMenuImpl"
     ]
   },
-  "accessWidener": "ManyLib.accesswidener",
+  "accessWidener": "manylib.accessWidener",
   "mixins": [
-    "ManyLib.mixins.json"
+    "manylib.mixins.json"
   ],
   "custom": {
   }
