@@ -23,8 +23,11 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+      - name: Normalize gradlew line endings & make executable
+        run: |
+          # Remove Windows CRLF endings if present, then make executable
+          sed -i 's/\r$//' ./gradlew
+          chmod +x ./gradlew
 
       - name: Ensure jar in fml-loom cache
         run: |
