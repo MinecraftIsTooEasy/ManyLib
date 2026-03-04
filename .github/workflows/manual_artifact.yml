@@ -5,9 +5,6 @@ permissions:
   issues: write
 
 on:
-  push:
-    tags:
-      - '*'
   workflow_dispatch:
 
 jobs:
@@ -58,27 +55,23 @@ jobs:
       - name: Build
         run: ./gradlew build
 
-      - name: Determine Tag (for workflow_dispatch)
-        id: determine_tag
-        if: github.event_name == 'workflow_dispatch'
+      - name: Find built JAR
+        id: find
         run: |
-          TAG="v$(date +'%Y%m%d-%H%M%S')"
-          echo "Generated tag: $TAG"
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          set -e
+          ARTIFACTS=$(ls build/libs/*.jar 2>/dev/null || true)
+          if [ -z "$ARTIFACTS" ]; then
+            echo "No jar found in build/libs/"
+            exit 1
+          fi
+          # output all matching paths (newline-separated)
+          echo "$ARTIFACTS" | tr ' ' '\n' > artifact_paths.txt
+          echo "artifact_list<<EOF" >> $GITHUB_OUTPUT
+          cat artifact_paths.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release (for push with tag)
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1.14.0
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          artifacts: "build/libs/*.jar"
-          generateReleaseNotes: true
-
-      - name: Create GitHub Release (for workflow_dispatch with generated tag)
-        if: github.event_name == 'workflow_dispatch'
-        uses: ncipollo/release-action@v1.14.0
-        with:
-          tag: ${{ steps.determine_tag.outputs.TAG }}
-          artifacts: "build/libs/*.jar"
-          generateReleaseNotes: true
-          commit: ${{ github.sha }}
-          makeLatest: true
+          name: build-artifacts-${{ github.sha }}
+          path: build/libs/*.jar
