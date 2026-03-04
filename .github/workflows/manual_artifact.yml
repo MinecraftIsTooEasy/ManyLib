@@ -1,4 +1,4 @@
-name: CI Build (push / PR -> build + upload artifact)
+name: Manual artifact
 
 permissions:
   contents: write
