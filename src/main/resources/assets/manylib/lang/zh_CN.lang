@@ -86,3 +86,10 @@ color.saturation=饱和度
 color.brightness=亮度
 
 list.empty=空列表
+
+commands.manyLib.usage=用法: /manyLib <命令> [参数]
+commands.manyLib.reload.usage=用法: /manyLib reload <配置名>
+commands.manyLib.reload.success=已重新加载配置 %s
+commands.manyLib.reload.configNotFound=未找到配置 '%s'
+commands.manyLib.reloadAll.usage=用法: /manyLib reloadAll
+commands.manyLib.reloadAll.success=已重新加载所有配置

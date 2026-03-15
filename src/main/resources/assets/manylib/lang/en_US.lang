@@ -86,3 +86,10 @@ color.saturation=Saturation
 color.brightness=Brightness
 
 list.empty=Empty List
+
+commands.manyLib.usage=Usage: /manyLib <command> [args]
+commands.manyLib.reload.usage=Usage: /manyLib reload <config>
+commands.manyLib.reload.success=Reloaded config %s
+commands.manyLib.reload.configNotFound=Config '%s' not found
+commands.manyLib.reloadAll.usage=Usage: /manyLib reloadAll
+commands.manyLib.reloadAll.success=Reloaded all configs
