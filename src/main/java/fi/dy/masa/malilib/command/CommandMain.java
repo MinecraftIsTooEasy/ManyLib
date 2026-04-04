@@ -30,28 +30,23 @@ public class CommandMain extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender iCommandSender, String[] strings)
-    {
-        if (strings.length == 0)
-        {
+    public void processCommand(ICommandSender iCommandSender, String[] strings) {
+        if (strings.length == 0) {
             iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.manyLib.usage"));
             return;
         }
 
-        if (this.commandMap.containsKey(strings[0]))
-        {
+        if (this.commandMap.containsKey(strings[0])) {
             String[] newStrings = new String[strings.length - 1];
             System.arraycopy(strings, 1, newStrings, 0, strings.length - 1);
             this.commandMap.get(strings[0]).processCommand(iCommandSender, newStrings);
-        }
-        else
-        {
+        } else {
             iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.manyLib.usage"));
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    @SuppressWarnings("unchecked, rawtypes")
     public List addTabCompletionOptions(ICommandSender iCommandSender, String[] strings) {
         int length = strings.length;
         if (length == 1)

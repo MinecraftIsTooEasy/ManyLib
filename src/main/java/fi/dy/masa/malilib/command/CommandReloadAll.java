@@ -1,24 +1,20 @@
 package fi.dy.masa.malilib.command;
 
 import fi.dy.masa.malilib.config.ConfigManager;
+import net.minecraft.ChatMessageComponent;
 import net.minecraft.CommandBase;
 import net.minecraft.ICommandSender;
-import net.minecraft.ChatMessageComponent;
 
 import java.util.List;
 
 public class CommandReloadAll implements IManyLibCommand {
 
     @Override
-    public void processCommand(ICommandSender iCommandSender, String[] strings)
-    {
-        if (strings.length == 0)
-        {
+    public void processCommand(ICommandSender iCommandSender, String[] strings) {
+        if (strings.length == 0) {
             ConfigManager.getInstance().loadAllConfigs();
             CommandBase.notifyAdmins(iCommandSender, "commands.manyLib.reloadAll.success");
-        }
-        else
-        {
+        } else {
             iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.manyLib.reloadAll.usage"));
         }
     }
