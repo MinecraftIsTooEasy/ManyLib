@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigInteger;
 import fi.dy.masa.malilib.util.JsonUtils;
 import net.minecraft.MathHelper;
@@ -33,17 +33,12 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
     }
 
     public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, boolean useSlider, String comment) {
-        super(ConfigType.INTEGER, name, comment);
+        super(ConfigTypes.INTEGER, name, comment);
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.defaultValue = defaultValue;
         this.value = defaultValue;
         this.useSlider = useSlider;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return String.valueOf(this.getIntegerValue());
     }
 
     @Override

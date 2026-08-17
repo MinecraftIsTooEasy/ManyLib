@@ -1,11 +1,6 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-public interface IConfigDouble extends IConfigValue, IConfigDisplay, IConfigSlideable {
-    @Deprecated(since = "1.1.1")
-    default double get() {
-        return this.getDoubleValue();
-    }
-
+public interface IConfigDouble extends IConfigValue, IConfigSlideable {
     double getDoubleValue();
 
     double getDefaultDoubleValue();

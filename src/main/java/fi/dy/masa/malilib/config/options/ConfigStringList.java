@@ -5,16 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
-import fi.dy.masa.malilib.config.interfaces.IConfigDisplay;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigStringList;
 import fi.dy.masa.malilib.util.JsonUtils;
-import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigStringList extends ConfigBase<ConfigStringList> implements IConfigStringList, IConfigDisplay {
+public class ConfigStringList extends ConfigBase<ConfigStringList> implements IConfigStringList {
     final List<String> defaultValue;
     final List<String> value;
 
@@ -23,7 +21,7 @@ public class ConfigStringList extends ConfigBase<ConfigStringList> implements IC
     }
 
     public ConfigStringList(String name, List<String> defaultValue, String comment) {
-        super(ConfigType.STRINGLIST, name, comment);
+        super(ConfigTypes.STRING_LIST, name, comment);
         this.defaultValue = defaultValue;
         this.value = new ArrayList<>();
         this.value.addAll(defaultValue);
@@ -79,11 +77,5 @@ public class ConfigStringList extends ConfigBase<ConfigStringList> implements IC
     @Override
     public List<String> getDefaultStringListValue() {
         return this.defaultValue;
-    }
-
-    @Override
-    public String getDisplayText() {
-        if (this.value.isEmpty()) return "<" + StringUtils.translate("list.empty") + ">";
-        return this.value.toString();
     }
 }

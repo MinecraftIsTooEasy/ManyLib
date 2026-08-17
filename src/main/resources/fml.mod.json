@@ -1,24 +1,26 @@
 {
   "schemaVersion": 1,
-  "id": "many-lib",
+  "id": "manylib",
   "version": "${version}",
   "depends": {
     "fishmodloader": ">=3.4.1"
   },
+  "provides": [
+    "many-lib"
+  ],
   "environment": "*",
   "name": "ManyLib",
   "description": "A simple fork of MaLiLib to MITE1.6.4",
   "authors": [
     "masa",
     "Debris",
-    "Xy_Lose",
+    "Xy_Luce",
     "Inf1nlty"
   ],
   "contact": {
-    "homepage": "https://github.com/De6ris/ManyLib",
-    "issues": "https://github.com/De6ris/ManyLib",
-    "sources": "https://github.com/De6ris/ManyLib",
-    "qq": "2838369930",
+    "homepage": "https://github.com/MinecraftIsTooEasy/ManyLib",
+    "issues": "https://github.com/MinecraftIsTooEasy/ManyLib",
+    "sources": "https://github.com/MinecraftIsTooEasy/ManyLib",
     "qqGroup": "661223990"
   },
   "license": "LGPLv3",
@@ -27,11 +29,11 @@
     "main": [
       "fi.dy.masa.malilib.ManyLib"
     ],
-    "modmenu": [
-      "fi.dy.masa.malilib.compat.ModMenuImpl"
+    "client": [
+      "fi.dy.masa.malilib.client.ManyLibClient"
     ]
   },
-  "accessWidener": "manylib.accessWidener",
+  "accessWidener": "manylib.accesswidener",
   "mixins": [
     "manylib.mixins.json"
   ],

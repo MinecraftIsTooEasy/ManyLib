@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.config.interfaces;
 
 import com.google.gson.JsonElement;
-import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.config.ConfigType;
 
 import javax.annotation.Nullable;
 
@@ -18,18 +18,6 @@ public interface IConfigBase {
      */
     @Nullable
     String getComment();
-
-    /**
-     * Returns the display name used for this config in the config GUIs
-     *
-     * @return
-     */
-    default String getConfigGuiDisplayName() {
-        return StringUtils.getTranslatedOrFallback("config.name." + this.getName(), this.getName());
-    }
-    default String getConfigGuiDisplayComment() {
-        return StringUtils.getTranslatedOrFallback("config.comment." + this.getName(), this.getComment());
-    }
 
     /**
      * Set the value of this config option from a JSON element (is possible)

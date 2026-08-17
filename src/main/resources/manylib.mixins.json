@@ -1,19 +1,26 @@
 {
   "required": true,
-  "package": "fi.dy.masa.malilib.mixin",
+  "package": "fi.dy.masa.malilib.mixins",
   "compatibilityLevel": "JAVA_17",
   "target": "DEFAULT",
   "minVersion": "0.8.3",
   "injectors": {
     "defaultRequire": 1
   },
+  "server": [
+    "server.DedicatedServerMixin"
+  ],
+  "client": [
+    "client.GuiIngameMenuMixin",
+    "client.GuiIngameMixin",
+    "client.GuiMainMenuMixin",
+    "client.GuiScreenMixin",
+    "client.GuiTextFieldMixin",
+    "client.MinecraftMixin",
+    "client.mod.modmenu.IModMenuMixin"
+  ],
   "mixins": [
-    "GuiIngameMenuMixin",
-    "GuiIngameMixin",
-    "GuiMainMenuMixin",
-    "GuiScreenMixin",
-    "GuiTextFieldMixin",
-    "MinecraftMixin",
-    "SlotCreativeInventoryMixin"
-  ]
+    "command.ServerCommandManagerMixin"
+  ],
+  "plugin": "fi.dy.masa.malilib.mixin.MixinPlugin"
 }

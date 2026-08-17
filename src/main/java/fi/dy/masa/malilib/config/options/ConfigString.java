@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigString;
 import fi.dy.masa.malilib.util.JsonUtils;
 
@@ -18,7 +18,7 @@ public class ConfigString extends ConfigBase<ConfigString> implements IConfigStr
     }
 
     public ConfigString(String name, String defaultValue, String comment) {
-        super(ConfigType.STRING, name, comment);
+        super(ConfigTypes.STRING, name, comment);
         this.defaultValue = defaultValue;
         this.value = defaultValue;
     }
@@ -75,10 +75,5 @@ public class ConfigString extends ConfigBase<ConfigString> implements IConfigStr
     @Override
     public boolean isModified(String newValue) {
         return newValue.equals(this.value);
-    }
-
-    @Override
-    public String getDisplayText() {
-        return this.value;
     }
 }

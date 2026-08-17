@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigDouble;
 import fi.dy.masa.malilib.util.JsonUtils;
 import net.minecraft.MathHelper;
@@ -33,18 +33,12 @@ public class ConfigDouble extends ConfigBase<ConfigDouble> implements IConfigDou
     }
 
     public ConfigDouble(String name, double defaultValue, double minValue, double maxValue, boolean useSlider, String comment) {
-        super(ConfigType.DOUBLE, name, comment);
+        super(ConfigTypes.DOUBLE, name, comment);
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.defaultValue = defaultValue;
         this.value = defaultValue;
         this.useSlider = useSlider;
-    }
-
-    @Override
-    public String getDisplayText() {
-        int percent = (int) (this.getRatio() * 100.0f);
-        return percent + "%";
     }
 
     @Override

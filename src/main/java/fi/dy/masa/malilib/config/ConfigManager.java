@@ -1,67 +1,60 @@
 package fi.dy.masa.malilib.config;
 
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.hotkeys.IKeybindManager;
-import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
+import fi.dy.masa.malilib.core.Side;
+import fi.dy.masa.malilib.util.Platform;
 
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class ConfigManager {
     private static final ConfigManager INSTANCE = new ConfigManager();
-    private final SortedMap<String, IConfigHandler> configInstances = new TreeMap<>();
+
+    private final Map<String, EnumMap<Side, IConfigHandler>> configMap = new TreeMap<>(Comparator.comparing(Function.identity()));
 
     public static ConfigManager getInstance() {
         return INSTANCE;
     }
 
-    public void registerConfig(SimpleConfigs configs) {
-        this.registerConfig((IConfigHandler) configs);
+    public Stream<IConfigHandler> streamConfigHandlers() {
+        return this.configMap.values().stream().flatMap(x -> x.values().stream());
     }
 
-    public void registerConfig(IConfigHandler configs) {
-        this.registerConfig(configs.getName(), configs);
+    @Nullable
+    public EnumMap<Side, IConfigHandler> getSideMap(String id) {
+        return this.configMap.get(id);
     }
 
-    public void registerConfig(String modId, IConfigHandler configs) {
-        List<ConfigHotkey> hotkeys = configs.getHotkeys();
-        if (configs.getValues() != null || hotkeys != null) {
-            this.configInstances.put(modId, configs);
-        }
-        if (hotkeys != null) {
-            InputEventHandler.getKeybindManager().registerKeybindProvider(new IKeybindProvider() {
-                @Override
-                public void addKeysToMap(IKeybindManager manager) {
-                    hotkeys.forEach(hotkey -> manager.addKeybindToMap(hotkey.getKeybind()));
-                }
-
-                @Override
-                public void addHotkeys(IKeybindManager manager) {
-                    manager.addHotkeysForCategory(modId, modId + ".hotkeys.category.generic_hotkeys", hotkeys);
-                }
-            });
-        }
+    @Nullable
+    public IConfigHandler getConfig(String id, Side side) {
+        EnumMap<Side, IConfigHandler> map = this.configMap.get(id);
+        if (map == null) return null;
+        return map.get(side);
     }
 
-    public Map<String, IConfigHandler> getConfigMap() {
-        return this.configInstances;
+    public Stream<String> streamModIds() {
+        return this.configMap.keySet().stream();
+    }
+
+    public void registerConfigHandler(IConfigHandler configHandler) {
+        if (configHandler.getSide() == Side.CLIENT && Platform.isServer()) throw new AssertionError();
+        EnumMap<Side, IConfigHandler> inner = this.configMap.computeIfAbsent(configHandler.getModId(), k -> new EnumMap<>(Side.class));
+        inner.put(configHandler.getSide(), configHandler);
     }
 
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
     public void loadAllConfigs() {
-        this.configInstances.values().forEach(IConfigHandler::load);
+        this.streamConfigHandlers().forEach(IConfigHandler::load);
     }
 
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
     public void saveAllConfigs() {
-        this.configInstances.values().forEach(IConfigHandler::save);
+        this.streamConfigHandlers().forEach(IConfigHandler::save);
     }
 }

@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-public interface IConfigEnum<E> extends IConfigValue, IConfigPeriodic, IConfigDisplay {
+public interface IConfigEnum<E> extends IConfigValue, IConfigCyclic {
     E getEnumValue();
 
     E getDefaultEnumValue();
@@ -15,5 +15,7 @@ public interface IConfigEnum<E> extends IConfigValue, IConfigPeriodic, IConfigDi
 
     default void next() {
         this.setEnumValue(this.getNext());
-    };
+    }
+
+    ;
 }

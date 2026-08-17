@@ -4,11 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.ConfigType;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigColor;
-import fi.dy.masa.malilib.util.Color4f;
+import fi.dy.masa.malilib.core.Color4f;
+import fi.dy.masa.malilib.util.ColorUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
-import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigColor extends ConfigInteger implements IConfigColor {
     private Color4f color;
@@ -19,14 +20,14 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
     }
 
     public ConfigColor(String name, String defaultValue, String comment) {
-        super(name, StringUtils.getColor(defaultValue, 0), comment);
+        super(name, ColorUtils.getColor(defaultValue, 0), comment);
         this.defaultColor = Color4f.fromColor(this.getIntegerValue());
         this.color = this.defaultColor;
     }
 
     @Override
     public ConfigType getType() {
-        return ConfigType.COLOR;
+        return ConfigTypes.COLOR;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
 
     @Override
     public void setValueFromString(String value) {
-        this.setIntegerValue(StringUtils.getColor(value, 0));
+        this.setIntegerValue(ColorUtils.getColor(value, 0));
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
     @Override
     public boolean isModified(String newValue) {
         try {
-            return StringUtils.getColor(newValue, 0) != this.getDefaultIntegerValue();
+            return ColorUtils.getColor(newValue, 0) != this.getDefaultIntegerValue();
         } catch (Exception ignored) {
         }
         return true;
@@ -79,7 +80,7 @@ public class ConfigColor extends ConfigInteger implements IConfigColor {
         try {
             JsonObject obj = element.getAsJsonObject();
             if (JsonUtils.hasString(obj, "color")) {
-                this.value = this.getClampedValue(StringUtils.getColor(obj.get("color").getAsString(), 0));
+                this.value = this.getClampedValue(ColorUtils.getColor(obj.get("color").getAsString(), 0));
                 this.color = Color4f.fromColor(this.value);
             } else {
                 ManyLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);

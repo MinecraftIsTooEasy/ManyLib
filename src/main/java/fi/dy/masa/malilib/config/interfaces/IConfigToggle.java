@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-public interface IConfigToggle extends IConfigValue, IConfigPeriodic {
+public interface IConfigToggle extends IConfigValue, IConfigCyclic {
     boolean isOn();
 
     boolean getDefaultStatus();

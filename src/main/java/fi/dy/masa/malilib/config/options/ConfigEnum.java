@@ -4,10 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.config.interfaces.ConfigType;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigEnum;
 import fi.dy.masa.malilib.util.JsonUtils;
-import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> implements IConfigEnum<E> {
     E value;
@@ -21,7 +20,7 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
     }
 
     public ConfigEnum(String name, E defaultValue, String comment) {
-        super(ConfigType.ENUM, name, comment);
+        super(ConfigTypes.ENUM, name, comment);
         this.value = defaultValue;
         this.defaultValue = defaultValue;
         this.enumClass = defaultValue.getDeclaringClass();
@@ -51,11 +50,6 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
             obj.add("comment", new JsonPrimitive(this.getComment()));
         }
         return obj;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StringUtils.getTranslatedOrFallback("config.enum." + this.getName() + "." + this.getStringValue(), this.getStringValue());
     }
 
     @Override

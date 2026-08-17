@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.command;
 
-import net.minecraft.ChatMessageComponent;
+import fi.dy.masa.malilib.localization.CommandText;
 import net.minecraft.CommandBase;
 import net.minecraft.ICommandSender;
 
@@ -26,13 +26,13 @@ public class CommandMain extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender iCommandSender) {
-        return "commands.manyLib.usage";
+        return CommandText.USAGE.getKey();
     }
 
     @Override
     public void processCommand(ICommandSender iCommandSender, String[] strings) {
         if (strings.length == 0) {
-            iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.manyLib.usage"));
+            iCommandSender.sendChatToPlayer(CommandText.USAGE.component());
             return;
         }
 
@@ -41,7 +41,7 @@ public class CommandMain extends CommandBase {
             System.arraycopy(strings, 1, newStrings, 0, strings.length - 1);
             this.commandMap.get(strings[0]).processCommand(iCommandSender, newStrings);
         } else {
-            iCommandSender.sendChatToPlayer(ChatMessageComponent.createFromTranslationKey("commands.manyLib.usage"));
+            iCommandSender.sendChatToPlayer(CommandText.USAGE.component());
         }
     }
 

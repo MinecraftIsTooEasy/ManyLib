@@ -1,7 +1,10 @@
 package fi.dy.masa.malilib.event;
 
+import fi.dy.masa.malilib.client.event.ClientHooks;
+import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IInitializationDispatcher;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
+import fi.dy.masa.malilib.util.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +28,15 @@ public class InitializationHandler implements IInitializationDispatcher {
     /**
      * NOT PUBLIC API - DO NOT CALL
      */
-    public void onGameStartDone() {
+    public void onInitialization() {
         if (!this.handlers.isEmpty()) {
             for (IInitializationHandler handler : this.handlers) {
                 handler.registerModHandlers();
             }
         }
-//        ConfigManager.getInstance().loadAllConfigs();
-//        KeyBinding.resetKeyBindingArrayAndHash();
-        InputEventHandler.getKeybindManager().updateUsedKeys();
+        ConfigManager.getInstance().loadAllConfigs();
+        if (Platform.isClient()) {
+            ClientHooks.onInitialization();
+        }
     }
 }

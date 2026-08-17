@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-import fi.dy.masa.malilib.util.Color4f;
+import fi.dy.masa.malilib.core.Color4f;
 
 public interface IConfigColor {
     /**

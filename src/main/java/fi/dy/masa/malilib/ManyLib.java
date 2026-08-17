@@ -1,21 +1,26 @@
 package fi.dy.masa.malilib;
 
-import fi.dy.masa.malilib.event.InitializationHandler;
+import fi.dy.masa.malilib.api.ManyLibApi;
+import fi.dy.masa.malilib.internal.ManyLibDummyInitHandler;
+import fi.dy.masa.malilib.util.Platform;
 import net.fabricmc.api.ModInitializer;
-import net.xiaoyu233.fml.ModResourceManager;
+import net.minecraft.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ManyLib implements ModInitializer {
-    public static final String MOD_ID = "many-lib";
+    public static final String MOD_ID = "manylib";
     public static final String MOD_NAME = "ManyLib";
-    public static final String RESOURCE_DOMAIN = "manylib";
     public static final Logger logger = LogManager.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {
-        ManyLibConfig.getInstance().load();
-        InitializationHandler.getInstance().registerInitializationHandler(new ManyLibInitHandler());
-        ModResourceManager.addResourcePackDomain(RESOURCE_DOMAIN);
+        if (Platform.isDev()) {
+            ManyLibApi.registerInitializationHandler(new ManyLibDummyInitHandler());
+        }
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(MOD_ID, path);
     }
 }

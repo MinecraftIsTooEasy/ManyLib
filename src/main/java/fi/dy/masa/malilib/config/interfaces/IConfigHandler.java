@@ -1,31 +1,27 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-import fi.dy.masa.malilib.config.ConfigTab;
 import fi.dy.masa.malilib.config.options.ConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import net.minecraft.GuiScreen;
+import fi.dy.masa.malilib.core.Side;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface IConfigHandler {
+public interface IConfigHandler extends Comparable<IConfigHandler> {
+    String getModId();
+
+    Side getSide();
+
     void load();
 
     void save();
 
-    List<ConfigTab> getConfigTabs();
-
+    @NotNull
     List<ConfigBase<?>> getValues();
 
-    List<ConfigHotkey> getHotkeys();
-
-    String getName();
-
-    String getMenuComment();
-
-    GuiScreen getConfigScreen(GuiScreen parentScreen);
-
-    @Deprecated(since = "2.1.0", forRemoval = true)
-    default GuiScreen getValueScreen(GuiScreen parentScreen) {
-        return this.getConfigScreen(parentScreen);
+    @Override
+    default int compareTo(@NotNull IConfigHandler o) {
+        int compare = this.getModId().compareTo(o.getModId());
+        if (compare != 0) return compare;
+        return Integer.compare(this.getSide().ordinal(), o.getSide().ordinal());
     }
 }

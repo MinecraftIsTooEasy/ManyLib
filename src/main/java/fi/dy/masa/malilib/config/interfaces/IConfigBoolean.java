@@ -1,11 +1,6 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-public interface IConfigBoolean extends IConfigValue, IConfigPeriodic {
-    @Deprecated(since = "1.1.1")
-    default boolean get() {
-        return this.getBooleanValue();
-    }
-
+public interface IConfigBoolean extends IConfigValue, IConfigCyclic {
     boolean getBooleanValue();
 
     boolean getDefaultBooleanValue();

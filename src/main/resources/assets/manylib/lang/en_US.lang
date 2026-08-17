@@ -1,6 +1,4 @@
 ## private
-manyLib.gui.button.controls=ManyLib Controls
-manyLib.gui.button.controls.comment=Click me to manage controls
 manyLib.gui.button.options=ManyLib Options
 manyLib.gui.button.pageUp=Page Up
 manyLib.gui.button.pageDown=Page Down
@@ -24,9 +22,14 @@ manyLib.gui.title.editStringList=Edit String List
 manyLib.gui.configuring=Configuring
 manyLib.gui.rightClickToCopy=Right Click To Copy
 
-manyLib.gui.comment.available_values=Available Values
-manyLib.gui.comment.clickToSelectColor=Click To Select Color
-manyLib.gui.comment.clickToEditStringList=Click To Edit String List
+manyLib.gui.tooltip.available_values=Available Values
+manyLib.gui.tooltip.clickToSelectColor=Click To Select Color
+manyLib.gui.tooltip.clickToEditStringList=Click To Edit String List
+manyLib.gui.tooltip.mod_id=Mod ID: %s
+manyLib.gui.tooltip.edit_client_config=Edit Client Config
+manyLib.gui.tooltip.edit_common_config=Edit Common Config
+manyLib.gui.tooltip.edit_server_config=Edit Server Config
+manyLib.gui.tooltip.open_in_mod_menu=Open In Mod Menu
 
 manyLib.configToggle.toggle=%s has been changed to: %s
 
@@ -53,8 +56,12 @@ config.name.manyLib.searchAny=Search ManyLib Global Config
 config.comment.manyLib.searchAny=Search manyLib relative mods config
 config.name.manyLib.hideValueButton=Hide Config Button
 config.comment.manyLib.hideValueButton=Hide the button added at the main menu and pause screen, you'd better hide when you have mod menu
-config.name.manyLib.hoverInfoY=Hovering Info Y Level
-config.comment.manyLib.hoverInfoY=Count up from the bottom
+config.name.manyLib.autoSaveLoad=Auto Save Load
+config.comment.manyLib.autoSaveLoad=(Works for all)read the config while entering a world, and save while quitting.
+config.name.manyLib.translationFallback=Translation Fallback
+config.comment.manyLib.translationFallback=Use fallback texts on translations
+config.name.manyLib.actionBarShift=Action Bar Shift
+config.comment.manyLib.actionBarShift=Count up from the bottom
 config.comment.manyLib.sortCategory=Sort Category
 config.enum.manyLib.sortCategory.Default=Default
 config.enum.manyLib.sortCategory.PinYin=Chinese PinYin
@@ -62,14 +69,15 @@ config.enum.manyLib.sortCategory.Alphabetical=Alphabetical
 config.enum.manyLib.sortCategory.Inverted=Inverted
 config.name.manyLib.highlightColor=Highlight color
 config.name.manyLib.titleFormat=Title Format
-config.name.manyLib.autoSaveLoad=Auto Save Load
-config.comment.manyLib.autoSaveLoad=(Works for all)read the config while entering a world, and save while quitting.
 
-config.menu.comment.ManyLib=Click me to hide the ManyLib button\nYou can still press %s to open it
+config.menu.name.manylib=ManyLib
+config.menu.comment.manylib=Click me to hide the ManyLib button\nYou can still press %s to open it
 
 ## generic
+config.tab.all=All
 config.tab.generic=Generic
 config.tab.hotkey=Hotkey
+config.tab.value=Value
 
 toggle.on=On
 toggle.off=Off
