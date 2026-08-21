@@ -15,7 +15,6 @@ import fi.dy.masa.malilib.client.gui.screen.interfaces.ElementList;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.IConfigScreen;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
-import fi.dy.masa.malilib.client.gui.screen.util.WidthAdder;
 import fi.dy.masa.malilib.client.gui.tab.ConfigTab;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetConfigListView;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
@@ -27,6 +26,7 @@ import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.localization.ScreenText;
 import net.minecraft.GuiScreen;
 import net.minecraft.GuiYesNoMITE;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -93,7 +93,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
                 )
         );
 
-        WidthAdder widthAdder = new WidthAdder(20);
+        MutableInt widthAdder = new MutableInt(20);
 
         this.addTabButtons(layer, widthAdder);
 
@@ -141,15 +141,15 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
         );
     }
 
-    void addTabButtons(Layer layer, WidthAdder widthAdder) {
+    void addTabButtons(Layer layer, MutableInt widthAdder) {
         for (ConfigTab configTab : this.configTabs) {
             String name = configTab.getGuiDisplayName();
             int stringWidth = this.fontRenderer.getStringWidth(name);
             layer.addWidget(ButtonGeneric.builder(name, button -> this.setCurrentTab(configTab))
                     .onUpdate(button -> button.setEnabled(this.currentTab != configTab))
-                    .dimensions(widthAdder.getWidth(), 30, stringWidth + 10, 20)
+                    .dimensions(widthAdder.getValue(), 30, stringWidth + 10, 20)
                     .hoverStrings(configTab.getTooltip()).build());
-            widthAdder.addWidth(stringWidth + 14);
+            widthAdder.add(stringWidth + 14);
         }
     }
 

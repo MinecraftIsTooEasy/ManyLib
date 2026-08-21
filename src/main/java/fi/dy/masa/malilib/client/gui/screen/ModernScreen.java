@@ -43,7 +43,7 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
 
     @Deprecated
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected final void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.mouseClicked((double) mouseX, (double) mouseY, mouseButton);
     }
@@ -52,11 +52,13 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
     @Override
     protected final void mouseMovedOrUp(int mouseX, int mouseY, int mouseButton) {
         super.mouseMovedOrUp(mouseX, mouseY, mouseButton);
-        if (mouseButton == -1) {
-            this.mouseMoved(mouseX, mouseY);
-        } else {
-            this.mouseReleased(mouseX, mouseY, mouseButton);
-        }
+        this.mouseReleased(mouseX, mouseY, mouseButton);
+    }
+
+    @Deprecated
+    @Override
+    protected final void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+        this.mouseMoved(mouseX, mouseY);
     }
 
     @Deprecated

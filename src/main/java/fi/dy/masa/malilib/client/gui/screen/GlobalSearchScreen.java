@@ -2,15 +2,14 @@ package fi.dy.masa.malilib.client.gui.screen;
 
 import fi.dy.masa.malilib.api.ManyLibApi;
 import fi.dy.masa.malilib.client.feature.SortCategory;
-import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
 import fi.dy.masa.malilib.client.gui.button.interfaces.ICycleButton;
 import fi.dy.masa.malilib.client.gui.config.ConfigDisplayApi;
 import fi.dy.masa.malilib.client.gui.layer.Layer;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.ElementList;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
-import fi.dy.masa.malilib.client.gui.screen.util.WidthAdder;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetGlobalConfigListView;
+import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
 import fi.dy.masa.malilib.client.util.StringUtils;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.ConfigUtils;
@@ -18,6 +17,7 @@ import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.localization.ScreenText;
 import net.minecraft.GuiScreen;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class GlobalSearchScreen extends LayeredScreen implements ElementList<Glo
         super.initBaseLayer(layer);
         layer.addWidget(ScreenConstants.getTitle(ScreenText.GLOBAL_SEARCHING.translate()));
 
-        WidthAdder widthAdder = new WidthAdder(40);
+        MutableInt widthAdder = new MutableInt(40);
 
         ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
         layer.addWidget(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
@@ -52,7 +52,7 @@ public class GlobalSearchScreen extends LayeredScreen implements ElementList<Glo
         }));
 
         WidgetGlobalConfigListView widgetListView = new WidgetGlobalConfigListView(this);
-        ScreenConstants.setWidgetListViewDimensions(this,widgetListView);
+        ScreenConstants.setWidgetListViewDimensions(this, widgetListView);
         layer.addWidget(widgetListView);
         this.widgetListView = widgetListView;
 

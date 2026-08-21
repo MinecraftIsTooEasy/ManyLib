@@ -22,10 +22,10 @@ import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.localization.ScreenText;
 import net.minecraft.FontRenderer;
 import net.minecraft.GuiScreen;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
 
 /**
  * This is shit
@@ -55,10 +55,6 @@ public class ScreenConstants {
     public static final int oneScroll = 3;
     public static final int configScreenCapacity = 7;
     public static final int modMenuCapacity = 7;
-
-    public static int getWidgetListViewY(GuiScreen screen) {
-        return screen.height / 6 + 32;
-    }
 
     public static WidgetText getTitle(String content) {
         return WidgetText.of(content).position(40, 15);
@@ -191,17 +187,17 @@ public class ScreenConstants {
         );
     }
 
-    public static ButtonGeneric getResetAllButton(WidthAdder widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
-        ButtonGeneric resetButton = new ResetButton(widthAdder.getWidth(), 30, predicate, onPress);
+    public static ButtonGeneric getResetAllButton(MutableInt widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
+        ButtonGeneric resetButton = new ResetButton(widthAdder.getValue(), 30, predicate, onPress);
         resetButton.setHoverStrings(ScreenText.RESET_ALL_BUTTON.translate());
-        widthAdder.addWidth(25);
+        widthAdder.add(25);
         return resetButton;
     }
 
-    public static CycleButton<?> getSortButton(GuiScreen screen, WidthAdder widthAdder, int y, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
+    public static CycleButton<?> getSortButton(GuiScreen screen, MutableInt widthAdder, int y, ConfigEnum<SortCategory> sortCategory, IButtonActionListener onPress) {
         int stringWidth = getMaxStringWidth(screen.fontRenderer, sortCategory);
-        int width = widthAdder.getWidth();
-        widthAdder.addWidth(stringWidth + 15);
+        int width = widthAdder.getValue();
+        widthAdder.add(stringWidth + 15);
         return new CycleButton<>(width, y, stringWidth + 10, commonButtonHeight, sortCategory, onPress);
     }
 

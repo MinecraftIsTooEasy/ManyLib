@@ -2,6 +2,12 @@
 
 ---
 
+TODO
+
+完善`IMouseInputHandler`
+
+---
+
 ## 3.0.0
 
 ### 新事物
@@ -34,6 +40,7 @@
 * 修复了长按shift就会触发全局搜索的问题
     * 且双击间隔改为0.1s
 * 无tooltip时不再建议`按shift查看tooltip`
+* 修复了`ModernScreen`中`mouseMove`未正常调用的问题
 
 ---
 
