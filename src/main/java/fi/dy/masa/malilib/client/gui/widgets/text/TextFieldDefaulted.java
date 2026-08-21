@@ -1,11 +1,11 @@
-package fi.dy.masa.malilib.client.gui.widgets;
+package fi.dy.masa.malilib.client.gui.widgets.text;
 
 import fi.dy.masa.malilib.client.gui.DrawContext;
 
-public class WidgetTextFieldDefaulted extends WidgetTextField {
+public class TextFieldDefaulted extends TextField {
     protected String defaultText;
 
-    public WidgetTextFieldDefaulted(int x, int y, int width, int height, String defaultText) {
+    public TextFieldDefaulted(int x, int y, int width, int height, String defaultText) {
         super(x, y, width, height);
         this.defaultText = defaultText;
     }

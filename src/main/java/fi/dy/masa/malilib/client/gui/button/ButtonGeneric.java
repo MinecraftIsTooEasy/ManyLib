@@ -186,7 +186,7 @@ public class ButtonGeneric extends ButtonBase {
             buttonGeneric.icon = this.icon;
             buttonGeneric.renderDefaultBackground = this.renderDefaultBackground;
             buttonGeneric.setOnUpdate(this.updateListener);
-            buttonGeneric.setHoverStrings(this.hoverStrings);
+            buttonGeneric.setTooltip(this.hoverStrings);
             return buttonGeneric;
         }
 

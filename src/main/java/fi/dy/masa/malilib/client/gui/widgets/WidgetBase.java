@@ -24,9 +24,10 @@ public abstract class WidgetBase extends Gui {
     protected int width;
     protected int height;
     protected int zLevel;
-    protected final List<String> hoverStrings = new ArrayList<>();
-    protected boolean hoverInfoRequiresShift;
-    protected final ImmutableList<String> hoverHelp;
+    private boolean focused;
+    protected final List<String> tooltip = new ArrayList<>();
+    protected boolean tooltipRequiresShift;
+    protected final ImmutableList<String> tooltipHelp;
 
     public WidgetBase(int x, int y, int width, int height) {
         this.x = x;
@@ -36,7 +37,7 @@ public abstract class WidgetBase extends Gui {
         this.mc = Minecraft.getMinecraft();
         this.fontRenderer = this.mc.fontRenderer;
         this.fontHeight = this.fontRenderer.FONT_HEIGHT;
-        this.hoverHelp = ImmutableList.of(ScreenText.HOLD_SHIFT_FOR_INFO.translate());
+        this.tooltipHelp = ImmutableList.of(ScreenText.HOLD_SHIFT_FOR_INFO.translate());
     }
 
     public int getX() {
@@ -110,20 +111,28 @@ public abstract class WidgetBase extends Gui {
     public void init() {
     }
 
-    public boolean hasHoverText() {
-        return this.hoverStrings.isEmpty() == false;
+    public boolean isFocused() {
+        return this.focused;
     }
 
-    public void setHoverInfoRequiresShift(boolean requireShift) {
-        this.hoverInfoRequiresShift = requireShift;
+    public void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
-    public void setHoverStrings(String... hoverStrings) {
-        this.setHoverStrings(Arrays.asList(hoverStrings));
+    public boolean hasTooltip() {
+        return this.tooltip.isEmpty() == false;
     }
 
-    public void setHoverStrings(List<String> hoverStrings) {
-        this.hoverStrings.clear();
+    public void setTooltipRequiresShift(boolean requireShift) {
+        this.tooltipRequiresShift = requireShift;
+    }
+
+    public void setTooltip(String... tooltip) {
+        this.setTooltip(Arrays.asList(tooltip));
+    }
+
+    public void setTooltip(List<String> hoverStrings) {
+        this.tooltip.clear();
 
         for (String str : hoverStrings) {
             str = StringUtils.translate(str);
@@ -131,20 +140,20 @@ public abstract class WidgetBase extends Gui {
             String[] parts = str.split("\\\\n");
 
             for (String part : parts) {
-                this.hoverStrings.add(StringUtils.translate(part));
+                this.tooltip.add(StringUtils.translate(part));
             }
         }
     }
 
-    public List<String> getHoverStrings() {
-        if (this.hoverInfoRequiresShift && !GuiBase.isShiftDown() && !this.hoverStrings.isEmpty()) {
-            return this.hoverHelp;
+    public List<String> getTooltip() {
+        if (this.tooltipRequiresShift && !GuiBase.isShiftDown() && !this.tooltip.isEmpty()) {
+            return this.tooltipHelp;
         }
-        return this.hoverStrings;
+        return this.tooltip;
     }
 
     public void clearHoverStrings() {
-        this.hoverStrings.clear();
+        this.tooltip.clear();
     }
 
     public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -230,7 +239,7 @@ public abstract class WidgetBase extends Gui {
 
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         if (drawContext.isTopLayer() && this.isMouseOver(mouseX, mouseY)) {
-            RenderUtils.renderTooltip(mouseX, mouseY, this.getHoverStrings(), drawContext);
+            RenderUtils.renderTooltip(mouseX, mouseY, this.getTooltip(), drawContext);
         }
     }
 }

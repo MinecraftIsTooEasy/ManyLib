@@ -4,8 +4,8 @@ import fi.dy.masa.malilib.client.gui.DrawContext;
 import fi.dy.masa.malilib.client.gui.button.SlideableToggleButton;
 import fi.dy.masa.malilib.client.gui.button.SliderButton;
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetTextField;
-import fi.dy.masa.malilib.client.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
@@ -14,14 +14,14 @@ import fi.dy.masa.malilib.config.options.ConfigDouble;
 
 public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & IStringRepresentable> extends WidgetConfig<T> {
     boolean useSlider;
-    final TextFieldWrapper<? extends WidgetTextField> textFieldWrapper;
+    final WidgetTextField<? extends TextField> widgetTextField;
     final SlideableToggleButton slideableToggleButton;
     final SliderButton<T> sliderButton;
 
     public WidgetConfigSlideable(T config) {
         super(config);
-        this.textFieldWrapper = ScreenConstants.getWrapperForSlideable(config, this::getConfigString, this);
-        this.textFieldWrapper.setText(this.config.getStringValue());
+        this.widgetTextField = ScreenConstants.getWrapperForSlideable(config, this::getConfigString, this);
+        this.widgetTextField.setText(this.config.getStringValue());
         this.useSlider = config.shouldUseSlider();
         this.slideableToggleButton = new SlideableToggleButton(0, 0, this.useSlider, button -> this.toggle());
         this.addWidget(this.slideableToggleButton);
@@ -32,7 +32,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
     public void init() {
         super.init();
 
-        ScreenConstants.placeTextFieldWrapper(this, this.textFieldWrapper);
+        ScreenConstants.placeTextFieldWrapper(this, this.widgetTextField);
         ScreenConstants.placeSlideableToggleButton(this, this.slideableToggleButton);
         ScreenConstants.placeCommonButton(this, this.sliderButton);
     }
@@ -43,7 +43,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
         if (this.useSlider) {
             this.sliderButton.render(mouseX, mouseY, this.sliderButton.isMouseOver(), drawContext);
         } else {
-            this.textFieldWrapper.render(mouseX, mouseY, drawContext);
+            this.widgetTextField.render(mouseX, mouseY, drawContext);
         }
     }
 
@@ -51,7 +51,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
     public void tick() {
         super.tick();
         if (!this.useSlider) {
-            this.textFieldWrapper.tick();
+            this.widgetTextField.tick();
         }
     }
 
@@ -68,7 +68,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
                 return true;
             }
         } else {
-            this.textFieldWrapper.mouseClicked(mouseX, mouseY, mouseButton);
+            this.widgetTextField.mouseClicked(mouseX, mouseY, mouseButton);
         }
         return super.onMouseClickedImpl(mouseX, mouseY, mouseButton);
     }
@@ -79,7 +79,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
             this.sliderButton.updateString();
             this.sliderButton.updateSliderRatioByConfig();
         } else {
-            this.textFieldWrapper.getTextField().setText(this.config.getStringValue());
+            this.widgetTextField.getTextField().setText(this.config.getStringValue());
         }
     }
 
@@ -93,7 +93,7 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
 
     @Override
     protected boolean onCharTypedImpl(char charIn, int modifiers) {
-        if (!this.useSlider && this.textFieldWrapper.onCharTyped(charIn, modifiers)) return true;
+        if (!this.useSlider && this.widgetTextField.onCharTyped(charIn, modifiers)) return true;
         return super.onCharTypedImpl(charIn, modifiers);
     }
 
@@ -102,15 +102,15 @@ public class WidgetConfigSlideable<T extends ConfigBase<T> & IConfigSlideable & 
         this.config.toggleUseSlider();
         if (this.useSlider) {// now is slider; update the text field before using
             String cast = this.getConfigString();
-            this.textFieldWrapper.setText(cast);
+            this.widgetTextField.setText(cast);
             this.config.setValueFromString(cast);
-            this.textFieldWrapper.setVisible(true);
+            this.widgetTextField.setVisible(true);
             this.sliderButton.setVisible(false);
         } else {// now is text field; update the slider before using
-            this.config.setValueFromString(this.textFieldWrapper.getText());
+            this.config.setValueFromString(this.widgetTextField.getText());
             this.sliderButton.updateString();
             this.sliderButton.updateSliderRatioByConfig();
-            this.textFieldWrapper.setVisible(false);
+            this.widgetTextField.setVisible(false);
             this.sliderButton.setVisible(true);
         }
         this.useSlider = !this.useSlider;

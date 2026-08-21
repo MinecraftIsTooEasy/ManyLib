@@ -34,7 +34,7 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
             this.editing = true;
             this.keybind.clearKeys();
         });
-        this.hotkeyButton.setHoverInfoRequiresShift(true);
+        this.hotkeyButton.setTooltipRequiresShift(true);
         this.addWidget(this.hotkeyButton);
 
         this.keySettingButton = ScreenConstants.getKeySettingButton(
@@ -64,8 +64,8 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
         super.postRenderHovered(mouseX, mouseY, selected, drawContext);
-        if (this.hotkeyButton.isMouseOver() && this.hotkeyButton.hasHoverText()) {
-            RenderUtils.renderTooltip(mouseX, mouseY, this.hotkeyButton.getHoverStrings(), drawContext);
+        if (this.hotkeyButton.isMouseOver() && this.hotkeyButton.hasTooltip()) {
+            RenderUtils.renderTooltip(mouseX, mouseY, this.hotkeyButton.getTooltip(), drawContext);
         }
         if (this.keySettingButton.isMouseOver()) {
             List<String> strings = new ArrayList<>();
@@ -151,7 +151,7 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
             }
         }
 
-        this.hotkeyButton.setHoverStrings(this.overlapInfo);
+        this.hotkeyButton.setTooltip(this.overlapInfo);
 
     }
 }

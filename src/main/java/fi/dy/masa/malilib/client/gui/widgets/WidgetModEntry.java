@@ -61,7 +61,7 @@ public class WidgetModEntry extends WidgetContainer {
                 ).dimensions(x - 95, y, 20, 20)
                 .build();
         common.setEnabled(sideMap.containsKey(Side.COMMON));
-        common.setHoverStrings(TooltipText.EDIT_COMMON_CONFIG.getKey());
+        common.setTooltip(TooltipText.EDIT_COMMON_CONFIG.getKey());
         this.addWidget(common);
 
         ButtonGeneric client = ButtonGeneric.builder(
@@ -70,7 +70,7 @@ public class WidgetModEntry extends WidgetContainer {
                 ).dimensions(x - 70, y, 20, 20)
                 .build();
         client.setEnabled(sideMap.containsKey(Side.CLIENT));
-        client.setHoverStrings(TooltipText.EDIT_CLIENT_CONFIG.getKey());
+        client.setTooltip(TooltipText.EDIT_CLIENT_CONFIG.getKey());
         this.addWidget(client);
 
         ButtonGeneric server = ButtonGeneric.builder(
@@ -79,7 +79,7 @@ public class WidgetModEntry extends WidgetContainer {
                 ).dimensions(x - 45, y, 20, 20)
                 .build();
         server.setEnabled(sideMap.containsKey(Side.SERVER));
-        server.setHoverStrings(TooltipText.EDIT_SERVER_CONFIG.getKey());
+        server.setTooltip(TooltipText.EDIT_SERVER_CONFIG.getKey());
         this.addWidget(server);
 
         ButtonGeneric info = ButtonGeneric.builder(
@@ -88,7 +88,7 @@ public class WidgetModEntry extends WidgetContainer {
                 ).dimensions(x - 20, y, 20, 20)
                 .build();
         info.setEnabled(ModReference.hasMod(ModReference.MOD_MENU) && ModReference.hasMod(id));
-        info.setHoverStrings(TooltipText.OPEN_IN_MOD_MENU.getKey());
+        info.setTooltip(TooltipText.OPEN_IN_MOD_MENU.getKey());
         this.addWidget(info);
 
     }

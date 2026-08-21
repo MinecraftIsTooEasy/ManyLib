@@ -149,7 +149,7 @@ public class ColorEditLayer extends Layer {
     }
 
     private void updateHoverString() {
-        this.colorBoard.setHoverStrings(ScreenText.RIGHT_CLICK_TO_COPY.toString(),
+        this.colorBoard.setTooltip(ScreenText.RIGHT_CLICK_TO_COPY.toString(),
                 this.configColor.getColorString(),
                 String.format("s=%.2f, v=%.2f", this.colorBoard.s, this.colorBoard.v)
         );

@@ -8,7 +8,7 @@ import fi.dy.masa.malilib.client.util.RenderUtils;
 public class ModLinkButton extends ButtonGeneric {
     public ModLinkButton(int x, int y, int width, int height, String message, String tooltip) {
         super(x, y, width, height, message, null);
-        this.setHoverStrings(tooltip);
+        this.setTooltip(tooltip);
         this.setTextCentered(false);
         this.setRenderDefaultBackground(false);
     }

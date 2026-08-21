@@ -24,7 +24,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IStringRe
         this.config = config;
         this.updateSliderRatioByConfig();
         this.isDouble = config.getType() == ConfigTypes.DOUBLE;
-        if (this.isDouble) this.setHoverStrings(this.castDoubleString());
+        if (this.isDouble) this.setTooltip(this.castDoubleString());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SliderButton<T extends ConfigBase<T> & IConfigSlideable & IStringRe
     @Override
     public void updateString() {
         this.setDisplayString(ConfigDisplayApi.getButtonText(this.config));
-        if (this.isDouble) this.setHoverStrings(this.castDoubleString());
+        if (this.isDouble) this.setTooltip(this.castDoubleString());
     }
 
     @Override

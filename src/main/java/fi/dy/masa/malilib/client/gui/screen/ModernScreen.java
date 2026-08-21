@@ -1,18 +1,22 @@
 package fi.dy.masa.malilib.client.gui.screen;
 
 import fi.dy.masa.malilib.client.gui.DrawContext;
-import fi.dy.masa.malilib.client.gui.interfaces.Drawable;
-import fi.dy.masa.malilib.client.gui.interfaces.Element;
-import fi.dy.masa.malilib.client.gui.interfaces.ParentElement;
+import fi.dy.masa.malilib.client.gui.event.ContainerEventHandler;
+import fi.dy.masa.malilib.client.gui.event.GuiEventListener;
+import fi.dy.masa.malilib.client.gui.interfaces.Renderable;
 import net.minecraft.GuiScreen;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
+public class ModernScreen extends GuiScreen implements ContainerEventHandler, Renderable {
+    private final List<GuiEventListener> children = new ArrayList<>();
+    private @Nullable GuiEventListener focused;
+    private boolean isDragging;
     private final DrawContext dummyContext = new DrawContext();
-    private @Nullable Element focused;
     private @Nullable GuiScreen parent;
 
     @Deprecated
@@ -90,7 +94,22 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
     }
 
     @Override
-    public void setFocused(@Nullable Element focused) {
+    public List<? extends GuiEventListener> children() {
+        return this.children;
+    }
+
+    @Override
+    public boolean isDragging() {
+        return this.isDragging;
+    }
+
+    @Override
+    public void setDragging(boolean dragging) {
+        this.isDragging = dragging;
+    }
+
+    @Override
+    public void setFocused(@Nullable GuiEventListener focused) {
         if (this.focused != null) {
             this.focused.setFocused(false);
         }
@@ -103,7 +122,7 @@ public class ModernScreen extends GuiScreen implements ParentElement, Drawable {
     }
 
     @Override
-    public @Nullable Element getFocused() {
+    public @Nullable GuiEventListener getFocused() {
         return this.focused;
     }
 

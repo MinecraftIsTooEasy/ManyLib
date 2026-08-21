@@ -1,9 +1,8 @@
 package fi.dy.masa.malilib.client.gui.layer;
 
 import fi.dy.masa.malilib.client.gui.DrawContext;
-import fi.dy.masa.malilib.client.gui.interfaces.Drawable;
-import fi.dy.masa.malilib.client.gui.interfaces.Element;
-import fi.dy.masa.malilib.client.gui.interfaces.ParentElement;
+import fi.dy.masa.malilib.client.gui.event.GuiEventListener;
+import fi.dy.masa.malilib.client.gui.interfaces.Renderable;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.client.util.GuiUtils;
 import fi.dy.masa.malilib.client.util.RenderUtils;
@@ -14,14 +13,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Layer implements ParentElement, Drawable {
+public class Layer implements GuiEventListener, Renderable {
     protected final GuiScreen screen;
     private final List<WidgetBase> widgets = new ArrayList<>();
     private @Nullable WidgetBase hovered;
-    /**
-     * This is not used now
-     */
-    private @Nullable Element focused;
+    private boolean focused = false;
 
     public Layer(GuiScreen screen) {
         this.screen = screen;
@@ -95,20 +91,12 @@ public class Layer implements ParentElement, Drawable {
     }
 
     @Override
-    public void setFocused(@Nullable Element focused) {
-        if (this.focused != null) {
-            this.focused.setFocused(false);
-        }
-
-        if (focused != null) {
-            focused.setFocused(true);
-        }
-
+    public void setFocused(boolean focused) {
         this.focused = focused;
     }
 
     @Override
-    public @Nullable Element getFocused() {
+    public boolean isFocused() {
         return this.focused;
     }
 

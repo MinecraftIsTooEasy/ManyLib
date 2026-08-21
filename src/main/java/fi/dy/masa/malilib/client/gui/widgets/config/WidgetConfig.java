@@ -33,7 +33,7 @@ public abstract class WidgetConfig<T extends ConfigBase<?>> extends WidgetContai
             config.resetToDefault();
             this.onResetClicked();
         });
-        this.resetButton.setHoverStrings(ScreenText.RESET_BUTTON.translate());
+        this.resetButton.setTooltip(ScreenText.RESET_BUTTON.translate());
 
         this.widgetText = new WidgetText(
                 0, 0,

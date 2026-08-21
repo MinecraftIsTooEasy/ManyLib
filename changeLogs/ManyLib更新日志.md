@@ -4,7 +4,9 @@
 
 TODO
 
-完善`IMouseInputHandler`
+* 完善`IMouseInputHandler`
+* 从2.3.2拉取输入的修复
+* 移除屏幕的layer系统
 
 ---
 

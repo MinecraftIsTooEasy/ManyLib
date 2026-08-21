@@ -74,7 +74,7 @@ public class WidgetText extends WidgetBase {
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext) {
 //        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
         if (this.visible && drawContext.isTopLayer() && this.getTooltipRange().contains(mouseX, mouseY)) {
-            RenderUtils.renderTooltip(mouseX, mouseY, this.getHoverStrings(), drawContext);
+            RenderUtils.renderTooltip(mouseX, mouseY, this.getTooltip(), drawContext);
         }
     }
 
@@ -84,7 +84,7 @@ public class WidgetText extends WidgetBase {
 
     public void addTooltip(String tooltip, boolean head) {
         if (tooltip != null) {
-            List<String> list = this.hoverStrings;
+            List<String> list = this.tooltip;
             if (head) {
                 list.add(0, tooltip);
             } else {

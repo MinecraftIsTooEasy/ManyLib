@@ -1,11 +1,9 @@
-package fi.dy.masa.malilib.client.gui.interfaces;
+package fi.dy.masa.malilib.client.gui.event;
 
 /**
- * There are some changes to the original code from 1.21
+ * There are some changes to the original code from 26.2
  */
-public interface Element {
-    long MAX_DOUBLE_CLICK_INTERVAL = 250L;
-
+public interface GuiEventListener {
     default void mouseMoved(double mouseX, double mouseY) {
     }
 
@@ -25,13 +23,13 @@ public interface Element {
         return false;
     }
 
-//    default boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-//        return false;
-//    }
-//
-//    default boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-//        return false;
-//    }
+    default boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    default boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
 
     default boolean charTyped(char chr, int keyCode) {
         return false;
@@ -44,4 +42,8 @@ public interface Element {
     void setFocused(boolean focused);
 
     boolean isFocused();
+
+    default boolean shouldTakeFocusAfterInteraction() {
+        return true;
+    }
 }

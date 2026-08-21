@@ -3,7 +3,7 @@ package fi.dy.masa.malilib.client.gui.widgets;
 import fi.dy.masa.malilib.client.gui.ManyLibIcons;
 import fi.dy.masa.malilib.client.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
-import fi.dy.masa.malilib.client.gui.wrappers.TextFieldWrapper;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 
 import java.util.List;
 
@@ -28,9 +28,9 @@ public class WidgetStringEditEntry extends WidgetContainer {
         WidgetText markNumber = WidgetText.of(String.valueOf(realIndex)).position(x, y + ScreenConstants.commentedTextShift);
         this.addWidget(markNumber);
 
-        TextFieldWrapper<WidgetTextField> textFieldWrapper = new TextFieldWrapper<>(new WidgetTextField(x + 20, y, 150, 18), s -> tempList.set(realIndex, s.getText()));
-        textFieldWrapper.setText(this.originalString);
-        this.addWidget(textFieldWrapper);
+        WidgetTextField<TextField> widgetTextField = new WidgetTextField<>(new TextField(x + 20, y, 150, 18), s -> tempList.set(realIndex, s.getText()));
+        widgetTextField.setText(this.originalString);
+        this.addWidget(widgetTextField);
 
         this.addWidget(ButtonGeneric.builder(ManyLibIcons.PLUS, button -> insertBelow(realIndex)).dimensions(x + 180, y, 15, 15).build());
         this.addWidget(ButtonGeneric.builder(ManyLibIcons.MINUS, button -> delete(realIndex)).dimensions(x + 200, y, 15, 15).build());

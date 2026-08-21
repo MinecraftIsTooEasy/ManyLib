@@ -9,7 +9,12 @@ import fi.dy.masa.malilib.client.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.StatusElement;
 import fi.dy.masa.malilib.client.gui.widgets.*;
-import fi.dy.masa.malilib.client.gui.wrappers.TextFieldWrapper;
+import fi.dy.masa.malilib.client.gui.widgets.WidgetTextField;
+import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldColor;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldDouble;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldInteger;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigCyclic;
@@ -76,41 +81,41 @@ public class ScreenConstants {
         button.setPosition(parent.getWidth() + resetButtonXFromRight, parent.getY() + listEntryMargin);
     }
 
-    public static void placeTextFieldWrapper(WidgetBase parent, TextFieldWrapper<?> wrapper) {
+    public static void placeTextFieldWrapper(WidgetBase parent, WidgetTextField<?> wrapper) {
         wrapper.setPosition(parent.getWidth() + commonButtonXFromRight + 2, parent.getY() + 2 * listEntryMargin);
     }
 
-    public static <T extends ConfigBase<?> & IStringRepresentable> TextFieldWrapper<WidgetTextField> getTextFieldWrapper(T config) {
-        return new TextFieldWrapper<>(
-                new WidgetTextField(0, 0, commonButtonWidth - 2, 18),
+    public static <T extends ConfigBase<?> & IStringRepresentable> WidgetTextField<TextField> getTextFieldWrapper(T config) {
+        return new WidgetTextField<>(
+                new TextField(0, 0, commonButtonWidth - 2, 18),
                 textField -> config.setValueFromString(textField.getText())
         );
     }
 
-    public static <T extends ConfigBase<T> & IStringRepresentable> TextFieldWrapper<WidgetTextField> getWrapperForSlideable(T config, Supplier<String> setStringOnFinish, WidgetBase parent) {
+    public static <T extends ConfigBase<T> & IStringRepresentable> WidgetTextField<TextField> getWrapperForSlideable(T config, Supplier<String> setStringOnFinish, WidgetBase parent) {
         ConfigType type = config.getType();
-        WidgetTextField widgetTextField;
+        TextField widgetTextField;
         if (type == ConfigTypes.DOUBLE) {
-            widgetTextField = new WidgetTextFieldDouble(0, 0, commonButtonWidth - 22, 18);
+            widgetTextField = new TextFieldDouble(0, 0, commonButtonWidth - 22, 18);
         } else {
-            widgetTextField = new WidgetTextFieldInteger(0, 0, commonButtonWidth - 22, 18);
+            widgetTextField = new TextFieldInteger(0, 0, commonButtonWidth - 22, 18);
         }
-        return new TextFieldWrapper<>(widgetTextField, new ITextFieldListener<>() {
+        return new WidgetTextField<>(widgetTextField, new ITextFieldListener<>() {
             @Override
-            public void onTextChange(WidgetTextField textField) {
+            public void onTextChange(TextField textField) {
                 config.setValueFromString(textField.getText());
             }
 
             @Override
-            public void onFinish(WidgetTextField textField) {
+            public void onFinish(TextField textField) {
                 textField.setText(setStringOnFinish.get());
             }
         });
     }
 
-    public static TextFieldWrapper<WidgetTextFieldColor> getWrapperForColor(ConfigColor config) {
-        return new TextFieldWrapper<>(
-                new WidgetTextFieldColor(0, 0, commonButtonWidth - 22, 18),
+    public static WidgetTextField<TextFieldColor> getWrapperForColor(ConfigColor config) {
+        return new WidgetTextField<>(
+                new TextFieldColor(0, 0, commonButtonWidth - 22, 18),
                 textField -> config.setValueFromString(textField.getText())
         );
     }
@@ -189,7 +194,7 @@ public class ScreenConstants {
 
     public static ButtonGeneric getResetAllButton(MutableInt widthAdder, BooleanSupplier predicate, IButtonActionListener onPress) {
         ButtonGeneric resetButton = new ResetButton(widthAdder.getValue(), 30, predicate, onPress);
-        resetButton.setHoverStrings(ScreenText.RESET_ALL_BUTTON.translate());
+        resetButton.setTooltip(ScreenText.RESET_ALL_BUTTON.translate());
         widthAdder.add(25);
         return resetButton;
     }

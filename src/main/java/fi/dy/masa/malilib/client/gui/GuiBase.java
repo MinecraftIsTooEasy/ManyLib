@@ -8,8 +8,8 @@ import fi.dy.masa.malilib.client.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.client.gui.screen.ModernScreen;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetLabel;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetTextField;
-import fi.dy.masa.malilib.client.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.client.interfaces.IStringConsumer;
 import fi.dy.masa.malilib.client.render.MessageRenderer;
 import fi.dy.masa.malilib.client.util.RenderUtils;
@@ -64,7 +64,7 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
     public final int fontHeight = this.textRenderer.FONT_HEIGHT;
     protected final List<ButtonBase> buttons = new ArrayList<>();
     protected final List<WidgetBase> widgets = new ArrayList<>();
-    protected final List<TextFieldWrapper<? extends WidgetTextField>> textFields = new ArrayList<>();
+    protected final List<WidgetTextField<? extends TextField>> textFields = new ArrayList<>();
     private final MessageRenderer messageRenderer = new MessageRenderer(0xDD000000, COLOR_HORIZONTAL_BAR);
     //    private long openTime;
     protected WidgetBase hoveredWidget = null;
@@ -252,7 +252,7 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
 
         boolean handled = false;
 
-        for (TextFieldWrapper<?> entry : this.textFields) {
+        for (WidgetTextField<?> entry : this.textFields) {
             if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
                 // Don't call super if the button press got handled
                 handled = true;
@@ -355,7 +355,7 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
     protected boolean onCharTyped(char charIn, int keyCode) {
         boolean handled = false;
 
-        for (TextFieldWrapper<?> entry : this.textFields) {
+        for (WidgetTextField<?> entry : this.textFields) {
             if (entry.onCharTyped(charIn, keyCode)) {
                 handled = true;
                 break;
@@ -421,8 +421,8 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
 //        return button;
 //    }
 
-    public <T extends WidgetTextField> TextFieldWrapper<T> addTextField(T textField, @Nullable ITextFieldListener<T> listener) {
-        TextFieldWrapper<T> wrapper = new TextFieldWrapper<>(textField, listener);
+    public <T extends TextField> WidgetTextField<T> addTextField(T textField, @Nullable ITextFieldListener<T> listener) {
+        WidgetTextField<T> wrapper = new WidgetTextField<>(textField, listener);
         this.textFields.add(wrapper);
         return wrapper;
     }
@@ -492,7 +492,7 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
     }
 
     protected void drawTextFields(int mouseX, int mouseY, DrawContext drawContext) {
-        for (TextFieldWrapper<?> entry : this.textFields) {
+        for (WidgetTextField<?> entry : this.textFields) {
             entry.render(mouseX, mouseY, drawContext);
         }
     }
@@ -515,8 +515,8 @@ public abstract class GuiBase extends ModernScreen implements IMessageConsumer, 
         }
 
         for (ButtonBase button : this.buttons) {
-            if (button.hasHoverText() && button.isMouseOver()) {
-                RenderUtils.renderTooltip(mouseX, mouseY, button.getHoverStrings(), drawContext);
+            if (button.hasTooltip() && button.isMouseOver()) {
+                RenderUtils.renderTooltip(mouseX, mouseY, button.getTooltip(), drawContext);
             }
         }
     }
