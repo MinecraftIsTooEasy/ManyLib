@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.config.interfaces;
 
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.core.Side;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ public interface IConfigHandler extends Comparable<IConfigHandler> {
     void save();
 
     @NotNull
-    List<ConfigBase<?>> getValues();
+    List<? extends IConfigBase> getValues();
 
     @Override
     default int compareTo(@NotNull IConfigHandler o) {

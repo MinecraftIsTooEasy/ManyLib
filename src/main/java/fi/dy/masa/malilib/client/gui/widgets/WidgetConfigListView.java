@@ -4,12 +4,12 @@ import fi.dy.masa.malilib.client.gui.config.ConfigDisplayApi;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.ElementList;
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.client.gui.widgets.config.WidgetConfig;
-import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 
 public class WidgetConfigListView extends WidgetListView<WidgetConfig<?>> {
-    private final ElementList<ConfigBase<?>> source;
+    private final ElementList<IConfigBase> source;
 
-    public WidgetConfigListView(ElementList<ConfigBase<?>> source) {
+    public WidgetConfigListView(ElementList<IConfigBase> source) {
         super(0, 0, 0, 0);
         this.source = source;
     }

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.client.feature.SortCategory;
 import fi.dy.masa.malilib.client.gui.config.ConfigDisplayApi;
 import fi.dy.masa.malilib.client.util.StringUtils;
-import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,14 @@ import java.util.stream.Collectors;
 
 public class ConfigTab {
     String unlocalizedName;
-    final ImmutableList<ConfigBase<?>> allConfigs;
-    List<ConfigBase<?>> searchableConfigs;
+    final ImmutableList<IConfigBase> allConfigs;
+    List<IConfigBase> searchableConfigs;
     String searchText;
 
-    public ConfigTab(String unlocalizedName, List<?> allConfigs) {
+    public ConfigTab(String unlocalizedName, List<? extends IConfigBase> allConfigs) {
         this.unlocalizedName = unlocalizedName;
-        ImmutableList.Builder<ConfigBase<?>> builder = ImmutableList.builder();
-        for (Object allConfig : allConfigs) {
-            ConfigBase<?> config = (ConfigBase<?>) allConfig;
+        ImmutableList.Builder<IConfigBase> builder = ImmutableList.builder();
+        for (IConfigBase config : allConfigs) {
             if (ConfigDisplayApi.isSupported(config.getType())) builder.add(config);
         }
         this.allConfigs = builder.build();
@@ -39,7 +38,7 @@ public class ConfigTab {
         return StringUtils.getTranslatedOrFallback("config.tab." + this.unlocalizedName + ".comment", null);
     }
 
-    public List<ConfigBase<?>> getAllConfigs() {
+    public List<IConfigBase> getAllConfigs() {
         return this.allConfigs;
     }
 
@@ -74,7 +73,7 @@ public class ConfigTab {
         return this.searchableConfigs.size();
     }
 
-    public ConfigBase<?> getSearchableConfig(int index) {
+    public IConfigBase getSearchableConfig(int index) {
         return this.searchableConfigs.get(index);
     }
 }

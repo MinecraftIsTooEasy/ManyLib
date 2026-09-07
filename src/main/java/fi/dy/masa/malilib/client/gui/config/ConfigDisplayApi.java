@@ -5,7 +5,6 @@ import fi.dy.masa.malilib.client.gui.widgets.config.WidgetConfig;
 import fi.dy.masa.malilib.client.util.StringUtils;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.interfaces.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.core.Color4f;
 import fi.dy.masa.malilib.util.Platform;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,13 +17,13 @@ public class ConfigDisplayApi {
         return ConfigDisplays.get(configType) != null;
     }
 
-    public static WidgetConfig<?> createWidget(ConfigBase<?> config) {
+    public static WidgetConfig<?> createWidget(IConfigBase config) {
         ConfigDisplay definition = ConfigDisplays.get(config.getType());
         if (definition == null) throw new AssertionError();
         return definition.createWidget(config);
     }
 
-    public static String getButtonText(ConfigBase<?> config) {
+    public static String getButtonText(IConfigBase config) {
         ConfigDisplay definition = ConfigDisplays.get(config.getType());
         if (definition == null) return "";
         return definition.getButtonText(config);
@@ -51,7 +50,7 @@ public class ConfigDisplayApi {
         return StringUtils.getTranslatedOrFallback("config.comment." + config.getName(), config.getComment());
     }
 
-    public static Color4f getConfigDisplayColor(ConfigBase<?> config) {
+    public static Color4f getConfigDisplayColor(IConfigBase config) {
         return Color4f.fromColor(GuiBase.COLOR_WHITE);
     }
 }

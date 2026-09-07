@@ -2,8 +2,8 @@ package fi.dy.masa.malilib.config;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.Platform;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +15,9 @@ import java.util.List;
 public abstract class SimpleConfigs implements IConfigHandler {
     private final String modId;
     protected Path path;
-    protected final List<ConfigBase<?>> values;
+    protected final List<? extends IConfigBase> values;
 
-    public SimpleConfigs(String modId, List<ConfigBase<?>> values) {
+    public SimpleConfigs(String modId, List<? extends IConfigBase> values) {
         this.modId = modId;
         this.path = Platform.getConfigPath().resolve(this.modId + "_" + this.getSide().toString() + ".json");
         this.values = values;
@@ -56,7 +56,7 @@ public abstract class SimpleConfigs implements IConfigHandler {
 
     @Override
     @NotNull
-    public List<ConfigBase<?>> getValues() {
+    public List<? extends IConfigBase> getValues() {
         return this.values;
     }
 }

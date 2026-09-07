@@ -11,11 +11,11 @@ import fi.dy.masa.malilib.client.gui.widgets.WidgetText;
 import fi.dy.masa.malilib.client.internal.ManyLibClientConfig;
 import fi.dy.masa.malilib.client.util.GuiUtils;
 import fi.dy.masa.malilib.client.util.RenderUtils;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.localization.ScreenText;
 
-public abstract class WidgetConfig<T extends ConfigBase<?>> extends WidgetContainer {
+public abstract class WidgetConfig<T extends IConfigBase> extends WidgetContainer {
     protected final T config;
     protected final ButtonGeneric resetButton;
     protected final WidgetText widgetText;
@@ -29,10 +29,12 @@ public abstract class WidgetConfig<T extends ConfigBase<?>> extends WidgetContai
         super(0, 0, 0, 0);
         this.config = config;
 
-        this.resetButton = new ResetButton(0, 0, ((IConfigResettable) config)::isModified, button -> {
-            config.resetToDefault();
-            this.onResetClicked();
-        });
+        this.resetButton = new ResetButton(0, 0,
+                () -> config instanceof IConfigResettable resettable && resettable.isModified(),
+                button -> {
+                    ((IConfigResettable) config).resetToDefault();
+                    this.onResetClicked();
+                });
         this.resetButton.setTooltip(ScreenText.RESET_BUTTON.translate());
 
         this.widgetText = new WidgetText(

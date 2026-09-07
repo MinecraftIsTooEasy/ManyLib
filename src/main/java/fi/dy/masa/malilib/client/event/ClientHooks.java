@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.client.event;
 
 import fi.dy.masa.malilib.api.ManyLibApi;
 import fi.dy.masa.malilib.client.config.interfaces.IClientConfigHandler;
-import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.client.input.IHotkey;
 import fi.dy.masa.malilib.client.input.IKeybindManager;
 import fi.dy.masa.malilib.client.input.IKeybindProvider;
 import fi.dy.masa.malilib.client.unsafe.ModMenuAccess;
@@ -15,7 +15,7 @@ public class ClientHooks {
     public static void onInitialization() {
         ManyLibApi.streamConfigHandlers().forEach(configHandler -> {
             if (configHandler instanceof IClientConfigHandler clientConfigHandler) {
-                List<ConfigHotkey> hotkeys = clientConfigHandler.getHotkeys();
+                List<? extends IHotkey> hotkeys = clientConfigHandler.getHotkeys();
                 if (!hotkeys.isEmpty()) {
                     InputEventHandler.getKeybindManager().registerKeybindProvider(new IKeybindProvider() {
                         @Override

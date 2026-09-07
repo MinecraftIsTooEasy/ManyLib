@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.client.feature;
 
 import fi.dy.masa.malilib.client.gui.config.ConfigDisplayApi;
 import fi.dy.masa.malilib.client.integration.PinyinHandler;
-import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 
 import java.util.Comparator;
 
@@ -17,7 +17,7 @@ public enum SortCategory {
     ;
     private final Comparator<String> stringComparator;
 
-    public final Comparator<ConfigBase<?>> category;
+    public final Comparator<IConfigBase> category;
 
     SortCategory(Comparator<String> category) {
         this.stringComparator = category;

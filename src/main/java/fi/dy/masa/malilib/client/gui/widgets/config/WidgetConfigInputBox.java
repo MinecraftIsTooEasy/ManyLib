@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.client.gui.widgets.config;
 
 import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
-import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetTextField;
+import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 

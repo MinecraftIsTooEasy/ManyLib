@@ -2,7 +2,7 @@ package fi.dy.masa.malilib.config.interfaces;
 
 import fi.dy.masa.malilib.core.Color4f;
 
-public interface IConfigColor {
+public interface IConfigColor extends IConfigValue {
     /**
      * a+r+g+b
      */

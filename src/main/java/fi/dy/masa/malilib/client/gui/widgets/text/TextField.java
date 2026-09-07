@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.client.gui.widgets.text;
 
 import fi.dy.masa.malilib.client.gui.DrawContext;
-import fi.dy.masa.malilib.client.gui.interfaces.Renderable;
 import fi.dy.masa.malilib.client.gui.event.GuiEventListener;
+import fi.dy.masa.malilib.client.gui.interfaces.Renderable;
 import fi.dy.masa.malilib.client.util.RenderUtils;
 import fi.dy.masa.malilib.mixin.interfaces.IPositionMutable;
 import net.minecraft.GuiTextField;

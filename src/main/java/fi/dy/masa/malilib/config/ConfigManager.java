@@ -5,7 +5,10 @@ import fi.dy.masa.malilib.core.Side;
 import fi.dy.masa.malilib.util.Platform;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 

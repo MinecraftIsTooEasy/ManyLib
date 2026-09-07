@@ -4,7 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
-import fi.dy.masa.malilib.client.input.*;
+import fi.dy.masa.malilib.client.input.IHotkey;
+import fi.dy.masa.malilib.client.input.IKeybind;
+import fi.dy.masa.malilib.client.input.KeybindMulti;
+import fi.dy.masa.malilib.client.input.KeybindSettings;
 import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.util.JsonUtils;
@@ -18,14 +21,6 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey {
 
     public ConfigHotkey(String name, String defaultStorageString, String comment) {
         this(name, KeybindMulti.fromStorageString(defaultStorageString, KeybindSettings.DEFAULT), comment);
-    }
-
-    public ConfigHotkey(String name, int hotkey) {
-        this(name, hotkey, null);
-    }
-
-    public ConfigHotkey(String name, int defaultKey, String comment) {
-        this(name, KeyCodes.getNameForKey(defaultKey), comment);
     }
 
     public ConfigHotkey(String name, IKeybind keybind, String comment) {

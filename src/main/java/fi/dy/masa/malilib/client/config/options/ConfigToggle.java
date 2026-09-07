@@ -5,37 +5,27 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.ManyLib;
 import fi.dy.masa.malilib.client.input.KeyCallbackToggleBooleanConfigWithMessage;
-import fi.dy.masa.malilib.client.input.KeyCodes;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.IConfigBoolean;
-import fi.dy.masa.malilib.config.interfaces.IConfigToggle;
 import fi.dy.masa.malilib.util.JsonUtils;
 
-public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfigBoolean {
-    private boolean status;
-    private final boolean defaultStatus;
+public class ConfigToggle extends ConfigHotkey implements IConfigBoolean {
+    private boolean booleanValue;
+    private final boolean defaultBooleanValue;
 
     public ConfigToggle(String name) {
-        this(name, null);
+        this(name, false);
     }
 
-    public ConfigToggle(String name, String comment) {
-        this(name, "", false, comment);
+    public ConfigToggle(String name, boolean defaultBooleanValue) {
+        this(name, "", defaultBooleanValue, null);
     }
 
-    public ConfigToggle(String name, boolean defaultStatus) {
-        this(name, "", defaultStatus, null);
-    }
-
-    public ConfigToggle(String name, int defaultKey, boolean defaultStatus, String comment) {
-        this(name, KeyCodes.getNameForKey(defaultKey), defaultStatus, comment);
-    }
-
-    public ConfigToggle(String name, String defaultStorageString, boolean defaultStatus, String comment) {
+    public ConfigToggle(String name, String defaultStorageString, boolean defaultBooleanValue, String comment) {
         super(name, defaultStorageString, comment);
-        this.status = defaultStatus;
-        this.defaultStatus = defaultStatus;
+        this.booleanValue = defaultBooleanValue;
+        this.defaultBooleanValue = defaultBooleanValue;
         this.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(this));
     }
 
@@ -46,19 +36,19 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfig
 
     @Override
     public boolean isModified() {
-        return super.isModified() || this.status != this.defaultStatus;
+        return super.isModified() || this.booleanValue != this.defaultBooleanValue;
     }
 
     @Override
     public void resetToDefault() {
         super.resetToDefault();
-        this.status = this.defaultStatus;
+        this.booleanValue = this.defaultBooleanValue;
     }
 
     @Override
     public JsonElement getAsJsonElement() {
         JsonObject obj = new JsonObject();
-        obj.add("enabled", new JsonPrimitive(this.status));
+        obj.add("enabled", new JsonPrimitive(this.booleanValue));
         obj.add("hotkey", this.keybind.getAsJsonElement());
         if (this.getComment() != null) {
             obj.add("comment", new JsonPrimitive(this.getComment()));
@@ -71,7 +61,7 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfig
         try {
             JsonObject obj = element.getAsJsonObject();
             if (JsonUtils.hasBoolean(obj, "enabled")) {
-                this.status = obj.get("enabled").getAsBoolean();
+                this.booleanValue = obj.get("enabled").getAsBoolean();
             } else {
                 ManyLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
@@ -86,42 +76,27 @@ public class ConfigToggle extends ConfigHotkey implements IConfigToggle, IConfig
     }
 
     @Override
-    public boolean isOn() {
-        return this.status;
+    public boolean getBooleanValue() {
+        return this.booleanValue;
     }
 
     @Override
-    public boolean getDefaultStatus() {
-        return this.defaultStatus;
+    public boolean getDefaultBooleanValue() {
+        return this.defaultBooleanValue;
     }
 
     @Override
-    public void setIsOn(boolean status) {
-        boolean oldValue = this.status;
-        this.status = status;
+    public void setBooleanValue(boolean value) {
+        boolean oldValue = this.booleanValue;
+        this.booleanValue = value;
 
-        if (oldValue != this.status) {
+        if (oldValue != this.booleanValue) {
             this.onValueChanged();
         }
     }
 
     @Override
     public void next() {
-        this.toggle();
-    }
-
-    @Override
-    public boolean getBooleanValue() {
-        return this.status;
-    }
-
-    @Override
-    public boolean getDefaultBooleanValue() {
-        return this.defaultStatus;
-    }
-
-    @Override
-    public void setBooleanValue(boolean value) {
-        this.setIsOn(value);
+        this.toggleBooleanValue();
     }
 }

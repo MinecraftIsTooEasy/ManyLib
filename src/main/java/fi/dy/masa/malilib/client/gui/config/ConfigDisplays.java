@@ -32,72 +32,72 @@ public class ConfigDisplays {
     static {
         register(ConfigTypes.BOOLEAN, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigCyclic<>((ConfigBoolean) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return ComponentUtils.ofBoolean(config);
             }
         });
 
         register(ConfigTypes.INTEGER, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigSlideable<>((ConfigInteger) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return String.valueOf(((IConfigInteger) config).getIntegerValue());
             }
         });
 
         register(ConfigTypes.DOUBLE, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigSlideable<>((ConfigDouble) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return (int) (((IConfigDouble) config).getRatio() * 100.0f) + "%";
             }
         });
 
         register(ConfigTypes.HOTKEY, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigHotkey((ConfigHotkey) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return ((IHotkey) config).getKeybind().getKeysDisplayString();
             }
         });
 
         register(ConfigTypes.STRING, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigInputBox<>((ConfigString) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return ((IConfigString) config).getStringValue();
             }
         });
 
         register(ConfigTypes.STRING_LIST, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigStringList((ConfigStringList) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 List<String> list = ((IConfigStringList) config).getStringListValue();
                 if (list.isEmpty()) return "<" + ScreenText.LIST_EMPTY.translate() + ">";
                 return list.toString();
@@ -106,12 +106,12 @@ public class ConfigDisplays {
 
         register(ConfigTypes.ENUM, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigCyclic<>((ConfigEnum<?>) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 String entry = ((IConfigEnum<?>) config).getStringValue();
                 return StringUtils.getTranslatedOrFallback("config.enum." + config.getName() + "." + entry, entry);
             }
@@ -119,24 +119,24 @@ public class ConfigDisplays {
 
         register(ConfigTypes.COLOR, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigColor((ConfigColor) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return String.valueOf(((IConfigInteger) config).getIntegerValue());
             }
         });
 
         register(ConfigTypes.TOGGLE, new ConfigDisplay() {
             @Override
-            public WidgetConfig<?> createWidget(ConfigBase<?> config) {
+            public WidgetConfig<?> createWidget(IConfigBase config) {
                 return new WidgetConfigToggle((ConfigToggle) config);
             }
 
             @Override
-            public String getButtonText(ConfigBase<?> config) {
+            public String getButtonText(IConfigBase config) {
                 return ComponentUtils.ofBoolean(config);
             }
         });

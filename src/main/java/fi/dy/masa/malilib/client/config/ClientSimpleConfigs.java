@@ -3,10 +3,10 @@ package fi.dy.masa.malilib.client.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.client.config.interfaces.IClientConfigHandler;
-import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.client.input.IHotkey;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.SimpleConfigs;
-import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.util.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +14,9 @@ import java.nio.file.Files;
 import java.util.List;
 
 public class ClientSimpleConfigs extends SimpleConfigs implements IClientConfigHandler {
-    protected final List<ConfigHotkey> hotkeys;
+    protected final List<? extends IHotkey> hotkeys;
 
-    public ClientSimpleConfigs(String modId, List<ConfigBase<?>> values, List<ConfigHotkey> hotkeys) {
+    public ClientSimpleConfigs(String modId, List<? extends IConfigBase> values, List<? extends IHotkey> hotkeys) {
         super(modId, values);
         this.hotkeys = hotkeys;
     }
@@ -53,7 +53,7 @@ public class ClientSimpleConfigs extends SimpleConfigs implements IClientConfigH
 
     @NotNull
     @Override
-    public List<ConfigHotkey> getHotkeys() {
+    public List<? extends IHotkey> getHotkeys() {
         return this.hotkeys;
     }
 }

@@ -35,6 +35,8 @@ TODO
 * 现在需要在自定义的配置屏幕中指定标签栏的组成
 * 现在需要通过`ManyLibClientApi#setConfigScreenFactory`设置自定义配置屏幕
 * 现在重新会在游戏初始化之后统一加载配置文件了, 若你需要提前加载配置文件, 仍然可以提前调用
+* 去除了`IConfigToggle`接口, 本质上是`IConfigBoolean`
+* 大多泛型从`ConfigBase<?>`改为更宽的`IConfigBase`
 
 ### 修复
 

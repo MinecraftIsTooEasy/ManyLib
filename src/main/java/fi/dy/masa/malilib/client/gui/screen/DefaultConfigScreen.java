@@ -19,9 +19,9 @@ import fi.dy.masa.malilib.client.gui.tab.ConfigTab;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetConfigListView;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
 import fi.dy.masa.malilib.client.internal.ManyLibClientConfig;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.localization.ScreenText;
 import net.minecraft.GuiScreen;
@@ -32,7 +32,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen, ElementList<ConfigBase<?>>, Searchable {
+public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen, ElementList<IConfigBase>, Searchable {
     public final IConfigHandler configHandler;
 
     public ConfigTab currentTab;
@@ -97,12 +97,17 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
 
         this.addTabButtons(layer, widthAdder);
 
-        ButtonGeneric resetAllButton = ScreenConstants.getResetAllButton(widthAdder, () -> this.currentTab.getAllConfigs().stream().anyMatch(IConfigResettable::isModified), button -> {
-            String question = ScreenText.RESET_TAB_QUESTION.translate(), yes = ScreenText.YES.translate(), no = ScreenText.NO.translate();
-            GuiYesNoMITE var3 = new GuiYesNoMITE
-                    (this, question, name + ": " + this.currentTab.getGuiDisplayName(), yes, no, ScreenConstants.confirmFlag);
-            this.mc.displayGuiScreen(var3);
-        });
+        ButtonGeneric resetAllButton = ScreenConstants.getResetAllButton(
+                widthAdder,
+                () -> this.currentTab.getAllConfigs().stream().anyMatch(
+                        config -> config instanceof IConfigResettable resettable && resettable.isModified()
+                ),
+                button -> {
+                    String question = ScreenText.RESET_TAB_QUESTION.translate(), yes = ScreenText.YES.translate(), no = ScreenText.NO.translate();
+                    GuiYesNoMITE var3 = new GuiYesNoMITE
+                            (this, question, name + ": " + this.currentTab.getGuiDisplayName(), yes, no, ScreenConstants.confirmFlag);
+                    this.mc.displayGuiScreen(var3);
+                });
         this.resetAllButton = resetAllButton;
         layer.addWidget(resetAllButton);
 
@@ -202,8 +207,11 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
 
     @Override
     public void confirmClicked(boolean result, int flag) {
-        if (result && flag == ScreenConstants.confirmFlag)
-            this.currentTab.getAllConfigs().forEach(IConfigResettable::resetToDefault);
+        if (result && flag == ScreenConstants.confirmFlag) {
+            this.currentTab.getAllConfigs().forEach(x -> {
+                if (x instanceof IConfigResettable resettable) resettable.resetToDefault();
+            });
+        }
         this.mc.displayGuiScreen(this);
     }
 
@@ -239,7 +247,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
     }
 
     @Override
-    public ConfigBase<?> get(int index) {
+    public IConfigBase get(int index) {
         return this.currentTab.getSearchableConfig(index);
     }
 }

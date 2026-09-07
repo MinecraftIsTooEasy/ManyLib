@@ -9,18 +9,13 @@ import fi.dy.masa.malilib.client.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.Searchable;
 import fi.dy.masa.malilib.client.gui.screen.interfaces.StatusElement;
 import fi.dy.masa.malilib.client.gui.widgets.*;
-import fi.dy.masa.malilib.client.gui.widgets.WidgetTextField;
-import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
 import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldColor;
 import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldDouble;
 import fi.dy.masa.malilib.client.gui.widgets.text.TextFieldInteger;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.ConfigTypes;
-import fi.dy.masa.malilib.config.interfaces.IConfigCyclic;
-import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
-import fi.dy.masa.malilib.config.interfaces.IConfigSlideable;
-import fi.dy.masa.malilib.config.interfaces.IStringRepresentable;
+import fi.dy.masa.malilib.config.interfaces.*;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
@@ -65,7 +60,7 @@ public class ScreenConstants {
         return WidgetText.of(content).position(40, 15);
     }
 
-    public static void placeCommentedText(WidgetBase parent, ConfigBase<?> config, WidgetText text) {
+    public static void placeCommentedText(WidgetBase parent, IConfigBase config, WidgetText text) {
         text.setPosition(nameX, parent.getY() + commentedTextShift);
         ConfigType type = config.getType();
         int right;

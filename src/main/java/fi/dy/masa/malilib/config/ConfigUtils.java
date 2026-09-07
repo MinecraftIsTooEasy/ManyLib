@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.client.config.interfaces.IClientConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.util.JsonUtils;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class ConfigUtils {
         }
     }
 
-    public static Stream<ConfigBase<?>> streamAllOptions(IConfigHandler iConfigHandler) {
+    public static Stream<? extends IConfigBase> streamAllOptions(IConfigHandler iConfigHandler) {
         if (iConfigHandler instanceof IClientConfigHandler clientConfigHandler) {
             return Stream.concat(
                     clientConfigHandler.getValues().stream(),

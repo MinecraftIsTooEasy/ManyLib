@@ -13,7 +13,7 @@ import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
 import fi.dy.masa.malilib.client.util.StringUtils;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.ConfigUtils;
-import fi.dy.masa.malilib.config.options.ConfigBase;
+import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigEnum;
 import fi.dy.masa.malilib.localization.ScreenText;
 import net.minecraft.GuiScreen;
@@ -127,7 +127,7 @@ public class GlobalSearchScreen extends LayeredScreen implements ElementList<Glo
         return this.searchResults.get(index);
     }
 
-    public record SearchResult(String mod, ConfigBase<?> configBase) {
+    public record SearchResult(String mod, IConfigBase configBase) {
     }
 
 }

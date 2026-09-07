@@ -9,11 +9,15 @@ import fi.dy.masa.malilib.client.input.KeybindSettings;
 
 public class ClientConfigFactory {
     public static ConfigToggle ofToggle(String name) {
-        return ofToggle(name, null);
+        return ofToggle(name, "", false, null);
     }
 
-    public static ConfigToggle ofToggle(String name, String comment) {
-        return new ConfigToggle(name, comment);
+    public static ConfigToggle ofToggle(String name, int defaultKey, boolean defaultBooleanValue, String comment) {
+        return ofToggle(name, KeyCodes.getNameForKey(defaultKey), defaultBooleanValue, comment);
+    }
+
+    public static ConfigToggle ofToggle(String name, String defaultStorageString, boolean defaultBooleanValue, String comment) {
+        return new ConfigToggle(name, defaultStorageString, defaultBooleanValue, comment);
     }
 
     public static ConfigHotkey ofHotkey(String name) {
