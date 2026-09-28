@@ -35,7 +35,7 @@ public class ModMenuAccess {
 
     public static void registerFactories() {
         Map<String, ConfigScreenFactory<?>> map = IModMenuMixin.getConfigScreenFactories();
-        ManyLibApi.streamModIds()
+        ManyLibApi.streamIds()
                 .filter(x -> !map.containsKey(x))
                 .forEach(id -> map.put(id, parent -> ManyLibClientApi.createConfigScreen(id, parent)));
     }

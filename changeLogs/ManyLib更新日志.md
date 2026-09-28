@@ -44,6 +44,8 @@ TODO
 * 删除了`IConfigEnum`的`getOrdinal`和`getNext`
 * `Cycle`相关接口现在能够指定循环方向
 * 现在枚举配置按钮在单击右键时会反向循环
+* `ColorBoardSV`减少了耦合
+* 新增了一些JavaDoc
 
 ### 修复
 

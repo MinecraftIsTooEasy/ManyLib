@@ -1,5 +1,6 @@
 package fi.dy.masa.malilib.api;
 
+import fi.dy.masa.malilib.client.api.ManyLibClientApi;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.ConfigTypes;
@@ -25,12 +26,15 @@ public interface ManyLibApi {
         ConfigManager.getInstance().registerConfigHandler(configHandler);
     }
 
+    /**
+     * Register display behavior on {@link ManyLibClientApi#registerConfigDisplay}
+     */
     static ConfigType registerConfigType(ResourceLocation id) {
         return ConfigTypes.register(id);
     }
 
-    static Stream<String> streamModIds() {
-        return ConfigManager.getInstance().streamModIds();
+    static Stream<String> streamIds() {
+        return ConfigManager.getInstance().streamIds();
     }
 
     static Stream<IConfigHandler> streamConfigHandlers() {

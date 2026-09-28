@@ -21,7 +21,7 @@ public class ModMenuV1 extends LayeredScreen {
 
         layer.addWidget(ScreenConstants.getTitle(ManyLibClientConfig.TitleFormat.getEnumValue() + ScreenText.TITLE_OPTIONS.translate()));
 
-        WidgetModListView widgetListView = new WidgetModListView(ManyLibApi.streamModIds().toList());
+        WidgetModListView widgetListView = new WidgetModListView(ManyLibApi.streamIds().toList());
         ScreenConstants.setWidgetListViewDimensions(this, widgetListView);
         layer.addWidget(widgetListView);
 

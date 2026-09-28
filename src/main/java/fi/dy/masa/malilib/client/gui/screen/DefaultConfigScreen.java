@@ -85,7 +85,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
     }
 
     protected void initElements(Layer layer) {
-        String id = this.configHandler.getModId();
+        String id = this.configHandler.getId();
         String name = ConfigDisplayApi.getModName(id);
         layer.addWidget(
                 ScreenConstants.getTitle(
@@ -142,7 +142,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
                 layer -> layer instanceof ModLinkLayer,
                 () -> new ModLinkLayer(
                         this,
-                        x -> this.configHandler.getModId().equals(x),
+                        x -> this.configHandler.getId().equals(x),
                         () -> this.modLinkButton,
                         x -> ManyLibClientApi.createConfigScreen(x, this)
                 )

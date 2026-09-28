@@ -26,7 +26,7 @@ public class ModMenu extends ScreenPaged {
 
     public ModMenu(GuiScreen parent) {
         super(parent, 6, 2);
-        this.configs = ManyLibApi.streamModIds().toList();
+        this.configs = ManyLibApi.streamIds().toList();
         this.updatePageCount(this.configs.size());
     }
 

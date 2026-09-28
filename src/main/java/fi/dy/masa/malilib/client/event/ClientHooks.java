@@ -25,7 +25,7 @@ public class ClientHooks {
 
                         @Override
                         public void addHotkeys(IKeybindManager manager) {
-                            String id = clientConfigHandler.getModId();
+                            String id = clientConfigHandler.getId();
                             manager.addHotkeysForCategory(id, id + ".hotkeys.category.generic_hotkeys", hotkeys);
                         }
                     });

@@ -75,7 +75,7 @@ public class GlobalSearchScreen extends LayeredScreen implements ElementList<Glo
         ManyLibApi.streamConfigHandlers()
                 .flatMap(
                         iConfigHandler -> ConfigUtils.streamAllOptions(iConfigHandler)
-                                .map(configBase -> new SearchResult(iConfigHandler.getModId(), configBase))
+                                .map(configBase -> new SearchResult(iConfigHandler.getId(), configBase))
                 )
                 .filter(x -> ConfigDisplayApi.isSupported(x.configBase().getType()))
                 .filter(x -> this.matchResult(x, input))

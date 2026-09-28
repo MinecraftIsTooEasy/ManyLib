@@ -37,13 +37,13 @@ public class ConfigManager {
         return map.get(side);
     }
 
-    public Stream<String> streamModIds() {
+    public Stream<String> streamIds() {
         return this.configMap.keySet().stream();
     }
 
     public void registerConfigHandler(IConfigHandler configHandler) {
         if (configHandler.getSide() == Side.CLIENT && Platform.isServer()) throw new AssertionError();
-        EnumMap<Side, IConfigHandler> inner = this.configMap.computeIfAbsent(configHandler.getModId(), k -> new EnumMap<>(Side.class));
+        EnumMap<Side, IConfigHandler> inner = this.configMap.computeIfAbsent(configHandler.getId(), k -> new EnumMap<>(Side.class));
         inner.put(configHandler.getSide(), configHandler);
     }
 

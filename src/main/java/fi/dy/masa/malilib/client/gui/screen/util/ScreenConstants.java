@@ -169,7 +169,7 @@ public class ScreenConstants {
     }
 
     public static ModLinkButton getModLinkButton(GuiScreen screen, IConfigHandler configInstance) {
-        return new ModLinkButton(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getModId(), ScreenText.OTHER_MODS.translate());
+        return new ModLinkButton(screen.width + modLinkButtonXFromRight, 10, 100, 16, configInstance.getId(), ScreenText.OTHER_MODS.translate());
     }
 
     public static WidgetScrollBar getScrollBar(int x, int y, StatusElement statusElement) {

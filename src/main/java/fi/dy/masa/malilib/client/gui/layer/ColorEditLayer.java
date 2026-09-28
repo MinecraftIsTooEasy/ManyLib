@@ -84,10 +84,13 @@ public class ColorEditLayer extends Layer {
 
         this.addLine(sliderX, topSliderY, 4, "color.hue", this.h, this::renderHueBar, this::setByHSV);
 
-        this.colorBoard = new ColorBoardSV(this.h,
-                this.a,
+        this.colorBoard = new ColorBoardSV(
+                this.h::getIntegerValue,
+                this.a::getIntegerValue,
                 this::setByHSV,
-                () -> SystemUtils.copyToClipboard(this.configColor.getColorString()),
+                () -> SystemUtils.copyToClipboard(this.configColor.getColorString())
+        );
+        this.colorBoard.setDimensions(
                 this.screen.width / 2 + 25,
                 this.screen.height / 2 - 50,
                 100,

@@ -13,13 +13,13 @@ import java.nio.file.Path;
 import java.util.List;
 
 public abstract class SimpleConfigs implements IConfigHandler {
-    private final String modId;
+    private final String id;
     protected Path path;
     protected final List<? extends IConfigBase> values;
 
-    public SimpleConfigs(String modId, List<? extends IConfigBase> values) {
-        this.modId = modId;
-        this.path = Platform.getConfigPath().resolve(this.modId + "_" + this.getSide().toString() + ".json");
+    public SimpleConfigs(String id, List<? extends IConfigBase> values) {
+        this.id = id;
+        this.path = Platform.getConfigPath().resolve(this.id + "_" + this.getSide().toString() + ".json");
         this.values = values;
     }
 
@@ -50,8 +50,8 @@ public abstract class SimpleConfigs implements IConfigHandler {
     }
 
     @Override
-    public String getModId() {
-        return this.modId;
+    public String getId() {
+        return this.id;
     }
 
     @Override

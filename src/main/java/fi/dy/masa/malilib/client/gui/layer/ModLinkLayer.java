@@ -77,7 +77,7 @@ public class ModLinkLayer extends Layer {
             super(0, 0, 0, 0);
             this.presentPredicate = presentPredicate;
             this.screenFactory = screenFactory;
-            this.links = ManyLibApi.streamModIds().toArray(String[]::new);
+            this.links = ManyLibApi.streamIds().toArray(String[]::new);
         }
 
         @Override

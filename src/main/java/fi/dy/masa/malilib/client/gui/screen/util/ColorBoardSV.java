@@ -3,31 +3,29 @@ package fi.dy.masa.malilib.client.gui.screen.util;
 import fi.dy.masa.malilib.client.gui.DrawContext;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.client.util.RenderUtils;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
 import net.minecraft.MathHelper;
 import net.minecraft.Tessellator;
 
+import java.util.function.IntSupplier;
+
 public class ColorBoardSV extends WidgetBase {
-    private final ConfigInteger hConfig;
-    private final ConfigInteger aConfig;
+    private final IntSupplier hSupplier;
+    private final IntSupplier aSupplier;
+    private final Runnable onDrag;
+    private final Runnable onRightClick;
 
     public float s;
     public float v;
 
     private int circleX;
-
     private int circleY;
-
-    private final Runnable onDrag;
-
-    private final Runnable onRightClick;
 
     private boolean dragging = false;
 
-    public ColorBoardSV(ConfigInteger hConfig, ConfigInteger aConfig, Runnable onDrag, Runnable onRightClick, int xPos, int yPos, int width, int height) {
-        super(xPos, yPos, width, height);
-        this.hConfig = hConfig;
-        this.aConfig = aConfig;
+    public ColorBoardSV(IntSupplier hSupplier, IntSupplier aSupplier, Runnable onDrag, Runnable onRightClick) {
+        super(0, 0, 0, 0);
+        this.hSupplier = hSupplier;
+        this.aSupplier = aSupplier;
         this.onDrag = onDrag;
         this.onRightClick = onRightClick;
     }
@@ -37,8 +35,8 @@ public class ColorBoardSV extends WidgetBase {
         if (this.dragging) {
             this.updateSV(mouseX, mouseY);
         }
-        int h = this.hConfig.getIntegerValue();
-        int a = this.aConfig.getIntegerValue();
+        int h = this.hSupplier.getAsInt();
+        int a = this.aSupplier.getAsInt();
 
         // the main board
         RenderUtils.preRenderGradient();

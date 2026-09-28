@@ -37,7 +37,7 @@ public class CommandReload implements IManyLibCommand {
     public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr) {
         int length = par2ArrayOfStr.length;
         if (length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(par2ArrayOfStr, ManyLibApi.streamModIds().toArray(String[]::new));
+            return CommandBase.getListOfStringsMatchingLastWord(par2ArrayOfStr, ManyLibApi.streamIds().toArray(String[]::new));
         }
         return null;
     }
