@@ -47,7 +47,7 @@ public class GlobalSearchScreen extends LayeredScreen implements ElementList<Glo
 
         ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
         layer.addWidget(ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
-            ((ICycleButton) button).next();
+            ((ICycleButton) button).cycle();
             this.sort(sortCategoryConfigEnum.getEnumValue());
         }));
 

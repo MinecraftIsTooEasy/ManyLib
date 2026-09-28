@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib.client.internal;
 
 import com.google.common.collect.ImmutableList;
+import fi.dy.masa.malilib.client.config.ClientConfigFactory;
 import fi.dy.masa.malilib.client.config.ClientSimpleConfigs;
 import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.client.input.KeybindMulti;
@@ -20,6 +21,7 @@ public class ManyLibClientConfig extends ClientSimpleConfigs {
     public static final ConfigHotkey OpenConfigMenu = new ConfigHotkey("manyLib.openMenu", "M,C", "打开ManyLib自身配置页面");
     public static final ConfigHotkey OpenModMenu = new ConfigHotkey("manyLib.openModMenu", KeybindMulti.fromStorageString("M", KeybindSettings.RELEASE), "打开ManyLib全部用户的菜单");
     public static final ConfigHotkey SearchAny = new ConfigHotkey("manyLib.searchAny", "M,A", "ManyLib全局配置搜索");
+    public static final ConfigHotkey IgnoredKeys = ClientConfigFactory.ofHotkey("manyLib.ignoredKeys");
 
 
     public static final List<ConfigBase<?>> values;
@@ -37,7 +39,7 @@ public class ManyLibClientConfig extends ClientSimpleConfigs {
 
     static {
         values = List.of(HideConfigButton, AutoSaveLoad, TranslationFallback, ActionBarShift, HighlightColor, TitleFormat);
-        hotkeys = List.of(OpenConfigMenu, OpenModMenu, SearchAny);
+        hotkeys = List.of(OpenConfigMenu, OpenModMenu, SearchAny, IgnoredKeys);
         Instance = new ManyLibClientConfig();
     }
 

@@ -4,6 +4,8 @@ public enum TooltipText implements ITranslatable {
     AVAILABLE_VALUES("manyLib.gui.tooltip.available_values"),
     CLICK_TO_EDIT_STRING_LIST("manyLib.gui.tooltip.clickToEditStringList"),
     CLICK_TO_SELECT_COLOR("manyLib.gui.tooltip.clickToSelectColor"),
+    CURRENT_VALUE("manyLib.gui.tooltip.current_value"),
+    DEFAULT_VALUE("manyLib.gui.tooltip.default_value"),
     EDIT_CLIENT_CONFIG("manyLib.gui.tooltip.edit_client_config"),
     EDIT_COMMON_CONFIG("manyLib.gui.tooltip.edit_common_config"),
     EDIT_SERVER_CONFIG("manyLib.gui.tooltip.edit_server_config"),

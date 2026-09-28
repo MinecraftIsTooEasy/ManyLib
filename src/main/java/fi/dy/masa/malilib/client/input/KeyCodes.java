@@ -1,9 +1,12 @@
 package fi.dy.masa.malilib.client.input;
 
 import fake.org.lwjgl.glfw.GLFW;
+import fi.dy.masa.malilib.client.util.StringUtils;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class KeyCodes {
     public static final int KEY_NONE = GLFW.GLFW_KEY_UNKNOWN;
@@ -138,8 +141,7 @@ public class KeyCodes {
     public static final int MOUSE_BUTTON_7 = GLFW.GLFW_MOUSE_BUTTON_7 - 100;
     public static final int MOUSE_BUTTON_8 = GLFW.GLFW_MOUSE_BUTTON_8 - 100;
 
-
-
+    private static final Map<Integer, String> KEY_DISPLAY_NAME_MAP = createKeyDisplayNameMap();
 
 
     public static String getNameForKeyCode(int keyCode) {
@@ -170,5 +172,76 @@ public class KeyCodes {
             }
         }
         return sb.toString();
+    }
+
+    private static Map<Integer, String> createKeyDisplayNameMap() {
+        HashMap<Integer, String> map = new HashMap<>(64);
+        map.put(0, "unknown");
+        map.put(1, "escape");
+        map.put(12, "minus");
+        map.put(13, "equal");
+        map.put(14, "backspace");
+        map.put(15, "tab");
+        map.put(26, "left.bracket");
+        map.put(27, "right.bracket");
+        map.put(28, "enter");
+        map.put(29, "left.control");
+        map.put(39, "semicolon");
+        map.put(40, "apostrophe");
+        map.put(41, "grave.accent");
+        map.put(42, "left.shift");
+        map.put(43, "backslash");
+        map.put(51, "comma");
+        map.put(52, "period");
+        map.put(53, "slash");
+        map.put(54, "right.shift");
+        map.put(55, "keypad.multiply");
+        map.put(56, "left.alt");
+        map.put(57, "space");
+        map.put(58, "caps.lock");
+        map.put(69, "num.lock");
+        map.put(70, "scroll.lock");
+        map.put(74, "keypad.subtract");
+        map.put(78, "keypad.add");
+        map.put(83, "keypad.decimal");
+        map.put(82, "keypad.0");
+        map.put(79, "keypad.1");
+        map.put(80, "keypad.2");
+        map.put(81, "keypad.3");
+        map.put(75, "keypad.4");
+        map.put(76, "keypad.5");
+        map.put(77, "keypad.6");
+        map.put(71, "keypad.7");
+        map.put(72, "keypad.8");
+        map.put(73, "keypad.9");
+        map.put(141, "keypad.equal");
+        map.put(156, "keypad.enter");
+        map.put(181, "keypad.divide");
+        map.put(183, "print.screen");
+        map.put(184, "right.alt");
+        map.put(197, "pause");
+        map.put(199, "home");
+        map.put(200, "up");
+        map.put(201, "page.up");
+        map.put(203, "left");
+        map.put(205, "right");
+        map.put(207, "end");
+        map.put(208, "down");
+        map.put(209, "page.down");
+        map.put(210, "insert");
+        map.put(211, "delete");
+        map.put(219, "left.win");
+        map.put(220, "right.win");
+        map.put(221, "menu");
+        return map;
+    }
+
+    public static String getKeyDisplayName(int keyCode) {
+        String name = KEY_DISPLAY_NAME_MAP.get(keyCode);
+        if (name != null) {
+            return StringUtils.translate("key.keyboard." + name);
+        } else {
+            return Keyboard.getKeyName(keyCode);
+        }
     }
 }

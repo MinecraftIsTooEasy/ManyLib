@@ -14,6 +14,7 @@ import fi.dy.masa.malilib.client.input.IKeybind;
 import fi.dy.masa.malilib.client.input.KeybindCategory;
 import fi.dy.masa.malilib.client.util.RenderUtils;
 import fi.dy.masa.malilib.localization.KeybindSettingsText;
+import fi.dy.masa.malilib.localization.KeybindText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +109,7 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
         this.updateConflicts();
         String string = this.keybind.getKeysDisplayString();
         if (string.isEmpty()) {
-            string = "NONE";
+            string = KeybindText.EMPTY.translate();
         }
         if (this.editing) {
             string = GuiBase.TXT_YELLOW + "> " + string + " <";

@@ -105,7 +105,7 @@ public class ConfigBoolean extends ConfigBase<ConfigBoolean> implements IConfigB
     }
 
     @Override
-    public void next() {
+    public void cycle(boolean forward) {
         this.toggleBooleanValue();
     }
 }

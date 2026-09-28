@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.client.api.ManyLibClientApi;
 import fi.dy.masa.malilib.client.event.InputEventHandler;
 import fi.dy.masa.malilib.client.feature.ProgressSaving;
 import fi.dy.masa.malilib.client.feature.SortCategory;
+import fi.dy.masa.malilib.client.gui.DrawContext;
 import fi.dy.masa.malilib.client.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.client.gui.button.CycleButton;
 import fi.dy.masa.malilib.client.gui.button.ModLinkButton;
@@ -19,6 +20,7 @@ import fi.dy.masa.malilib.client.gui.tab.ConfigTab;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetConfigListView;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetSearchField;
 import fi.dy.masa.malilib.client.internal.ManyLibClientConfig;
+import fi.dy.masa.malilib.client.util.RenderUtils;
 import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
@@ -40,6 +42,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
     private boolean firstSeen = true;
     private final List<ConfigTab> configTabs;
 
+    private final ConfigEnum<SortCategory> sortCategory;
     private ButtonGeneric resetAllButton;
     private CycleButton<?> sortButton;
     private ModLinkButton modLinkButton;
@@ -55,6 +58,7 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
         this.configHandler = configHandler;
         this.configTabs = this.createConfigTabs();
         this.currentTab = this.configTabs.get(0);
+        this.sortCategory = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
     }
 
     @Override
@@ -111,10 +115,9 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
         this.resetAllButton = resetAllButton;
         layer.addWidget(resetAllButton);
 
-        ConfigEnum<SortCategory> sortCategoryConfigEnum = new ConfigEnum<>("manyLib.sortCategory", SortCategory.Default);
-        CycleButton<?> sortButton = ScreenConstants.getSortButton(this, widthAdder, 30, sortCategoryConfigEnum, button -> {
-            ((ICycleButton) button).next();
-            this.sort(sortCategoryConfigEnum.getEnumValue());
+        CycleButton<?> sortButton = ScreenConstants.getSortButton(this, widthAdder, 30, this.sortCategory, button -> {
+            ((ICycleButton) button).cycle();
+            this.sort(this.sortCategory.getEnumValue());
         });
         this.sortButton = sortButton;
         layer.addWidget(sortButton);
@@ -213,6 +216,14 @@ public class DefaultConfigScreen extends LayeredScreen implements IConfigScreen,
             });
         }
         this.mc.displayGuiScreen(this);
+    }
+
+    @Override
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+        super.render(drawContext, mouseX, mouseY, partialTicks);
+        if (this.sortButton.isMouseOver()) {
+            RenderUtils.renderTooltip(mouseX, mouseY, ConfigDisplayApi.getEnumTooltip(this.sortCategory), drawContext);
+        }
     }
 
     @Override

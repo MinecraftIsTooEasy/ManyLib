@@ -10,10 +10,7 @@ import fi.dy.masa.malilib.client.util.InfoUtils;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class KeybindMulti implements IKeybind {
     private static final ArrayList<Integer> PRESSED_KEYS = new ArrayList<>();
@@ -21,7 +18,7 @@ public class KeybindMulti implements IKeybind {
 
     private final String defaultStorageString;
     private final KeybindSettings defaultSettings;
-    private List<Integer> keyCodes = new ArrayList<>(4);
+    private final List<Integer> keyCodes = new ArrayList<>(4);
     private KeybindSettings settings;
     private boolean pressed;
     private boolean pressedLast;
@@ -201,7 +198,22 @@ public class KeybindMulti implements IKeybind {
 
     @Override
     public String getKeysDisplayString() {
-        return this.getStringValue().replaceAll(",", " + ");
+        StringBuilder sb = new StringBuilder(32);
+
+        for (int i = 0; i < this.keyCodes.size(); ++i) {
+            if (i > 0) {
+                sb.append(" + ");
+            }
+
+            int keyCode = this.keyCodes.get(i);
+            String name = KeyCodes.getKeyDisplayName(keyCode);
+
+            if (name != null) {
+                sb.append(name);
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -242,8 +254,8 @@ public class KeybindMulti implements IKeybind {
                 sb.append(",");
             }
 
-            int keyCode = this.keyCodes.get(i).intValue();
-            String name = getStorageStringForKeyCode(keyCode);
+            int keyCode = this.keyCodes.get(i);
+            String name = KeyCodes.getNameForKey(keyCode);
 
             if (name != null) {
                 sb.append(name);
@@ -353,8 +365,6 @@ public class KeybindMulti implements IKeybind {
 
     public static boolean isKeyDown(int keyCode) {
         return Keyboard.isKeyDown(keyCode);
-    }
-//    public static boolean isKeyDown(int keyCode) {
 //        if (keyCode == -1) {
 //            return false;
 //        }
@@ -368,7 +378,7 @@ public class KeybindMulti implements IKeybind {
 //        keyCode += 100;
 //
 //        return keyCode >= 0 && GLFW.glfwGetMouseButton(window, keyCode) == GLFW.GLFW_PRESS;
-//    }
+    }
 
     /**
      * NOT PUBLIC API - DO NOT CALL FROM MOD CODE!!!
@@ -380,11 +390,10 @@ public class KeybindMulti implements IKeybind {
 
             if (state) {
                 if (PRESSED_KEYS.contains(valObj) == false) {
-//                    Collection<Integer> ignored = ManyLibConfig.Generic.IGNORED_KEYS.getKeybind().getKeys();
-
-//                    if (ignored.size() == 0 || ignored.contains(valObj) == false) {
-                    PRESSED_KEYS.add(valObj);
-//                    }
+                    Collection<Integer> ignored = ManyLibClientConfig.IgnoredKeys.getKeybind().getKeys();
+                    if (ignored.size() == 0 || ignored.contains(valObj) == false) {
+                        PRESSED_KEYS.add(valObj);
+                    }
                 }
             } else {
                 PRESSED_KEYS.remove(valObj);
@@ -444,7 +453,7 @@ public class KeybindMulti implements IKeybind {
                     sb.append(" + ");
                 }
 
-                String name = getStorageStringForKeyCode(key);
+                String name = KeyCodes.getNameForKey(key);
 
                 if (name != null) {
                     sb.append(String.format("%s (%d)", name, key));
@@ -457,11 +466,6 @@ public class KeybindMulti implements IKeybind {
         }
 
         return "<none>";
-    }
-
-    @Nullable
-    public static String getStorageStringForKeyCode(int keyCode) {
-        return KeyCodes.getNameForKey(keyCode);
     }
 
     public static int getTriggeredCount() {

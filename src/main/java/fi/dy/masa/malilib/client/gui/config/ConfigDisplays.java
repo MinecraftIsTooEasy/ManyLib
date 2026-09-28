@@ -4,7 +4,6 @@ import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.client.config.options.ConfigToggle;
 import fi.dy.masa.malilib.client.gui.widgets.config.*;
 import fi.dy.masa.malilib.client.input.IHotkey;
-import fi.dy.masa.malilib.client.util.StringUtils;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.config.interfaces.*;
@@ -112,8 +111,7 @@ public class ConfigDisplays {
 
             @Override
             public String getButtonText(IConfigBase config) {
-                String entry = ((IConfigEnum<?>) config).getStringValue();
-                return StringUtils.getTranslatedOrFallback("config.enum." + config.getName() + "." + entry, entry);
+                return ConfigDisplayApi.getEnumDisplayName((IConfigEnum<?>) config);
             }
         });
 

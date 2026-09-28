@@ -73,16 +73,6 @@ public class ConfigEnum<E extends Enum<E>> extends ConfigBase<ConfigEnum<E>> imp
     }
 
     @Override
-    public E getNext() {
-        return this.allValues[(this.value.ordinal() + 1) % this.capacity];
-    }
-
-    @Override
-    public int getOrdinal() {
-        return this.value.ordinal();
-    }
-
-    @Override
     public E[] getAllEnumValues() {
         return this.allValues;
     }

@@ -96,7 +96,7 @@ public class ConfigToggle extends ConfigHotkey implements IConfigBoolean {
     }
 
     @Override
-    public void next() {
+    public void cycle(boolean forward) {
         this.toggleBooleanValue();
     }
 }
