@@ -2,8 +2,8 @@ package fi.dy.masa.malilib.config;
 
 import fi.dy.masa.malilib.ManyLib;
 import net.minecraft.ResourceLocation;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

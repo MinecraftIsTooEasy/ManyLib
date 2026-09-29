@@ -2,8 +2,9 @@ package fi.dy.masa.malilib.localization;
 
 public enum TooltipText implements ITranslatable {
     AVAILABLE_VALUES("manyLib.gui.tooltip.available_values"),
-    CLICK_TO_EDIT_STRING_LIST("manyLib.gui.tooltip.clickToEditStringList"),
-    CLICK_TO_SELECT_COLOR("manyLib.gui.tooltip.clickToSelectColor"),
+    CLICK_TO_EDIT_STRING_LIST("manyLib.gui.tooltip.click_to_edit_string_list"),
+    CLICK_TO_SELECT_COLOR("manyLib.gui.tooltip.click_to_select_color"),
+    CLICK_TO_TRIGGER("manyLib.gui.tooltip.click_to_trigger"),
     CURRENT_VALUE("manyLib.gui.tooltip.current_value"),
     DEFAULT_VALUE("manyLib.gui.tooltip.default_value"),
     EDIT_CLIENT_CONFIG("manyLib.gui.tooltip.edit_client_config"),

@@ -10,7 +10,10 @@ public class WidgetConfigToggle extends WidgetConfigHotkey {
 
     public WidgetConfigToggle(ConfigToggle config) {
         super(config);
-        this.toggleButton = ScreenConstants.getConfigToggleButton(button -> ((ConfigToggle) this.config).cycle());
+        this.toggleButton = ScreenConstants.getHotkeyActionButton(
+                button -> ((ConfigToggle) this.config).cycle(),
+                ""
+        );
         this.toggleButton.setOnUpdate(button -> this.toggleButton.setDisplayString(ComponentUtils.ofBoolean(this.config)));
         this.addWidget(this.toggleButton);
     }
@@ -19,6 +22,6 @@ public class WidgetConfigToggle extends WidgetConfigHotkey {
     public void init() {
         super.init();
 
-        ScreenConstants.placeConfigToggleButton(this, this.toggleButton);
+        ScreenConstants.placeHotkeyActionButton(this, this.toggleButton);
     }
 }

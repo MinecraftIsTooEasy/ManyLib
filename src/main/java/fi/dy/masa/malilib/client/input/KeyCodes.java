@@ -2,9 +2,9 @@ package fi.dy.masa.malilib.client.input;
 
 import fake.org.lwjgl.glfw.GLFW;
 import fi.dy.masa.malilib.client.util.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

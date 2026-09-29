@@ -8,8 +8,8 @@ import fi.dy.masa.malilib.client.util.GuiUtils;
 import fi.dy.masa.malilib.client.util.RenderUtils;
 import net.minecraft.GuiScreen;
 import net.minecraft.ScaledResolution;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -6,8 +6,8 @@ import fi.dy.masa.malilib.client.internal.ManyLibClientConfig;
 import fi.dy.masa.malilib.config.ConfigManager;
 import net.minecraft.Minecraft;
 import net.minecraft.WorldClient;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

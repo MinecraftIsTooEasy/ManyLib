@@ -3,9 +3,8 @@ package fi.dy.masa.malilib.client.gui.widgets;
 import fi.dy.masa.malilib.client.gui.DrawContext;
 import fi.dy.masa.malilib.client.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.client.gui.widgets.text.TextField;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.Nullable;
 
 public class WidgetTextField<T extends TextField> extends WidgetBase {
     private final T textField;

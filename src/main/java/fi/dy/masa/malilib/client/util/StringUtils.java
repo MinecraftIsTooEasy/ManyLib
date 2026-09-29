@@ -6,9 +6,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.I18n;
 import net.minecraft.Minecraft;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Locale;
@@ -236,7 +236,7 @@ public class StringUtils {
         return Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
     }
 
-    public static boolean stringMatchesInput(@Nonnull String string, @Nonnull String input) {
+    public static boolean stringMatchesInput(@NonNull String string, @NonNull String input) {
         if (string.toLowerCase().contains(input.toLowerCase())) {
             return true;
         }

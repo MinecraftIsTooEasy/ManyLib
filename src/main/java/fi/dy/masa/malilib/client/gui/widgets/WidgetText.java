@@ -5,9 +5,9 @@ import fi.dy.masa.malilib.client.gui.screen.util.ScreenConstants;
 import fi.dy.masa.malilib.client.util.RenderUtils;
 import fi.dy.masa.malilib.core.Color4f;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.Rectangle;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class WidgetText extends WidgetBase {

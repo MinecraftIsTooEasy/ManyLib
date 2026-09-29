@@ -15,8 +15,8 @@ import net.minecraft.DynamicTexture;
 import net.minecraft.GuiScreen;
 import net.minecraft.Minecraft;
 import net.minecraft.ResourceLocation;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

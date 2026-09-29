@@ -9,8 +9,8 @@ import fi.dy.masa.malilib.core.Side;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import net.minecraft.ResourceLocation;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.stream.Stream;
 

@@ -5,8 +5,7 @@ import fi.dy.masa.malilib.client.gui.button.interfaces.IButtonUpdateListener;
 import fi.dy.masa.malilib.client.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.client.util.SoundUtils;
 import net.minecraft.ResourceLocation;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class ButtonBase extends WidgetBase {
     protected static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");

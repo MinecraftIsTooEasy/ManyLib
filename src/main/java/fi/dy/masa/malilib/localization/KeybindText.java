@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.localization;
 
 public enum KeybindText implements ITranslatable{
     EMPTY("keybind.empty"),
+    TRIGGER("keybind.trigger"),
     ;
 
     private final String key;

@@ -23,8 +23,9 @@ manyLib.gui.configuring=正在配置
 manyLib.gui.rightClickToCopy=右键复制
 
 manyLib.gui.tooltip.available_values=可用值
-manyLib.gui.tooltip.clickToSelectColor=点击打开取色板
-manyLib.gui.tooltip.clickToEditStringList=点击配置字符串列表
+manyLib.gui.tooltip.click_to_select_color=点击打开取色板
+manyLib.gui.tooltip.click_to_edit_string_list=点击配置字符串列表
+manyLib.gui.tooltip.click_to_trigger=点击触发\n若你不在游戏内可能导致崩溃
 manyLib.gui.tooltip.current_value=当前值
 manyLib.gui.tooltip.default_value=默认值
 manyLib.gui.tooltip.edit_client_config=编辑客户端配置
@@ -99,6 +100,7 @@ color.brightness=亮度
 list.empty=空列表
 
 keybind.empty=空
+keybind.trigger=触发
 
 commands.manyLib.usage=用法: /manyLib <命令> [参数]
 commands.manyLib.reload.usage=用法: /manyLib reload <配置名>

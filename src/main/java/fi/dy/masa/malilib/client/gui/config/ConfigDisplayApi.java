@@ -11,8 +11,8 @@ import fi.dy.masa.malilib.core.Color4f;
 import fi.dy.masa.malilib.localization.TooltipText;
 import fi.dy.masa.malilib.util.Platform;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

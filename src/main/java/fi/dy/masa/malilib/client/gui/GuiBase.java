@@ -15,10 +15,10 @@ import fi.dy.masa.malilib.client.render.MessageRenderer;
 import fi.dy.masa.malilib.client.util.RenderUtils;
 import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import net.minecraft.*;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

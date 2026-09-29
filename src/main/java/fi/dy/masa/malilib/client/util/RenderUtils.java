@@ -37,7 +37,7 @@ public class RenderUtils {
             List<String> linesNew = new ArrayList<>();
 
             for (String lineOrig : textLines) {
-                String[] lines = lineOrig.split("\\n");
+                String[] lines = lineOrig.split("\\\\n");
 
                 for (String line : lines) {
                     int length = font.getStringWidth(line);

@@ -1,8 +1,7 @@
 package fi.dy.masa.malilib.client.input;
 
 import fi.dy.masa.malilib.config.interfaces.IConfigBoolean;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class KeyCallbackAdjustable implements IHotkeyCallback {
     protected static boolean valueChanged;

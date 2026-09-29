@@ -7,9 +7,9 @@ import fi.dy.masa.malilib.client.input.KeybindSettings.Context;
 import fi.dy.masa.malilib.client.internal.ManyLibClientConfig;
 import fi.dy.masa.malilib.client.util.GuiUtils;
 import fi.dy.masa.malilib.client.util.InfoUtils;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class KeybindMulti implements IKeybind {
@@ -472,6 +472,7 @@ public class KeybindMulti implements IKeybind {
         return triggeredCount;
     }
 
+    @Nullable
     public IHotkeyCallback getCallback() {
         return callback;
     }

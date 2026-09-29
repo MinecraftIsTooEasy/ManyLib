@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.client.gui.screen.util;
 
-import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.client.feature.SortCategory;
 import fi.dy.masa.malilib.client.gui.button.*;
 import fi.dy.masa.malilib.client.gui.button.interfaces.IButtonActionListener;
@@ -135,11 +134,10 @@ public class ScreenConstants {
         button.setPosition(parent.getWidth() + hotKeyFirstButtonXFromRight, parent.getY() + listEntryMargin);
     }
 
-    public static ButtonBase getHotkeyButton(ConfigHotkey config, IButtonActionListener onPress) {
-        ConfigType type = config.getType();
-        boolean isShort = type == ConfigTypes.TOGGLE;
-        int width = isShort ? shortHotkeyButtonWidth : commonHotkeyButtonWidth;
-        return ButtonGeneric.builder("", onPress).dimensions(0, 0, width, commonButtonHeight).build();
+    public static ButtonBase getHotkeyButton(IButtonActionListener onPress, boolean isShort) {
+        return ButtonGeneric.builder("", onPress)
+                .dimensions(0, 0, isShort ? shortHotkeyButtonWidth : commonHotkeyButtonWidth, commonButtonHeight)
+                .build();
     }
 
     public static void placeKeySettingButton(WidgetBase parent, ButtonBase button) {
@@ -158,12 +156,15 @@ public class ScreenConstants {
         button.setPosition(parent.getWidth() + commonButtonXFromRight + commonButtonWidth - 15, parent.getY() + 3 * listEntryMargin);
     }
 
-    public static void placeConfigToggleButton(WidgetBase parent, ButtonBase button) {
+    /**
+     * Trigger callback, or toggle boolean
+     */
+    public static void placeHotkeyActionButton(WidgetBase parent, ButtonBase button) {
         button.setPosition(parent.getWidth() + hotKeyFirstButtonXFromRight + shortHotkeyButtonWidth + 5, parent.getY() + listEntryMargin);
     }
 
-    public static ButtonBase getConfigToggleButton(IButtonActionListener onPress) {
-        return ButtonGeneric.builder("", onPress)
+    public static ButtonBase getHotkeyActionButton(IButtonActionListener onPress, String text) {
+        return ButtonGeneric.builder(text, onPress)
                 .size(configToggleButtonXWidth, commonButtonHeight)
                 .build();
     }

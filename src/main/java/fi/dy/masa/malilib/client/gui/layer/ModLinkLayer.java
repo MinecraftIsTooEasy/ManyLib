@@ -87,7 +87,7 @@ public class ModLinkLayer extends Layer {
             ModLinkEntry widget = new ModLinkEntry(
                     this.presentPredicate.test(link),
                     link,
-                    button -> Minecraft.getMinecraft().displayGuiScreen(this.screenFactory.apply(link))
+                    button -> this.mc.displayGuiScreen(this.screenFactory.apply(link))
             );
             widget.setVisible(true);
             return widget;

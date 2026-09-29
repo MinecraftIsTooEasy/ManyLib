@@ -5,10 +5,10 @@ import fi.dy.masa.malilib.client.gui.event.ContainerEventHandler;
 import fi.dy.masa.malilib.client.gui.event.GuiEventListener;
 import fi.dy.masa.malilib.client.gui.interfaces.Renderable;
 import net.minecraft.GuiScreen;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

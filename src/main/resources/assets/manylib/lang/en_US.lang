@@ -23,8 +23,9 @@ manyLib.gui.configuring=Configuring
 manyLib.gui.rightClickToCopy=Right Click To Copy
 
 manyLib.gui.tooltip.available_values=Available Values
-manyLib.gui.tooltip.clickToSelectColor=Click To Select Color
-manyLib.gui.tooltip.clickToEditStringList=Click To Edit String List
+manyLib.gui.tooltip.click_to_select_color=Click to select color
+manyLib.gui.tooltip.click_to_edit_string_list=Click to edit string list
+manyLib.gui.tooltip.click_to_trigger=Click to trigger\nMay crash if you are not in game
 manyLib.gui.tooltip.current_value=Current Value
 manyLib.gui.tooltip.default_value=Default Value
 manyLib.gui.tooltip.edit_client_config=Edit Client Config
@@ -99,6 +100,7 @@ color.brightness=Brightness
 list.empty=Empty List
 
 keybind.empty=EMPTY
+keybind.trigger=Trigger
 
 commands.manyLib.usage=Usage: /manyLib <command> [args]
 commands.manyLib.reload.usage=Usage: /manyLib reload <config>

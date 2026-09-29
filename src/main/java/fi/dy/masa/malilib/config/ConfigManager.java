@@ -3,8 +3,8 @@ package fi.dy.masa.malilib.config;
 import fi.dy.masa.malilib.config.interfaces.IConfigHandler;
 import fi.dy.masa.malilib.core.Side;
 import fi.dy.masa.malilib.util.Platform;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;

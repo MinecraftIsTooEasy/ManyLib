@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.config.interfaces;
 
 import fi.dy.masa.malilib.core.Side;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ public interface IConfigHandler extends Comparable<IConfigHandler> {
 
     void save();
 
-    @NotNull
+    @NonNull
     List<? extends IConfigBase> getValues();
 
     @Override
-    default int compareTo(@NotNull IConfigHandler o) {
+    default int compareTo(@NonNull IConfigHandler o) {
         int compare = this.getId().compareTo(o.getId());
         if (compare != 0) return compare;
         return Integer.compare(this.getSide().ordinal(), o.getSide().ordinal());

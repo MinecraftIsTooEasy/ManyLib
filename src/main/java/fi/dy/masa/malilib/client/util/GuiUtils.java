@@ -3,8 +3,7 @@ package fi.dy.masa.malilib.client.util;
 import net.minecraft.GuiScreen;
 import net.minecraft.Minecraft;
 import net.minecraft.ScaledResolution;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class GuiUtils {
     public static ScaledResolution getScaledResolution(){

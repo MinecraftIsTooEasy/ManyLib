@@ -1,8 +1,8 @@
 package fi.dy.masa.malilib.util;
 
 import net.xiaoyu233.fml.FishModLoader;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 
 public class Platform {

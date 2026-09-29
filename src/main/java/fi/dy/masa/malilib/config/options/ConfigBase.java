@@ -5,7 +5,7 @@ import fi.dy.masa.malilib.config.interfaces.IConfigBase;
 import fi.dy.masa.malilib.config.interfaces.IConfigNotifiable;
 import fi.dy.masa.malilib.config.interfaces.IConfigResettable;
 import fi.dy.masa.malilib.config.interfaces.IValueChangeCallback;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, IConfigResettable, IConfigNotifiable<T> {
     private final ConfigType type;

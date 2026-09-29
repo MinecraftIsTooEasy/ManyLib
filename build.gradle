@@ -31,6 +31,7 @@ dependencies {
     // compile needed
     compileOnly "com.github.MinecraftIsTooEasy:ModMenu:10.1.1"
     compileOnly "com.github.MinecraftIsTooEasy:PinIn-Lib:1.6.0"
+    compileOnly 'org.jspecify:jspecify:1.0.0'
 
     // for convenience
     compileOnly "com.github.MinecraftIsTooEasy:RustedIronCore:1.5.5"

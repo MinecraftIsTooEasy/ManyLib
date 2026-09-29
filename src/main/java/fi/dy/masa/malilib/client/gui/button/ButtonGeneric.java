@@ -5,8 +5,8 @@ import fi.dy.masa.malilib.client.gui.button.interfaces.IButtonActionListener;
 import fi.dy.masa.malilib.client.gui.button.interfaces.IButtonUpdateListener;
 import fi.dy.masa.malilib.client.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.client.util.RenderUtils;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ButtonGeneric extends ButtonBase {

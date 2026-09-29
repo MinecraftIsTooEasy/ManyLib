@@ -48,6 +48,7 @@ public class WidgetModEntry extends WidgetContainer {
         WidgetText nameText = WidgetText.of(ConfigDisplayApi.getModName(id)).position(45, ScreenConstants.commentedTextShift);
         nameText.translateTo(this);
         nameText.addTooltip(TooltipText.MOD_ID.translate(id));
+        nameText.addTooltip(ConfigDisplayApi.getModComment(id));
         nameText.getTooltipRange().setBounds(0, this.getY(), x - 95, ScreenConstants.listEntryHeight);
         this.addWidget(nameText);
 

@@ -10,8 +10,8 @@ import fi.dy.masa.malilib.config.interfaces.*;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.localization.ScreenText;
 import fi.dy.masa.malilib.util.ComponentUtils;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

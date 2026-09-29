@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib.client.gui.event;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Optional;
 

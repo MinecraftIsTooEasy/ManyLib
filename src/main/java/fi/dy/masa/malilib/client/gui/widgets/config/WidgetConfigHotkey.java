@@ -1,7 +1,9 @@
 package fi.dy.masa.malilib.client.gui.widgets.config;
 
+import fi.dy.masa.malilib.annotation.MaybeInvisible;
 import fi.dy.masa.malilib.client.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.client.event.InputEventHandler;
+import fi.dy.masa.malilib.client.feature.TriggerCallback;
 import fi.dy.masa.malilib.client.gui.DrawContext;
 import fi.dy.masa.malilib.client.gui.GuiBase;
 import fi.dy.masa.malilib.client.gui.button.ButtonBase;
@@ -13,8 +15,10 @@ import fi.dy.masa.malilib.client.input.IHotkey;
 import fi.dy.masa.malilib.client.input.IKeybind;
 import fi.dy.masa.malilib.client.input.KeybindCategory;
 import fi.dy.masa.malilib.client.util.RenderUtils;
+import fi.dy.masa.malilib.config.ConfigTypes;
 import fi.dy.masa.malilib.localization.KeybindSettingsText;
 import fi.dy.masa.malilib.localization.KeybindText;
+import fi.dy.masa.malilib.localization.TooltipText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +30,21 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
 
     final ButtonBase hotkeyButton;
     final ButtonBase keySettingButton;
+    @MaybeInvisible
+    final ButtonBase triggerButton;
 
     public WidgetConfigHotkey(ConfigHotkey config) {
         super(config);
         this.keybind = config.getKeybind();
 
-        this.hotkeyButton = ScreenConstants.getHotkeyButton(this.config, button -> {
-            this.editing = true;
-            this.keybind.clearKeys();
-        });
+        boolean hasCallback = this.keybind.getCallback() != null;
+
+        this.hotkeyButton = ScreenConstants.getHotkeyButton(
+                button -> {
+                    this.editing = true;
+                    this.keybind.clearKeys();
+                }, hasCallback
+        );
         this.hotkeyButton.setTooltipRequiresShift(true);
         this.addWidget(this.hotkeyButton);
 
@@ -46,6 +56,16 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
                 )
         );
         this.addWidget(this.keySettingButton);
+
+        this.triggerButton = ScreenConstants.getHotkeyActionButton(
+                button -> TriggerCallback.run(this.keybind),
+                KeybindText.TRIGGER.translate()
+        );
+        this.addWidget(this.triggerButton);
+
+        if (!hasCallback || config.getType() == ConfigTypes.TOGGLE) {
+            this.triggerButton.setVisible(false);
+        }
     }
 
     @Override
@@ -54,6 +74,7 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
 
         ScreenConstants.placeHotkeyButton(this, this.hotkeyButton);
         ScreenConstants.placeKeySettingButton(this, this.keySettingButton);
+        ScreenConstants.placeHotkeyActionButton(this, this.triggerButton);
     }
 
     @Override
@@ -73,6 +94,9 @@ public class WidgetConfigHotkey extends WidgetConfig<ConfigHotkey> {
             strings.add(KeybindSettingsText.SETTINGS.translate() + ":");
             strings.addAll(this.keybind.getSettings().toStringList());
             RenderUtils.renderTooltip(mouseX, mouseY, strings, drawContext);
+        }
+        if (this.triggerButton.isMouseOver()) {
+            RenderUtils.renderTooltip(mouseX, mouseY, List.of(TooltipText.CLICK_TO_TRIGGER.translate()), drawContext);
         }
     }
 

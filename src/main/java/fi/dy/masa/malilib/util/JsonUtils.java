@@ -2,9 +2,9 @@ package fi.dy.masa.malilib.util;
 
 import com.google.gson.*;
 import fi.dy.masa.malilib.ManyLib;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -215,8 +215,8 @@ public class JsonUtils {
 
 
     // https://stackoverflow.com/questions/29786197/gson-jsonobject-copy-value-affected-others-jsonobject-instance
-    @Nonnull
-    public static JsonObject deepCopy(@Nonnull JsonObject jsonObject) {
+    @NonNull
+    public static JsonObject deepCopy(@NonNull JsonObject jsonObject) {
         JsonObject result = new JsonObject();
 
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -226,8 +226,8 @@ public class JsonUtils {
         return result;
     }
 
-    @Nonnull
-    public static JsonArray deepCopy(@Nonnull JsonArray jsonArray) {
+    @NonNull
+    public static JsonArray deepCopy(@NonNull JsonArray jsonArray) {
         JsonArray result = new JsonArray();
 
         for (JsonElement e : jsonArray) {
@@ -237,8 +237,8 @@ public class JsonUtils {
         return result;
     }
 
-    @Nonnull
-    public static JsonElement deepCopy(@Nonnull JsonElement jsonElement) {
+    @NonNull
+    public static JsonElement deepCopy(@NonNull JsonElement jsonElement) {
         if (jsonElement.isJsonPrimitive() || jsonElement.isJsonNull()) {
             return jsonElement; // these are immutable anyway
         } else if (jsonElement.isJsonObject()) {
